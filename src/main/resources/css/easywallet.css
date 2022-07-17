@@ -1,0 +1,55 @@
+/*******************************************************************************
+*                                                                              *
+* Palette: 41508B, 6176A4, 4AA7B2, E6D8B3, EB934C                                 *
+*                                                                              *
+*******************************************************************************/
+
+/*******************************************************************************
+*                                                                              *
+* JFX Decorator                                                                *
+*                                                                              *
+*******************************************************************************/
+
+.jfx-decorator {
+    -fx-decorator-color: #8bc34a;
+}
+
+.jfx-decorator .jfx-decorator-buttons-container {
+    -fx-background-color: -fx-decorator-color;
+}
+
+.jfx-decorator .resize-border {
+    -fx-border-color: white;
+    -fx-border-width: 3 3 3 3;
+}
+
+.jfx-decorator .jfx-decorator-title-container .jfx-decorator-text {
+    -fx-fill: WHITE;
+    -fx-font-size: 16;
+}
+
+.jfx-decorator .jfx-decorator-title-container .jfx-svg-glyph {
+    -fx-shape: "M512 682c-128.024-99.309-255.626-199.040-384-298l384-298 384 298c-128.375 98.958-255.974 198.693-384 298zM512 792l314-246 70 54-384 298-384-298 70-54z";
+    -jfx-size: 15;
+    -fx-background-color: WHITE;
+}
+
+/*******************************************************************************
+*                                                                              *
+* EasyWallet                                                                   *
+*                                                                              *
+*******************************************************************************/
+
+.primary-color {
+    -fx-background-color: #8bc34a;
+    /*-fx-border-width: 0;*/
+    /*-fx-border-color: -fx-background-color;;*/
+}
+
+.secondary-color {
+    -fx-background-color: #eb934c;
+}
+
+.primary-button {
+    -fx-background-color: #8bc34a;
+}
