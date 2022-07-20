@@ -10,7 +10,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox class="wallet_card" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<VBox
+    xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+    styleClass="wallet_card" style="-fx-background-color: white;"
+    fx:controller="ste.w3.easywallet.ui.WalletController"
+    fx:id="walletCard"
+>
     <children>
         <VBox>
             <children>
@@ -28,7 +33,7 @@
                 </VBox>
                 <VBox alignment="TOP_CENTER">
                     <children>
-                        <Label text="x0123456789012345678901234567890123456789">
+                        <Label fx:id="address" text="x0123456789012345678901234567890123456789">
                             <font>
                                 <Font name="Roboto Bold" size="18.0" />
                             </font>

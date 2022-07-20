@@ -1,5 +1,7 @@
 /*
  * EasyWallet
+ * ----------
+ *
  * Copyright (C) 2022 Stefano Fornari. Licensed under the
  * EUPL-1.2 or later (see LICENSE).
  *
@@ -18,11 +20,40 @@
  */
 package ste.w3.easywallet.ui;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class WalletPane extends Pane {
+public class WalletController {
+
+    @FXML
+    private Pane walletCard;
+
+    @FXML
+    private Label address;
+
+    public final Wallet wallet;
+
+    public WalletController(Wallet wallet) {
+        this.wallet = wallet;
+    }
+
+    public WalletController() {
+        wallet = null;
+    }
+
+
+    @FXML
+    public void initialize() {
+        if (wallet == null) {
+            return;
+        }
+        
+        address.setText("0x" + wallet.address);
+    }
 
 }
