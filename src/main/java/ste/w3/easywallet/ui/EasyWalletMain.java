@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import ste.w3.easywallet.Preferences;
@@ -28,7 +29,7 @@ public class EasyWalletMain extends Application {
     private Preferences preferences = null;
 
     @Override
-        public void start(Stage stage) {
+    public void start(Stage stage) {
         new Thread(() -> {
             try {
                 SVGGlyphLoader.loadGlyphsFont(EasyWalletMain.class.getResourceAsStream("/fonts/icomoon.svg"), "icomoon.svg");
@@ -41,29 +42,28 @@ public class EasyWalletMain extends Application {
             PreferencesManager pm = new PreferencesManager();
             preferences = pm.fromJSON(FileUtils.readFileToString(configFile, "UTF-8"));
 
+            stage.setWidth(400); stage.setHeight(600);
+            stage.setMinHeight(400);
+
+            //
+            // TODO: Move the window creation code into EasyWalletWindow and add a controller
+            //
             Pane content = FXMLLoader.load(EasyWalletMain.class.getResource("/fxml/EasyWalletMain.fxml"));
-            Pane card = FXMLLoader.load(EasyWalletMain.class.getResource("/fxml/WalletCard.fxml"));
+            StackPane pane = (StackPane)content.getChildren().get(0);
+            pane.getChildren().add(0, new EasyWalletWindow(preferences.wallets));
 
             JFXDecorator decorator = new JFXDecorator(stage, content, false, true, true);
-            decorator.setCustomMaximize(true);
-            decorator.setGraphic(new SVGGlyph(""));
             Scene scene = new Scene(decorator);
-
-            stage.setTitle("EasyWallet v0.1");
-
             final ObservableList<String> stylesheets = scene.getStylesheets();
             stylesheets.addAll(JFoenixResources.load("css/jfoenix-fonts.css").toExternalForm(),
                                JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
                                EasyWalletMain.class.getResource("/css/easywallet.css").toExternalForm());
 
-            stage.setWidth(400); stage.setHeight(600);
-            stage.setMinHeight(400);
+            decorator.setCustomMaximize(true);
+            decorator.setGraphic(new SVGGlyph(""));
 
-            // keep the buttons to the bottom
-            /*
-            StackPane pane = (StackPane)content.getChildren().get(0);
-            pane.getChildren().add(0, card);
-            */
+            stage.setTitle("EasyWallet v0.1");
+
             stage.setScene(scene);
             stage.show();
         } catch (IOException x) {
@@ -80,14 +80,14 @@ public class EasyWalletMain extends Application {
         launch(args);
     }
 
-
-
-    // ......................................................- protected methods
+    // ------------------------------------------------------- protected methods
 
     protected File getConfigFile() {
         return new File(
             FileUtils.getUserDirectory(), ".config/ste.w3.easywallet/preferences.json"
         );
     }
+
+    // --------------------------------------------------------- private methods
 
 }
