@@ -57,11 +57,7 @@ public class EasyWalletMainPreferencesTest extends ApplicationTest {
 
         main = new EasyWalletMainWithPreferences();
 
-        try {
-            main.start(stage);
-        } catch (Throwable t) {
-            System.out.println("suppressiong throwable " + t);
-        }
+        main.start(stage);
     }
 
     @Test

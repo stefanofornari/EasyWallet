@@ -1,9 +1,5 @@
 package ste.w3.easywallet.ui;
 
-import com.jfoenix.assets.JFoenixResources;
-import com.jfoenix.controls.JFXDecorator;
-import com.jfoenix.svg.SVGGlyph;
-import com.jfoenix.svg.SVGGlyphLoader;
 import java.io.File;
 import java.io.IOException;
 import javafx.application.Application;
@@ -28,22 +24,16 @@ public class EasyWalletMain extends Application {
 
     private Preferences preferences = null;
 
+    private boolean loadStylesheets = true;
+
     @Override
     public void start(Stage stage) {
-        new Thread(() -> {
-            try {
-                SVGGlyphLoader.loadGlyphsFont(EasyWalletMain.class.getResourceAsStream("/fonts/icomoon.svg"), "icomoon.svg");
-            } catch (IOException x) {
-                x.printStackTrace();
-            }
-        }).start();
-
         try {
             PreferencesManager pm = new PreferencesManager();
             preferences = pm.fromJSON(FileUtils.readFileToString(configFile, "UTF-8"));
 
-            stage.setWidth(400); stage.setHeight(600);
-            stage.setMinHeight(400);
+            stage.setMinWidth(400);
+            stage.setMinHeight(600);
 
             //
             // TODO: Move the window creation code into EasyWalletWindow and add a controller
@@ -52,15 +42,10 @@ public class EasyWalletMain extends Application {
             StackPane pane = (StackPane)content.getChildren().get(0);
             pane.getChildren().add(0, new EasyWalletWindow(preferences.wallets));
 
-            JFXDecorator decorator = new JFXDecorator(stage, content, false, true, true);
-            Scene scene = new Scene(decorator);
-            final ObservableList<String> stylesheets = scene.getStylesheets();
-            stylesheets.addAll(JFoenixResources.load("css/jfoenix-fonts.css").toExternalForm(),
-                               JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
-                               EasyWalletMain.class.getResource("/css/easywallet.css").toExternalForm());
+            Scene scene = new Scene(content);
 
-            decorator.setCustomMaximize(true);
-            decorator.setGraphic(new SVGGlyph(""));
+            final ObservableList<String> stylesheets = scene.getStylesheets();
+            stylesheets.addAll(EasyWalletMain.class.getResource("/css/easywallet.css").toExternalForm());
 
             stage.setTitle("EasyWallet v0.1");
 

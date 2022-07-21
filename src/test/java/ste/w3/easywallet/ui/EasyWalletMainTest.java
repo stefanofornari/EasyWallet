@@ -17,16 +17,27 @@ package ste.w3.easywallet.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
+import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.service.query.NodeQuery;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.Wallet;
+import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
+import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
 
 /**
  *
@@ -55,24 +66,17 @@ public class EasyWalletMainTest extends ApplicationTest {
 
         main = new EasyWalletMainWithPreferences();
 
-        //
-        // not great, but needed to suppress
-        // java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.IllegalStateException: Cannot set style once stage has been set visible
-        //
-        try {
-            main.start(stage);
-        } catch (Throwable t) {
-            System.out.println("suppressiong throwable " + t);
-        }
+        main.start(stage);
     }
-    /*
+
 
     @Test
     public void should_contain_button_with_text() throws Exception {
-        JFXDecorator root = lookup(".root").queryAs(JFXDecorator.class);
+        System.out.println(lookup(".root").queryAll());
+        Pane root = lookup(".root").queryAs(Pane.class);
         then(stage.getTitle()).isEqualTo("EasyWallet v0.1");
-        then(root.getScene().getWidth()).isEqualTo(400);
-        then(root.getScene().getHeight()).isEqualTo(600);
+        then(root.getScene().getWidth()).isGreaterThanOrEqualTo(400);
+        then(root.getScene().getHeight()).isGreaterThanOrEqualTo(600);
 
         Button b = lookup('#' + KEY_ADD_WALLET).queryButton();
         then(b.getStyleClass().toArray()).contains("primary-button");
@@ -92,7 +96,6 @@ public class EasyWalletMainTest extends ApplicationTest {
         Set<Label> labels = from(cards).lookup(".label").queryAllAs(Label.class);
         then(labels).extracting(Label::getText).contains("0x" + preferences.wallets[0].address);
     }
-    */
 
     // --------------------------------------------------------- private methods
 
