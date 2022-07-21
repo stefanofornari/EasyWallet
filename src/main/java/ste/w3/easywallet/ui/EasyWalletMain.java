@@ -24,8 +24,6 @@ public class EasyWalletMain extends Application {
 
     private Preferences preferences = null;
 
-    private boolean loadStylesheets = true;
-
     @Override
     public void start(Stage stage) {
         try {
