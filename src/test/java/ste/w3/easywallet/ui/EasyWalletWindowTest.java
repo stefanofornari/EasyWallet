@@ -15,22 +15,26 @@
  */
 package ste.w3.easywallet.ui;
 
+import java.io.IOException;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
-import ste.w3.easywallet.Wallet;
+import ste.w3.easywallet.Preferences;
 
 /**
  *
- * @author ste
  */
 public class EasyWalletWindowTest extends ApplicationTest {
 
 
     @Override
-    public void start(Stage stage) {
-        stage.setScene(new Scene(new EasyWalletWindow(new Wallet[0])));
+    public void start(Stage stage) throws IOException {
+        stage.setScene(
+            new Scene(
+                new EasyWalletFXMLLoader().loadMainWindow(new Preferences())
+            )
+        );
         stage.show();
     }
 

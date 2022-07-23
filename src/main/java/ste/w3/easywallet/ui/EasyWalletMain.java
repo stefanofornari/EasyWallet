@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import ste.w3.easywallet.Preferences;
@@ -33,12 +31,7 @@ public class EasyWalletMain extends Application {
             stage.setMinWidth(400);
             stage.setMinHeight(600);
 
-            //
-            // TODO: Move the window creation code into EasyWalletWindow and add a controller
-            //
-            Pane content = FXMLLoader.load(EasyWalletMain.class.getResource("/fxml/EasyWalletMain.fxml"));
-            StackPane pane = (StackPane)content.getChildren().get(0);
-            pane.getChildren().add(0, new EasyWalletWindow(preferences.wallets));
+            Pane content = new EasyWalletFXMLLoader().loadMainWindow(preferences);
 
             Scene scene = new Scene(content);
 
@@ -71,6 +64,6 @@ public class EasyWalletMain extends Application {
         );
     }
 
-    // --------------------------------------------------------- private methods
+    // --------------------------------------------------------- private method
 
 }

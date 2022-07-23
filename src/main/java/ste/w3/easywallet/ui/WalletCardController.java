@@ -20,26 +20,40 @@
  */
 package ste.w3.easywallet.ui;
 
-import java.io.IOException;
-import javafx.fxml.FXMLLoader;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import ste.w3.easywallet.Preferences;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class EasyWalletWindow extends Pane {
+public class WalletCardController {
 
-    public EasyWalletWindow(Preferences preferences) {
-        try {
-            Pane content = FXMLLoader.load(EasyWalletMain.class.getResource("/fxml/EasyWalletMain.fxml"));
-            StackPane pane = (StackPane)content.getChildren().get(0);
-            pane.getChildren().add(0, new EasyWalletPane(preferences.wallets));
-        } catch (IOException x) {
-            x.printStackTrace(); // TODO: general management of such exceptions
-            throw new IllegalStateException("Error loading EasyWalletWindow FXML", x);
+    @FXML
+    private Pane walletCard;
+
+    @FXML
+    private Label address;
+
+    public final Wallet wallet;
+
+    public WalletCardController(Wallet wallet) {
+        this.wallet = wallet;
+    }
+
+    public WalletCardController() {
+        wallet = null;
+    }
+
+
+    @FXML
+    public void initialize() {
+        if (wallet == null) {
+            return;
         }
+        
+        address.setText("0x" + wallet.address);
     }
 
 }

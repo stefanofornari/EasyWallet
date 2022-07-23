@@ -9,7 +9,12 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox alignment="BOTTOM_CENTER" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<VBox xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+   alignment = "BOTTOM_CENTER"
+   stylesheets = "@../css/easywallet.css"
+   fx:controller="ste.w3.easywallet.ui.EasyWalletMainController"
+   fx:id = "easyWalletMain"
+>
    <children>
       <StackPane>
          <padding>
