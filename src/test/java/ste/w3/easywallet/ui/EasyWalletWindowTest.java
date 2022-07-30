@@ -17,35 +17,53 @@ package ste.w3.easywallet.ui;
 
 import java.io.IOException;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.junit.Before;
 import org.junit.Test;
+import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
-import ste.w3.easywallet.Preferences;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import ste.w3.easywallet.TestingConstants;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class EasyWalletWindowTest extends ApplicationTest {
+public class EasyWalletWindowTest extends ApplicationTest implements TestingConstants {
 
+    EasyWalletMainController controller;
 
     @Override
     public void start(Stage stage) throws IOException {
-        stage.setScene(
-            new Scene(
-                new EasyWalletFXMLLoader().loadMainWindow(new Preferences())
-            )
-        );
+        Pane mainWindow = new EasyWalletFXMLLoader().loadMainWindow(new Wallet[0]);
+        stage.setScene(new Scene(mainWindow));
+        controller = (EasyWalletMainController)mainWindow.getUserData();
         stage.show();
     }
 
-    @Test
-    public void should_contain_button_with_text() throws Exception {
+    @Before
+    public void before() {
+        controller.wallets.clear();
     }
 
     @Test
-    public void launch_with_wallets_shows_wallets_in_wallet_pane() throws Exception {
+    public void no_wallet_no_card() throws Exception {
+        Then.then(lookup(".wallet_card")).hasNoWidgets();
+    }
+
+    @Test
+    public void some_wallets_a_card_each() throws Exception {
+        final Wallet[] WALLTES = new Wallet[] {
+            new Wallet(ADDRESS1), new Wallet(ADDRESS2), new Wallet(ADDRESS3)
+        };
 
 
+        controller.wallets.addAll(WALLTES);
+
+        waitForFxEvents();
+
+        Then.then(lookup(".wallet_card")).hasNWidgets(WALLTES.length);
     }
 
 }

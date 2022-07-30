@@ -20,28 +20,53 @@
  */
 package ste.w3.easywallet.ui;
 
+import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
-import ste.w3.easywallet.Preferences;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class EasyWalletMainController {
+public class EasyWalletMainController implements InvalidationListener {
 
     @FXML
     Pane easyWalletMain;
 
-    public final Preferences preferences;
+    @FXML
+    Pane walletsPane;
 
-    public EasyWalletMainController(Preferences preferences) {
-        this.preferences = preferences;
+    public final WalletList wallets = new WalletList();
+
+    public EasyWalletMainController() {
+        wallets.addListener(this);
     }
 
     @FXML
     public void initialize() {
-        Pane pane = (Pane)easyWalletMain.getChildren().get(0);
-        pane.getChildren().add(0, new EasyWalletPane(preferences.wallets));
+    }
+
+    @Override
+    public void invalidated(Observable o) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (walletsPane == null) {
+                    return;
+                }
+                ObservableList children = walletsPane.getChildren();
+                children.clear();
+
+                for (Wallet wallet : wallets) {
+                    children.add(
+                        new EasyWalletFXMLLoader().loadCardPane(wallet)
+                    );
+                }
+            }
+        });
     }
 
 }

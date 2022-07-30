@@ -1,5 +1,7 @@
 /*
  * EasyWallet
+ * ----------
+ *
  * Copyright (C) 2022 Stefano Fornari. Licensed under the
  * EUPL-1.2 or later (see LICENSE).
  *
@@ -16,27 +18,13 @@
  * DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
  * THIS SOFTWARE OR ITS DERIVATIVES.
  */
-package ste.w3.easywallet.ui;
+package ste.w3.easywallet;
 
-import javafx.scene.layout.Pane;
-import ste.w3.easywallet.Wallet;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
- * TODO: use the controller!
+ *
  */
-public class EasyWalletPane extends Pane {
+public class PreferencesProperty extends SimpleObjectProperty<Preferences> {
 
-    public final String ID = "wallets";
-
-    public EasyWalletPane(Wallet[] wallets) {
-        setId(ID);
-
-        if (wallets != null) {
-            for(Wallet wallet: wallets) {
-                getChildren().add(
-                    new EasyWalletFXMLLoader().loadCardPane(wallet)
-                );
-            }
-        }
-    }
 }

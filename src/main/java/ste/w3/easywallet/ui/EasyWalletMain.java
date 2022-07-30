@@ -5,7 +5,6 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import ste.w3.easywallet.Preferences;
@@ -20,32 +19,30 @@ public class EasyWalletMain extends Application {
 
     public final File configFile = getConfigFile();
 
-    private Preferences preferences = null;
+    private Preferences preferences = new Preferences();
 
     @Override
     public void start(Stage stage) {
+        PreferencesManager pm = new PreferencesManager();
         try {
-            PreferencesManager pm = new PreferencesManager();
             preferences = pm.fromJSON(FileUtils.readFileToString(configFile, "UTF-8"));
-
-            stage.setMinWidth(400);
-            stage.setMinHeight(600);
-
-            Pane content = new EasyWalletFXMLLoader().loadMainWindow(preferences);
-
-            Scene scene = new Scene(content);
-
-            final ObservableList<String> stylesheets = scene.getStylesheets();
-            stylesheets.addAll(EasyWalletMain.class.getResource("/css/easywallet.css").toExternalForm());
-
-            stage.setTitle("EasyWallet v0.1");
-
-            stage.setScene(scene);
-            stage.show();
         } catch (IOException x) {
             x.printStackTrace();
         }
 
+        stage.setTitle("EasyWallet v0.1");
+        stage.setMinWidth(400);
+        stage.setMinHeight(600);
+
+        Scene scene = new Scene(
+            new EasyWalletFXMLLoader().loadMainWindow(preferences.wallets)
+        );
+
+        final ObservableList<String> stylesheets = scene.getStylesheets();
+        stylesheets.addAll(EasyWalletMain.class.getResource("/css/easywallet.css").toExternalForm());
+
+        stage.setScene(scene);
+        stage.show();
     }
 
     public Preferences getPreferences() {

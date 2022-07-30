@@ -22,10 +22,7 @@ package ste.w3.easywallet;
  *
  */
 public class Preferences {
-
     public String   endpoint   = "";
     public String   appkey     = "";
     public Wallet[] wallets    = {};
-
-
 }

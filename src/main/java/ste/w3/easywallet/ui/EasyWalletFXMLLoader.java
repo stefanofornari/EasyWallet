@@ -24,7 +24,6 @@ import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
-import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Wallet;
 
 /**
@@ -32,35 +31,57 @@ import ste.w3.easywallet.Wallet;
  */
 public class EasyWalletFXMLLoader {
 
-    Pane loadMainWindow(Preferences preferences) throws IOException {
-        return FXMLLoader.load(
-                EasyWalletMain.class.getResource("/fxml/EasyWalletMain.fxml"),
-                null, /* resourceBundle */
-                null, /* builderFactory */
+    public Pane loadMainWindow(Wallet[] wallets) {
+        return loadPane(
+                "/fxml/EasyWalletMain.fxml",
                 new Callback<Class<?>, Object>() {
-            /* controllerFactory */
-            @Override
-            public Object call(Class<?> p) {
-                return new EasyWalletMainController(preferences);
-            }
-        });
+                    /* controllerFactory */
+                    @Override
+                    public Object call(Class<?> p) {
+                        EasyWalletMainController controller = new EasyWalletMainController();
+                        controller.wallets.addAll(wallets);
+
+                        return controller;
+                    }
+                });
     }
 
-    Pane loadCardPane(Wallet[] wallets) throws IOException {
-        return FXMLLoader.load(
-                EasyWalletMain.class.getResource("/fxml/WalletCard.fxml"),
+    public Pane loadCardPane(Wallet wallet) {
+        return loadPane(
+                "/fxml/WalletCard.fxml",
+                new Callback<Class<?>, Object>() {
+                    /* controllerFactory */
+                    @Override
+                    public Object call(Class<?> p) {
+                        return new WalletCardController(wallet);
+                    }
+                });
+    }
+
+    public Pane loadPane(String resource, Callback<Class<?>, Object> controllerFactory) {
+        try {
+            final Object[] controllerWrapper = new Object[1];
+
+            Pane pane = FXMLLoader.load(
+                EasyWalletMain.class.getResource(resource),
                 null, /* resourceBundle */
                 null, /* builderFactory */
                 new Callback<Class<?>, Object>() {
-            /* controllerFactory */
-            @Override
-            public Object call(Class<?> p) {
-                if (wallets.length > 0) {
-                    return new WalletCardController(wallets[0]);
-                } else {
-                    return new WalletCardController();
+                    @Override
+                    public Object call(Class<?> p) {
+                        return (controllerWrapper[0] = controllerFactory.call(p));
+
+                    }
                 }
-            }
-        });
+            );
+
+            pane.setUserData(controllerWrapper[0]);
+
+            return pane;
+        } catch (IOException x) {
+            //
+            // TODO: better handling of this exception
+            throw new RuntimeException("unable to load FXML " + resource, x);
+        }
     }
 }

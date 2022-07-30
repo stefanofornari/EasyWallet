@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  *
  */
-public class PreferencesTest {
+public class PreferencesManagerTest {
 
     @Test
     public void serialize_empty_preferences() {
@@ -143,7 +143,5 @@ public class PreferencesTest {
         then(p.endpoint).isEmpty();
         then(p.appkey).isEmpty();
         then(p.wallets).isEmpty();
-  }
-
-
+    }
 }
