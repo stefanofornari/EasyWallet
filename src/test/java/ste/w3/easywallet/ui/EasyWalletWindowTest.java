@@ -58,7 +58,6 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
             new Wallet(ADDRESS1), new Wallet(ADDRESS2), new Wallet(ADDRESS3)
         };
 
-
         controller.wallets.addAll(WALLTES);
 
         waitForFxEvents();

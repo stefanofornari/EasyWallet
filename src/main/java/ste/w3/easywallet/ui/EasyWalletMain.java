@@ -31,8 +31,8 @@ public class EasyWalletMain extends Application {
         }
 
         stage.setTitle("EasyWallet v0.1");
-        stage.setMinWidth(400);
-        stage.setMinHeight(600);
+        stage.setWidth(575);
+        stage.setHeight(800);
 
         Scene scene = new Scene(
             new EasyWalletFXMLLoader().loadMainWindow(preferences.wallets)

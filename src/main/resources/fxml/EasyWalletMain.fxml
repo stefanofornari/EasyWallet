@@ -2,37 +2,39 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-   alignment="BOTTOM_CENTER"
-   stylesheets="@../css/easywallet.css"
-   fx:controller="ste.w3.easywallet.ui.EasyWalletMainController"
-   fx:id="easyWalletMain"
->
-   <children>
-      <VBox fx:id="walletsPane">
-         <padding>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </padding>
-      </VBox>
-      <GridPane alignment="BOTTOM_CENTER" maxHeight="-Infinity">
-          <columnConstraints>
-              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          </columnConstraints>
-          <rowConstraints>
-              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          </rowConstraints>
-          <children>
-              <MFXButton id="btn_add_wallet" maxWidth="1.7976931348623157E308" styleClass="primary-button" text="+" GridPane.columnIndex="1" />
-              <MFXButton id="btn_refresh" disable="true" maxWidth="1.7976931348623157E308" styleClass="primary-button" text="⟳" />
-          </children>
-      </GridPane>
-   </children>
-</VBox>
+<BorderPane fx:id="easyWalletMain" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.EasyWalletMainController">
+    <bottom>
+        <GridPane alignment="BOTTOM_CENTER" maxHeight="-Infinity" BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <MFXButton id="btn_add_wallet" maxWidth="1.7976931348623157E308" styleClass="primary-button" text="+" GridPane.columnIndex="1" />
+                <MFXButton id="btn_refresh" disable="true" maxWidth="1.7976931348623157E308" styleClass="primary-button" text="⟳" />
+            </children>
+        </GridPane>
+    </bottom>
+    <center>
+        <VBox fx:id="walletsPane" spacing="10.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+        </VBox>
+    </center>
+</BorderPane>

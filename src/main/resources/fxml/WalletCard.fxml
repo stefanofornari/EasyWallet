@@ -10,66 +10,55 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox
-    xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-    styleClass="wallet_card" style="-fx-background-color: white;"
-    fx:controller="ste.w3.easywallet.ui.WalletCardController"
-    fx:id="walletCard"
->
+<VBox fx:id="walletCard" minWidth="500.0" style="-fx-background-color: white;" styleClass="wallet_card" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.WalletCardController">
     <children>
-        <VBox>
+        <VBox prefHeight="40.0" styleClass="secondary-color" stylesheets="@../css/easywallet.css">
             <children>
-                <VBox prefHeight="40.0" styleClass="secondary-color" stylesheets="@../css/easywallet.css">
+                <AnchorPane minHeight="25.0" prefWidth="100.0">
+                    <VBox.margin>
+                        <Insets top="20.0" />
+                    </VBox.margin>
                     <children>
-                        <AnchorPane minHeight="25.0" prefWidth="100.0">
-                            <VBox.margin>
-                                <Insets top="20.0" />
-                            </VBox.margin>
-                            <children>
-                                <Label maxHeight="32.0" maxWidth="32.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" style="-fx-border-radius: 50; -fx-background-color: white; -fx-background-radius: 50; -fx-background-image: url(/images/eth-diamond-glyph-32x32.png); -fx-background-position: center; -fx-background-repeat: no-repeat;" AnchorPane.bottomAnchor="-20.0" AnchorPane.leftAnchor="10.0" />
-                            </children>
-                        </AnchorPane>
+                        <Label maxHeight="32.0" maxWidth="32.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" style="-fx-border-radius: 50; -fx-background-color: white; -fx-background-radius: 50; -fx-background-image: url(/images/eth-diamond-glyph-32x32.png); -fx-background-position: center; -fx-background-repeat: no-repeat;" AnchorPane.bottomAnchor="-20.0" AnchorPane.leftAnchor="10.0" />
                     </children>
-                </VBox>
-                <VBox alignment="TOP_CENTER">
+                </AnchorPane>
+            </children>
+        </VBox>
+        <VBox alignment="TOP_CENTER">
+            <children>
+                <Label fx:id="address" text="x0123456789012345678901234567890123456789">
+                    <font>
+                        <Font name="Roboto Bold" size="18.0" />
+                    </font>
+                </Label>
+                <FlowPane alignment="CENTER" columnHalignment="CENTER">
                     <children>
-                        <Label fx:id="address" text="x0123456789012345678901234567890123456789">
+                        <Label prefHeight="15.0" text="ETH 0.0" textFill="#909090">
                             <font>
-                                <Font name="Roboto Bold" size="18.0" />
+                                <Font name="Roboto Regular" size="28.0" />
                             </font>
                         </Label>
-                        <FlowPane alignment="CENTER" columnHalignment="CENTER">
-                            <children>
-                                <Label prefHeight="15.0" text="ETH 0.0" textFill="#909090">
-                                    <font>
-                                        <Font name="Roboto Regular" size="28.0" />
-                                    </font>
-                                </Label>
-                                <Label layoutX="10.0" layoutY="10.0" prefHeight="15.0" text="0.0" textFill="#909090">
-                                    <font>
-                                        <Font name="Roboto Regular" size="28.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                        </FlowPane>
+                        <Label layoutX="10.0" layoutY="10.0" prefHeight="15.0" text="0.0" textFill="#909090">
+                            <font>
+                                <Font name="Roboto Regular" size="28.0" />
+                            </font>
+                        </Label>
                     </children>
-                    <VBox.margin>
-                        <Insets left="55.0" right="20.0" top="20.0" />
-                    </VBox.margin>
-                </VBox>
-                <HBox alignment="TOP_RIGHT" prefHeight="18.0" prefWidth="90.0" spacing="3.0">
-                    <children>
-                        <MFXFontIcon description="mfx-gear" size="20.0" />
-                        <MFXFontIcon description="mfx-delete" size="20.0" />
-                    </children>
-                    <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                    </VBox.margin>
-                </HBox>
+                </FlowPane>
             </children>
-            <effect>
-            </effect>
+            <VBox.margin>
+                <Insets left="55.0" right="20.0" top="20.0" />
+            </VBox.margin>
         </VBox>
+        <HBox alignment="TOP_RIGHT" prefHeight="18.0" prefWidth="90.0" spacing="3.0">
+            <children>
+                <MFXFontIcon description="mfx-gear" size="20.0" />
+                <MFXFontIcon description="mfx-delete" size="20.0" />
+            </children>
+            <VBox.margin>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </VBox.margin>
+        </HBox>
     </children>
     <effect>
         <DropShadow offsetX="5.0" offsetY="5.0" />
