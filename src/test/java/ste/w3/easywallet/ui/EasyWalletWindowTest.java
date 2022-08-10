@@ -53,7 +53,7 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
     }
 
     @Test
-    public void some_wallets_a_card_each() throws Exception {
+    public void configured_wallets_have_a_card_each() throws Exception {
         final Wallet[] WALLTES = new Wallet[] {
             new Wallet(ADDRESS1), new Wallet(ADDRESS2), new Wallet(ADDRESS3)
         };
@@ -63,6 +63,16 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
         waitForFxEvents();
 
         Then.then(lookup(".wallet_card")).hasNWidgets(WALLTES.length);
+    }
+
+    @Test
+    public void show_add_wallet_dialog() throws Exception {
+        waitForFxEvents();
+        Then.then(lookup(".mfx-dialog")).hasNoWidgets();
+
+        clickOn("#btn_add_wallet"); waitForFxEvents();
+        Then.then(lookup(".mfx-dialog")).hasOneWidget();
+
     }
 
 }

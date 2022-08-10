@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
@@ -54,6 +55,18 @@ public class EasyWalletFXMLLoader {
                     @Override
                     public Object call(Class<?> p) {
                         return new WalletCardController(wallet);
+                    }
+                });
+    }
+
+    public Pane loadAddWalletDialogContent(final MFXGenericDialog dialog) {
+        return loadPane(
+                "/fxml/AddWalletDialog.fxml",
+                new Callback<Class<?>, Object>() {
+                    /* controllerFactory */
+                    @Override
+                    public Object call(Class<?> p) {
+                        return new AddWalletController(dialog);
                     }
                 });
     }

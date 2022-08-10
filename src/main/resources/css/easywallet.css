@@ -1,8 +1,48 @@
 /*******************************************************************************
 *                                                                              *
-* Palette: 41508B, 6176A4, 4AA7B2, E6D8B3, EB934C                                 *
+* Palette: 41508B, 6176A4, 4AA7B2, E6D8B3, EB934C                              *
 *                                                                              *
 *******************************************************************************/
+@import "colors.css";
+@import "borders.css";
+
+
+/*******************************************************************************
+*                                                                              *
+* MaterialFX                                                                   *
+*                                                                              *
+*******************************************************************************/
+.mfx-text-field {
+    -mfx-main: -ew-primary-color;
+}
+
+.mfx-dialog {
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-style: solid;
+
+    /* These are note picked up for some reason... see AddWalletDialog
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    */
+}
+
+.mfx-dialog .actions-pane .mfx-button {
+    -fx-background-radius: 0;
+    -fx-pref-width: 75;
+}
+
+/*
+.mfx-text-field:invalid {
+    -fx-background-color: -mfx-red;
+}
+*/
+
+.mfx-text-field:invalid .floating-text {
+    -fx-text-fill: -mfx-red;
+}
+
+
 
 /*******************************************************************************
 *                                                                              *
@@ -20,15 +60,15 @@
 }
 
 .primary-color {
-    -fx-background-color: #8bc34a;
+    -fx-background-color: -ew-primary-color;
     /*-fx-border-width: 0;*/
     /*-fx-border-color: -fx-background-color;;*/
 }
 
 .secondary-color {
-    -fx-background-color: #eb934c;
+    -fx-background-color: -ew-secondary-color;
 }
 
 .primary-button {
-    -fx-background-color: #8bc34a;
+    -fx-background-color: -ew-primary-color;
 }

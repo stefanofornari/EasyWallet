@@ -18,51 +18,16 @@
  * DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
  * THIS SOFTWARE OR ITS DERIVATIVES.
  */
-package ste.w3.easywallet.ui;
-
-import io.github.palexdev.materialfx.font.MFXFontIcon;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import ste.w3.easywallet.Wallet;
+package ste.w3.easywallet;
 
 /**
  *
  */
-public class WalletCardController {
+public interface Labels {
+    public final String LABEL_OK = "OK";
+    public final String LABEL_CANCEL = "CANCEL";
 
-    @FXML
-    private Pane walletCard;
-
-    @FXML
-    private MFXFontIcon editButton;
-
-    @FXML
-    private Label address;
-
-    public final Wallet wallet;
-
-    public WalletCardController(Wallet wallet) {
-        this.wallet = wallet;
-    }
-
-    public WalletCardController() {
-        wallet = null;
-    }
-
-
-    @FXML
-    public void initialize() {
-        if (wallet == null) {
-            return;
-        }
-
-        address.setText("0x" + wallet.address);
-    }
-
-    @FXML
-    public void editWallet() {
-        System.out.println("HELLO!");
-    }
-
+    public final String LABEL_ADD_WALLET_DIALOG_TITLE = "Add a public wallet";
+    public final String LABEL_ADDRESS = "Insert the 20 hex bytes public address:";
+    public final String LABEL_ADDRESS_HINT = "eg: 00000000219ab540356cBB839Cbe05303d7705Fa";
 }

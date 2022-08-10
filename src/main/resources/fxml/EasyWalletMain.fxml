@@ -19,7 +19,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <MFXButton id="btn_add_wallet" maxWidth="1.7976931348623157E308" styleClass="primary-button" text="+" GridPane.columnIndex="1" />
+                <MFXButton id="btn_add_wallet" maxWidth="1.7976931348623157E308" onAction="#onAddWallet" styleClass="primary-button" text="+" GridPane.columnIndex="1" />
                 <MFXButton id="btn_refresh" disable="true" maxWidth="1.7976931348623157E308" styleClass="primary-button" text="⟳" />
             </children>
         </GridPane>
@@ -29,12 +29,6 @@
             <padding>
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </padding>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
         </VBox>
     </center>
 </BorderPane>
