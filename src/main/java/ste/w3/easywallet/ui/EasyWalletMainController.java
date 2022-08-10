@@ -24,6 +24,7 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Wallet;
@@ -67,6 +68,13 @@ public class EasyWalletMainController implements InvalidationListener {
                 }
             }
         });
+    }
+
+    @FXML
+    private void onAddWallet(ActionEvent event) {
+        System.out.println("Add a wallet!!!");
+        AddWalletDialog dialog = new AddWalletDialog(easyWalletMain);
+        dialog.showAndWait();
     }
 
 }

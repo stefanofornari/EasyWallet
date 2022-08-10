@@ -95,6 +95,11 @@ public class EasyWalletMainTest extends ApplicationTest {
         then(labels).extracting(Label::getText).contains("0x" + preferences.wallets[0].address);
     }
 
+    @Test
+    public void show_added_wallet_in_wallet_pane() throws Exception {
+
+    }
+
     // --------------------------------------------------------- private methods
 
     private File getPreferencesFile() throws IOException {
