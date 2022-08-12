@@ -71,8 +71,7 @@ public class EasyWalletMainController implements InvalidationListener {
     }
 
     @FXML
-    private void onAddWallet(ActionEvent event) {
-        System.out.println("Add a wallet!!!");
+    protected void onAddWallet(ActionEvent event) {
         AddWalletDialog dialog = new AddWalletDialog(easyWalletMain);
         dialog.showAndWait();
     }

@@ -75,4 +75,14 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
 
     }
 
+    @Test
+    public void show_add_wallet_dialog() throws Exception {
+        waitForFxEvents();
+        Then.then(lookup(".mfx-dialog")).hasNoWidgets();
+
+        clickOn("#btn_add_wallet"); waitForFxEvents();
+        Then.then(lookup(".mfx-dialog")).hasOneWidget();
+
+    }
+
 }
