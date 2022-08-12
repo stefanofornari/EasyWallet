@@ -34,41 +34,41 @@ public class EasyWalletFXMLLoader {
 
     public Pane loadMainWindow(Wallet[] wallets) {
         return loadPane(
-                "/fxml/EasyWalletMain.fxml",
-                new Callback<Class<?>, Object>() {
-                    /* controllerFactory */
-                    @Override
-                    public Object call(Class<?> p) {
-                        EasyWalletMainController controller = new EasyWalletMainController();
-                        controller.wallets.addAll(wallets);
+            "/fxml/EasyWalletMain.fxml",
+            new Callback<Class<?>, Object>() {
+                /* controllerFactory */
+                @Override
+                public Object call(Class<?> p) {
+                    EasyWalletMainController controller = new EasyWalletMainController();
+                    controller.wallets.addAll(wallets);
 
-                        return controller;
-                    }
-                });
+                    return controller;
+                }
+            });
     }
 
     public Pane loadCardPane(Wallet wallet) {
         return loadPane(
-                "/fxml/WalletCard.fxml",
-                new Callback<Class<?>, Object>() {
-                    /* controllerFactory */
-                    @Override
-                    public Object call(Class<?> p) {
-                        return new WalletCardController(wallet);
-                    }
-                });
+            "/fxml/WalletCard.fxml",
+            new Callback<Class<?>, Object>() {
+                /* controllerFactory */
+                @Override
+                public Object call(Class<?> p) {
+                    return new WalletCardController(wallet);
+                }
+            });
     }
 
     public Pane loadAddWalletDialogContent(final MFXGenericDialog dialog) {
         return loadPane(
-                "/fxml/AddWalletDialog.fxml",
-                new Callback<Class<?>, Object>() {
-                    /* controllerFactory */
-                    @Override
-                    public Object call(Class<?> p) {
-                        return new AddWalletController(dialog);
-                    }
-                });
+            "/fxml/AddWalletDialog.fxml",
+            new Callback<Class<?>, Object>() {
+                /* controllerFactory */
+                @Override
+                public Object call(Class<?> p) {
+                    return new AddWalletController(dialog);
+                }
+            });
     }
 
     public Pane loadPane(String resource, Callback<Class<?>, Object> controllerFactory) {
