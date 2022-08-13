@@ -21,6 +21,7 @@
 package ste.w3.easywallet.ui;
 
 import java.io.IOException;
+import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -81,31 +82,20 @@ public class EasyWalletMainController implements InvalidationListener {
     @FXML
     protected void onAddWallet(ActionEvent event) {
         AddWalletDialog dialog = new AddWalletDialog(easyWalletMain);
-        dialog.showAndWait();
+        dialog.onOk = new Function<String, Void>() {
+            @Override
+            public Void apply(String address) {
+                Wallet wallet = new Wallet(address);
+                addWallet(wallet);
+                saveWallet(wallet);
+                walletsPane.getChildren().add(
+                    new EasyWalletFXMLLoader().loadCardPane(wallet)
+                );
 
-        Wallet wallet = new Wallet(dialog.ret.get());
-        addWallet(wallet);
-
-        //
-        // TODO: use a callback and remove ret from AddWalletDialog
-        //
-
-        //if (dialog.ret.get() != null) {
-            walletsPane.getChildren().add(
-                new EasyWalletFXMLLoader().loadCardPane(wallet)
-            );
-            //
-            // TODO: move the code below in a savePreferences() method in EasyWalletMain
-            //
-            try {
-                PreferencesManager pm = new PreferencesManager();
-                FileUtils.write(main.getConfigFile(), pm.toJSON(main.getPreferences()), "UTF-8");
-            } catch (IOException x) {
-                x.printStackTrace();
+                return null;
             }
-
-        //}
-
+        };
+        dialog.showAndWait();
     }
 
     // --------------------------------------------------------- private methods
@@ -117,6 +107,18 @@ public class EasyWalletMainController implements InvalidationListener {
         System.arraycopy(p.wallets, 0, newList, 0, p.wallets.length);
         newList[p.wallets.length] = wallet;
         p.wallets = newList;
+    }
+
+    private void saveWallet(Wallet wallet) {
+        //
+        // TODO: move the code below in a savePreferences() method in EasyWalletMain
+        //
+        try {
+            PreferencesManager pm = new PreferencesManager();
+            FileUtils.write(main.getConfigFile(), pm.toJSON(main.getPreferences()), "UTF-8");
+        } catch (IOException x) {
+            x.printStackTrace();
+        }
     }
 
 }

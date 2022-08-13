@@ -25,8 +25,7 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import java.util.Map;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import java.util.function.Function;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -37,7 +36,7 @@ import ste.w3.easywallet.Labels;
  */
 public class AddWalletDialog extends MFXStageDialog implements Labels {
 
-    public final StringProperty ret = new SimpleStringProperty();
+    public Function<String, Void> onOk;
 
     public AddWalletDialog(Pane owner) {
         super(
@@ -74,7 +73,9 @@ public class AddWalletDialog extends MFXStageDialog implements Labels {
                 close();
             }),
             Map.entry(okButton, e -> {
-                ret.set(((TextField)getScene().lookup("#addrText")).getText());
+                if (onOk != null) {
+                    onOk.apply(((TextField)getScene().lookup("#addrText")).getText());
+                }
                 close();
             })
         );

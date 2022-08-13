@@ -22,6 +22,7 @@ package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -107,31 +108,65 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels {
     }
 
     @Test
-    public void pressing_ok_retunrs_the_address1() {
+    public void pressing_ok_returns_the_address1() {
+        final String[] ret = new String[1];
+
         TextField address = lookup(".mfx-text-field").queryAs(TextField.class);
+
+        dialog.onOk = new Function<>() {
+            public Void apply(String a) {
+                ret[0] = a; return null;
+            }
+        };
 
         clickOn(".mfx-text-field");
         address.setText(TestingConstants.WALLET1);
         clickOn(".primary-button");
-        then(dialog.ret.get()).isEqualTo(TestingConstants.WALLET1);
+        then(ret[0]).isEqualTo(TestingConstants.WALLET1);
     }
 
     @Test
-    public void pressing_ok_retunrs_the_address2() {
+    public void pressing_ok_returns_the_address2() {
+        final String[] ret = new String[1];
+
         TextField address = lookup(".mfx-text-field").queryAs(TextField.class);
+
+        dialog.onOk = new Function<>() {
+            public Void apply(String a) {
+                ret[0] = a; return null;
+            }
+        };
 
         clickOn(".mfx-text-field");
         address.setText(TestingConstants.WALLET2);
         clickOn(".primary-button");
-        then(dialog.ret.get()).isEqualTo(TestingConstants.WALLET2);
+        then(ret[0]).isEqualTo(TestingConstants.WALLET2);
     }
 
     @Test
-    public void pressing_cancel_retunrs_null() {
+    public void pressing_cancel_returns_null() {
+        boolean[] test = new boolean[1];
+
+        dialog.onOk = new Function<>() {
+            public Void apply(String a) {
+                test[0] = true; return null;
+            }
+        };
+
         clickOn(".mfx-text-field");
         lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET2);
         clickOn(LABEL_CANCEL);
-        then(dialog.ret.get()).isNull();
+        then(test[0]).isFalse();
+    }
+
+    @Test
+    public void do_nothing_when_onOk_is_null() {
+        clickOn(".mfx-text-field");
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET2);
+        clickOn(LABEL_OK);
+        //
+        // end with no exceptions...
+        //
     }
 
     /*
