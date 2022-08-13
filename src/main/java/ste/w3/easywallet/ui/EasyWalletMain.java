@@ -46,11 +46,18 @@ public class EasyWalletMain extends Application {
         stage.show();
     }
 
+    /**
+     * Add a wallet by adding it to the preferences and save the updated
+     * preferences on disk.
+     *
+     * @param wallet the wallet to add
+     */
     public void addWallet(Wallet wallet) {
         Wallet[] newList = new Wallet[preferences.wallets.length+1];
         System.arraycopy(preferences.wallets, 0, newList, 0, preferences.wallets.length);
         newList[preferences.wallets.length] = wallet;
         preferences.wallets = newList;
+        savePreferences();
     }
 
     public Preferences getPreferences() {

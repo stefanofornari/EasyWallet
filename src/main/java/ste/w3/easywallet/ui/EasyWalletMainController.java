@@ -82,7 +82,6 @@ public class EasyWalletMainController implements InvalidationListener {
             public Void apply(String address) {
                 Wallet wallet = new Wallet(address);
                 main.addWallet(wallet);
-                main.savePreferences();
                 addCard(wallet);
 
                 return null;

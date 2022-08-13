@@ -99,7 +99,7 @@ public class EasyWalletMainTest extends ApplicationTest {
     }
 
     @Test
-    public void show_added_wallet_in_wallet_pane() throws Exception {
+    public void show_added_wallet_in_wallet_pane_and_save_prefs() throws Exception {
         clickOn('#' + KEY_ADD_WALLET);
         lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET1);
         clickOn(LABEL_OK);
