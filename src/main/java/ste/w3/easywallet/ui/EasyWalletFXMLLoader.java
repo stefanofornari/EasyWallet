@@ -32,17 +32,14 @@ import ste.w3.easywallet.Wallet;
  */
 public class EasyWalletFXMLLoader {
 
-    public Pane loadMainWindow(Wallet[] wallets) {
+    public Pane loadMainWindow(EasyWalletMain main) {
         return loadPane(
             "/fxml/EasyWalletMain.fxml",
             new Callback<Class<?>, Object>() {
                 /* controllerFactory */
                 @Override
                 public Object call(Class<?> p) {
-                    EasyWalletMainController controller = new EasyWalletMainController();
-                    controller.wallets.addAll(wallets);
-
-                    return controller;
+                    return new EasyWalletMainController(main);
                 }
             });
     }

@@ -36,7 +36,7 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
 
     @Override
     public void start(Stage stage) throws IOException {
-        Pane mainWindow = new EasyWalletFXMLLoader().loadMainWindow(new Wallet[0]);
+        Pane mainWindow = new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain());
         stage.setScene(new Scene(mainWindow));
         controller = (EasyWalletMainController)mainWindow.getUserData();
         stage.show();
@@ -74,15 +74,4 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
         Then.then(lookup(".mfx-dialog")).hasOneWidget();
 
     }
-
-    @Test
-    public void show_add_wallet_dialog() throws Exception {
-        waitForFxEvents();
-        Then.then(lookup(".mfx-dialog")).hasNoWidgets();
-
-        clickOn("#btn_add_wallet"); waitForFxEvents();
-        Then.then(lookup(".mfx-dialog")).hasOneWidget();
-
-    }
-
 }

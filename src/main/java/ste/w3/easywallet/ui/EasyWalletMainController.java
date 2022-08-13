@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import java.io.IOException;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -27,12 +28,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+import org.apache.commons.io.FileUtils;
+import ste.w3.easywallet.Preferences;
+import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
 public class EasyWalletMainController implements InvalidationListener {
+
+    private final EasyWalletMain main;
 
     @FXML
     Pane easyWalletMain;
@@ -42,8 +48,10 @@ public class EasyWalletMainController implements InvalidationListener {
 
     public final WalletList wallets = new WalletList();
 
-    public EasyWalletMainController() {
+    public EasyWalletMainController(EasyWalletMain main) {
+        this.main = main;
         wallets.addListener(this);
+        wallets.addAll(main.getPreferences().wallets);
     }
 
     @FXML
@@ -74,6 +82,41 @@ public class EasyWalletMainController implements InvalidationListener {
     protected void onAddWallet(ActionEvent event) {
         AddWalletDialog dialog = new AddWalletDialog(easyWalletMain);
         dialog.showAndWait();
+
+        Wallet wallet = new Wallet(dialog.ret.get());
+        addWallet(wallet);
+
+        //
+        // TODO: use a callback and remove ret from AddWalletDialog
+        //
+
+        //if (dialog.ret.get() != null) {
+            walletsPane.getChildren().add(
+                new EasyWalletFXMLLoader().loadCardPane(wallet)
+            );
+            //
+            // TODO: move the code below in a savePreferences() method in EasyWalletMain
+            //
+            try {
+                PreferencesManager pm = new PreferencesManager();
+                FileUtils.write(main.getConfigFile(), pm.toJSON(main.getPreferences()), "UTF-8");
+            } catch (IOException x) {
+                x.printStackTrace();
+            }
+
+        //}
+
+    }
+
+    // --------------------------------------------------------- private methods
+
+    private void addWallet(Wallet wallet) {
+        Preferences p = main.getPreferences();
+
+        Wallet[] newList = new Wallet[p.wallets.length+1];
+        System.arraycopy(p.wallets, 0, newList, 0, p.wallets.length);
+        newList[p.wallets.length] = wallet;
+        p.wallets = newList;
     }
 
 }

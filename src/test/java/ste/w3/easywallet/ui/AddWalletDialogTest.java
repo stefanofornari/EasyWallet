@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import ste.w3.easywallet.Labels;
+import ste.w3.easywallet.TestingConstants;
 
 
 /**
@@ -106,24 +107,29 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels {
     }
 
     @Test
-    public void pressing_ok_retunrs_the_address() {
-        clickOn(".mfx-text-field");
-        type(KeyCode.DIGIT0, 20); type(KeyCode.DIGIT1, 20);
-        clickOn(".primary-button");
-        then(dialog.ret.get()).isEqualTo("0000000000000000000011111111111111111111");
-
-        lookup(".mfx-text-field").queryAs(TextField.class).clear();
+    public void pressing_ok_retunrs_the_address1() {
+        TextField address = lookup(".mfx-text-field").queryAs(TextField.class);
 
         clickOn(".mfx-text-field");
-        type(KeyCode.DIGIT1, 20); type(KeyCode.DIGIT0, 20);
+        address.setText(TestingConstants.WALLET1);
         clickOn(".primary-button");
-        then(dialog.ret.get()).isEqualTo("1111111111111111111100000000000000000000");
+        then(dialog.ret.get()).isEqualTo(TestingConstants.WALLET1);
+    }
+
+    @Test
+    public void pressing_ok_retunrs_the_address2() {
+        TextField address = lookup(".mfx-text-field").queryAs(TextField.class);
+
+        clickOn(".mfx-text-field");
+        address.setText(TestingConstants.WALLET2);
+        clickOn(".primary-button");
+        then(dialog.ret.get()).isEqualTo(TestingConstants.WALLET2);
     }
 
     @Test
     public void pressing_cancel_retunrs_null() {
         clickOn(".mfx-text-field");
-        type(KeyCode.DIGIT0, 20); type(KeyCode.DIGIT1, 20);
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET2);
         clickOn(LABEL_CANCEL);
         then(dialog.ret.get()).isNull();
     }

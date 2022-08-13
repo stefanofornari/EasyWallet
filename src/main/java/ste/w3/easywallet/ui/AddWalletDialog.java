@@ -75,6 +75,7 @@ public class AddWalletDialog extends MFXStageDialog implements Labels {
             }),
             Map.entry(okButton, e -> {
                 ret.set(((TextField)getScene().lookup("#addrText")).getText());
+                close();
             })
         );
         dialog.alwaysOnTopProperty().bind(alwaysOnTopProperty());

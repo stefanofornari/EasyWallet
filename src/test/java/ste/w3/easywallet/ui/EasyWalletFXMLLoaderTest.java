@@ -24,7 +24,6 @@ import javafx.scene.layout.Pane;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
-import ste.w3.easywallet.Wallet;
 
 /**
  *
@@ -35,7 +34,7 @@ public class EasyWalletFXMLLoaderTest extends ApplicationTest {
     @Test
     public void loaded_main_window_pane_has_controller() {
         EasyWalletFXMLLoader instance = new EasyWalletFXMLLoader();
-        Pane pane = instance.loadMainWindow(new Wallet[0]);
+        Pane pane = instance.loadMainWindow(new EasyWalletMain());
         then(pane.getUserData()).isNotNull().isInstanceOf(EasyWalletMainController.class);
     }
 

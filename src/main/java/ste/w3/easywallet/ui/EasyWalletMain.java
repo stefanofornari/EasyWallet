@@ -35,7 +35,7 @@ public class EasyWalletMain extends Application {
         stage.setHeight(800);
 
         Scene scene = new Scene(
-            new EasyWalletFXMLLoader().loadMainWindow(preferences.wallets)
+            new EasyWalletFXMLLoader().loadMainWindow(this)
         );
 
         final ObservableList<String> stylesheets = scene.getStylesheets();

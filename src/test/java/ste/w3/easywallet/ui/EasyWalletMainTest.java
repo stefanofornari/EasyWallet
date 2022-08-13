@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Set;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -33,8 +34,11 @@ import org.junit.rules.TemporaryFolder;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import static ste.w3.easywallet.Labels.LABEL_OK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
+import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
 import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
 import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
@@ -59,7 +63,7 @@ public class EasyWalletMainTest extends ApplicationTest {
     public void start(Stage stage) {
         this.stage = stage;
         try {
-            prepareConfiguration();
+            preparePreferences();
         } catch (IOException x) {
             x.printStackTrace();
         }
@@ -97,7 +101,16 @@ public class EasyWalletMainTest extends ApplicationTest {
 
     @Test
     public void show_added_wallet_in_wallet_pane() throws Exception {
+        clickOn('#' + KEY_ADD_WALLET);
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET1);
+        clickOn(LABEL_OK);
 
+        waitForFxEvents();
+
+        Then.then(lookup("0x" + TestingConstants.WALLET1)).hasWidgets();
+        then(getPreferencesFile()).content().contains(
+            String.format("{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\"}", TestingConstants.WALLET1)
+        );
     }
 
     // --------------------------------------------------------- private methods
@@ -106,7 +119,7 @@ public class EasyWalletMainTest extends ApplicationTest {
         return new File(HOME.getRoot(), CONFIG_FILE);
     }
 
-    private void prepareConfiguration() throws IOException {
+    private void preparePreferences() throws IOException {
         File preferencesFile = getPreferencesFile();
 
         preferencesFile.getParentFile().mkdirs();
