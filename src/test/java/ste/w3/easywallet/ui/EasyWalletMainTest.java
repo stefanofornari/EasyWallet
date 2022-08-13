@@ -148,6 +148,19 @@ public class EasyWalletMainTest extends ApplicationTest {
         );
     }
 
+    @Test
+    public void add_wallet_to_preferences() {
+        Preferences p = main.getPreferences();
+
+        main.addWallet(new Wallet(TestingConstants.WALLET1));
+        then(p.wallets).hasSize(2);
+        then(p.wallets[1].address).isEqualTo(TestingConstants.WALLET1);
+
+        main.addWallet(new Wallet(TestingConstants.WALLET2));
+        then(p.wallets).hasSize(3);
+        then(p.wallets[2].address).isEqualTo(TestingConstants.WALLET2);
+    }
+
     // --------------------------------------------------------- private methods
 
     private File getPreferencesFile() throws IOException {

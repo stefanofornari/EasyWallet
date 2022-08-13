@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
+import ste.w3.easywallet.Wallet;
 
 /**
  * Preferences are stored in a file under $(CONFIG_HOME)/ste.w3.easywallet/preferences.json
@@ -43,6 +44,13 @@ public class EasyWalletMain extends Application {
 
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void addWallet(Wallet wallet) {
+        Wallet[] newList = new Wallet[preferences.wallets.length+1];
+        System.arraycopy(preferences.wallets, 0, newList, 0, preferences.wallets.length);
+        newList[preferences.wallets.length] = wallet;
+        preferences.wallets = newList;
     }
 
     public Preferences getPreferences() {

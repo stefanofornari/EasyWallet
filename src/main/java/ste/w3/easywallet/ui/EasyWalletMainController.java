@@ -28,7 +28,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
-import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Wallet;
 
 /**
@@ -83,8 +82,8 @@ public class EasyWalletMainController implements InvalidationListener {
             @Override
             public Void apply(String address) {
                 Wallet wallet = new Wallet(address);
-                addWallet(wallet);
-                saveWallet(wallet);
+                main.addWallet(wallet);
+                main.savePreferences();
                 walletsPane.getChildren().add(
                     new EasyWalletFXMLLoader().loadCardPane(wallet)
                 );
@@ -96,18 +95,5 @@ public class EasyWalletMainController implements InvalidationListener {
     }
 
     // --------------------------------------------------------- private methods
-
-    private void addWallet(Wallet wallet) {
-        Preferences p = main.getPreferences();
-
-        Wallet[] newList = new Wallet[p.wallets.length+1];
-        System.arraycopy(p.wallets, 0, newList, 0, p.wallets.length);
-        newList[p.wallets.length] = wallet;
-        p.wallets = newList;
-    }
-
-    private void saveWallet(Wallet wallet) {
-        main.savePreferences();
-    }
 
 }
