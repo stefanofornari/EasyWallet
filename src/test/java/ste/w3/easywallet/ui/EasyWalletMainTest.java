@@ -113,10 +113,12 @@ public class EasyWalletMainTest extends ApplicationTest {
     }
 
     @Test
-    public void remove_deleted_wallet() {
+    public void remove_deleted_wallet_and_save_prefs() throws Exception {
+        final String WALLET = main.getPreferences().wallets[0].address;
         clickOn("mfx-delete");
         waitForFxEvents();
-        Then.then(lookup("0x" + main.getPreferences().wallets[00].address)).hasNoWidgets();
+        Then.then(lookup("0x" + WALLET)).hasNoWidgets();
+        then(getPreferencesFile()).content().doesNotContain(WALLET);
     }
 
     @Test

@@ -103,11 +103,11 @@ public class EasyWalletMainController implements InvalidationListener {
                 List<Node> children = walletsPane.getChildren();
                 for (Node n: children) {
                     if (n.getId().equals(wallet.address)) {
+                        main.deleteWallet(wallet);
                         children.remove(n);
                         break;
                     }
                 }
-                //main.deleteWallet(wallet);
                 return null;
             }
         };

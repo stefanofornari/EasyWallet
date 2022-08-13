@@ -60,6 +60,18 @@ public class EasyWalletMain extends Application {
         savePreferences();
     }
 
+    public void deleteWallet(Wallet wallet) {
+        Wallet[] newList = new Wallet[preferences.wallets.length-1];
+        int i=0;
+        for(Wallet w: preferences.wallets) {
+            if (!w.address.equals(wallet.address)) {
+                newList[i++] = w;
+            }
+        }
+        preferences.wallets = newList;
+        savePreferences();
+    }
+
     public Preferences getPreferences() {
         return preferences;
     }
