@@ -20,13 +20,14 @@
  */
 package ste.w3.easywallet.ui;
 
+import java.util.List;
 import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Wallet;
 
@@ -63,13 +64,11 @@ public class EasyWalletMainController implements InvalidationListener {
                 if (walletsPane == null) {
                     return;
                 }
-                ObservableList children = walletsPane.getChildren();
-                children.clear();
+
+                walletsPane.getChildren().clear();
 
                 for (Wallet wallet : wallets) {
-                    children.add(
-                        new EasyWalletFXMLLoader().loadCardPane(wallet)
-                    );
+                    addCard(wallet);
                 }
             }
         });
@@ -84,9 +83,7 @@ public class EasyWalletMainController implements InvalidationListener {
                 Wallet wallet = new Wallet(address);
                 main.addWallet(wallet);
                 main.savePreferences();
-                walletsPane.getChildren().add(
-                    new EasyWalletFXMLLoader().loadCardPane(wallet)
-                );
+                addCard(wallet);
 
                 return null;
             }
@@ -94,6 +91,29 @@ public class EasyWalletMainController implements InvalidationListener {
         dialog.showAndWait();
     }
 
+
+
     // --------------------------------------------------------- private methods
+
+    private void addCard(Wallet wallet) {
+        Pane card = new EasyWalletFXMLLoader().loadCardPane(wallet);
+        WalletCardController controller = (WalletCardController)card.getUserData();
+        controller.onDelete = new Function<String, Void>() {
+            @Override
+            public Void apply(String t) {
+                List<Node> children = walletsPane.getChildren();
+                for (Node n: children) {
+                    if (n.getId().equals(wallet.address)) {
+                        children.remove(n);
+                        break;
+                    }
+                }
+                //main.deleteWallet(wallet);
+                return null;
+            }
+        };
+
+        walletsPane.getChildren().add(card);
+    }
 
 }

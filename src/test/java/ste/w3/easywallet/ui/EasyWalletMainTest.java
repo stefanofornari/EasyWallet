@@ -58,7 +58,6 @@ public class EasyWalletMainTest extends ApplicationTest {
     @Rule
     public TemporaryFolder HOME = new TemporaryFolder();
 
-
     @Override
     public void start(Stage stage) {
         this.stage = stage;
@@ -111,6 +110,13 @@ public class EasyWalletMainTest extends ApplicationTest {
         then(getPreferencesFile()).content().contains(
             String.format("{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\"}", TestingConstants.WALLET1)
         );
+    }
+
+    @Test
+    public void remove_deleted_wallet() {
+        clickOn("mfx-delete");
+        waitForFxEvents();
+        Then.then(lookup("0x" + main.getPreferences().wallets[00].address)).hasNoWidgets();
     }
 
     @Test

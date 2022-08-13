@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import io.github.palexdev.materialfx.font.MFXFontIcon?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -10,9 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="walletCard" minWidth="500.0" style="-fx-background-color: white;" styleClass="wallet_card" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.WalletCardController">
+<VBox fx:id="walletCard" minWidth="500.0" style="-fx-background-color: white;" styleClass="wallet_card" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.WalletCardController">
     <children>
-        <VBox prefHeight="40.0" styleClass="secondary-color" stylesheets="@../css/easywallet.css">
+        <VBox prefHeight="40.0" styleClass="secondary-color">
             <children>
                 <AnchorPane minHeight="25.0" prefWidth="100.0">
                     <VBox.margin>
@@ -50,10 +51,18 @@
                 <Insets left="55.0" right="20.0" top="20.0" />
             </VBox.margin>
         </VBox>
-        <HBox alignment="TOP_RIGHT" prefHeight="18.0" prefWidth="90.0" spacing="3.0">
+        <HBox alignment="CENTER_RIGHT">
             <children>
-                <MFXFontIcon fx:id="editButton" description="mfx-gear" onTouchPressed="#editWallet" size="20.0" />
-                <MFXFontIcon description="mfx-delete" size="20.0" />
+                <MFXButton fx:id="editButton" contentDisplay="GRAPHIC_ONLY" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#editWallet" prefHeight="30.0" prefWidth="30.0" styleClass="rounded" text="mfx-gear">
+                    <graphic>
+                        <MFXFontIcon description="mfx-gear" size="20.0" />
+                    </graphic>
+                </MFXButton>
+                <MFXButton fx:id="deleteButton" contentDisplay="GRAPHIC_ONLY" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#deleteWallet" prefHeight="30.0" prefWidth="30.0" styleClass="rounded" text="mfx-delete">
+                    <graphic>
+                        <MFXFontIcon description="mfx-delete" size="20.0" />
+                    </graphic>
+                </MFXButton>
             </children>
             <VBox.margin>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

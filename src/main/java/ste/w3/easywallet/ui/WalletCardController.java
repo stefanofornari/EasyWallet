@@ -20,7 +20,10 @@
  */
 package ste.w3.easywallet.ui;
 
-import io.github.palexdev.materialfx.font.MFXFontIcon;
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.effects.ripple.RippleClipType;
+import io.github.palexdev.materialfx.factories.RippleClipTypeFactory;
+import java.util.function.Function;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -35,12 +38,18 @@ public class WalletCardController {
     private Pane walletCard;
 
     @FXML
-    private MFXFontIcon editButton;
+    private MFXButton editButton;
+
+    @FXML
+    private MFXButton deleteButton;
+
 
     @FXML
     private Label address;
 
     public final Wallet wallet;
+
+    public Function<String, Void> onDelete;
 
     public WalletCardController(Wallet wallet) {
         this.wallet = wallet;
@@ -50,14 +59,21 @@ public class WalletCardController {
         wallet = null;
     }
 
-
     @FXML
     public void initialize() {
         if (wallet == null) {
             return;
         }
 
+        walletCard.setId(wallet.address);
+
         address.setText("0x" + wallet.address);
+        editButton.getRippleGenerator().setClipSupplier(
+            () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(editButton)
+        );
+        deleteButton.getRippleGenerator().setClipSupplier(
+            () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(deleteButton)
+        );
     }
 
     @FXML
@@ -65,4 +81,10 @@ public class WalletCardController {
         System.out.println("HELLO!");
     }
 
+    @FXML
+    public void deleteWallet() {
+        if (onDelete != null) {
+            onDelete.apply(wallet.address);
+        }
+    }
 }

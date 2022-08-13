@@ -24,18 +24,31 @@ import javafx.scene.layout.Pane;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
+import ste.w3.easywallet.TestingConstants;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
 public class EasyWalletFXMLLoaderTest extends ApplicationTest {
 
+    private final EasyWalletFXMLLoader instance = new EasyWalletFXMLLoader();
+
 
     @Test
     public void loaded_main_window_pane_has_controller() {
-        EasyWalletFXMLLoader instance = new EasyWalletFXMLLoader();
         Pane pane = instance.loadMainWindow(new EasyWalletMain());
         then(pane.getUserData()).isNotNull().isInstanceOf(EasyWalletMainController.class);
+    }
+
+    @Test
+    public void loaded_card_pane_has_controller_and_id() {
+        Pane pane = instance.loadCardPane(new Wallet(TestingConstants.WALLET1));
+        then(pane.getUserData()).isNotNull().isInstanceOf(WalletCardController.class);
+        then(pane.getId()).isEqualTo(TestingConstants.WALLET1);
+
+        pane = instance.loadCardPane(new Wallet(TestingConstants.WALLET2));
+        then(pane.getId()).isEqualTo(TestingConstants.WALLET2);
     }
 
 }
