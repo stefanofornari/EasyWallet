@@ -20,7 +20,6 @@
  */
 package ste.w3.easywallet.ui;
 
-import java.io.IOException;
 import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -29,9 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
-import org.apache.commons.io.FileUtils;
 import ste.w3.easywallet.Preferences;
-import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.Wallet;
 
 /**
@@ -110,15 +107,7 @@ public class EasyWalletMainController implements InvalidationListener {
     }
 
     private void saveWallet(Wallet wallet) {
-        //
-        // TODO: move the code below in a savePreferences() method in EasyWalletMain
-        //
-        try {
-            PreferencesManager pm = new PreferencesManager();
-            FileUtils.write(main.getConfigFile(), pm.toJSON(main.getPreferences()), "UTF-8");
-        } catch (IOException x) {
-            x.printStackTrace();
-        }
+        main.savePreferences();
     }
 
 }

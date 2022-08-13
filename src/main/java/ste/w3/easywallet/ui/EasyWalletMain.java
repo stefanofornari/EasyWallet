@@ -49,6 +49,15 @@ public class EasyWalletMain extends Application {
         return preferences;
     }
 
+    public void savePreferences() {
+        try {
+            PreferencesManager pm = new PreferencesManager();
+            FileUtils.write(getConfigFile(), pm.toJSON(preferences), "UTF-8");
+        } catch (IOException x) {
+            x.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

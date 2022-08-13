@@ -113,6 +113,41 @@ public class EasyWalletMainTest extends ApplicationTest {
         );
     }
 
+    @Test
+    public void save_preferences() throws Exception {
+        final String TEST_KEY = "new key";
+        final String TEST_EP = "new endpoint";
+        final Wallet[] TEST_WALLETS = new Wallet[] {
+            new Wallet(TestingConstants.WALLET1), new Wallet(TestingConstants.WALLET2)
+        };
+        TEST_WALLETS[0].mnemonicPhrase = "mnemonic1";
+        TEST_WALLETS[1].mnemonicPhrase = "mnemonic2";
+        TEST_WALLETS[1].privateKey = "privatekey1";
+        TEST_WALLETS[1].privateKey = "privatekey2";
+
+        //
+        // actual preferences
+        //
+        Preferences p = main.getPreferences();
+        main.savePreferences();
+        then(getPreferencesFile()).content().isEqualTo(String.format(
+            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\"}]}",
+            p.endpoint, p.appkey, p.wallets[0].address
+        ));
+
+        //
+        // new prefrences
+        //
+        p.appkey = TEST_KEY;
+        p.endpoint = TEST_EP;
+        p.wallets = TEST_WALLETS;
+
+        main.savePreferences();
+        then(getPreferencesFile()).content().isEqualTo(
+            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\"},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\"}]}"
+        );
+    }
+
     // --------------------------------------------------------- private methods
 
     private File getPreferencesFile() throws IOException {
