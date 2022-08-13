@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# EasyWallet
+# ----------
+# Copyright (C) 2022 Stefano Fornari. Licensed under the
+# EUPL-1.2 or later (see LICENSE).
+#
+# All Rights Reserved.  No use, copying or distribution of this
+# work may be made except in accordance with a valid license
+# agreement from Stefano Fornari.  This notice must be
+# included on all copies, modifications and derivatives of this
+# work.
+#
+# STEFANO FORNARI MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY
+# OF THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+# PURPOSE, OR NON-INFRINGEMENT. STEFANO FORNARI SHALL NOT BE LIABLE FOR ANY
+# DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
+# THIS SOFTWARE OR ITS DERIVATIVES.
+
+scriptname=$(basename $0)
+scriptdir=$(cd $(dirname $0) && pwd)
+home=$(dirname "$scriptdir")
+
+. "$scriptdir/scriptutils"
+
+#
+# If JAVA_HOME points to a jdk, it is taken to launch the client, it the java
+# command in the path is used.
+#
+set_java
+set_classpath "$home/lib"
+
+cd "$home"
+
+#
+# Default configuration (use conf/serverone.conf to customize)
+#
+JAVA_OPTS="--module-path  lib --add-modules=javafx.controls,javafx.fxml"
+#JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044"
+
+#
+# Load a custom configuration (if any) overwriting the default values above
+#
+load_config $scriptname
+
+exec 2>&1
+exec $uidcmd $javacmd $JAVA_OPTS ste.w3.easywallet.ui.EasyWalletMain $*

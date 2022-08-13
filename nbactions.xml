@@ -21,4 +21,15 @@
             <goal>javafx:run@debug</goal>
         </goals>
     </action>
+    <action>
+        <actionName>CUSTOM-package</actionName>
+        <displayName>package</displayName>
+        <goals>
+            <goal>package</goal>
+            <goal>assembly:single</goal>
+        </goals>
+        <properties>
+            <skipTests>true</skipTests>
+        </properties>
+    </action>
 </actions>
