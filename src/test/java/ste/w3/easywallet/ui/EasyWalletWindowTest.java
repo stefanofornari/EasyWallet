@@ -16,62 +16,71 @@
 package ste.w3.easywallet.ui;
 
 import java.io.IOException;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.junit.Before;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
+import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
 
 /**
  *
  */
 public class EasyWalletWindowTest extends ApplicationTest implements TestingConstants {
 
-    EasyWalletMainController controller;
+    private Stage stage;
 
     @Override
     public void start(Stage stage) throws IOException {
-        Pane mainWindow = new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain());
-        stage.setScene(new Scene(mainWindow));
-        controller = (EasyWalletMainController)mainWindow.getUserData();
+        this.stage = stage;
         stage.show();
-    }
-
-    @Before
-    public void before() {
-        controller.wallets.clear();
     }
 
     @Test
     public void no_wallet_no_card() throws Exception {
+        EasyWalletMain main = new EasyWalletMain();
+
+        setScene(
+            new EasyWalletFXMLLoader().loadMainWindow(main)
+        );
+
         Then.then(lookup(".wallet_card")).hasNoWidgets();
+        Then.then(lookup('#' + KEY_REFRESH).queryButton()).isDisabled();
     }
 
     @Test
     public void configured_wallets_have_a_card_each() throws Exception {
-        final Wallet[] WALLETS = new Wallet[] {
+        EasyWalletMain main = new EasyWalletMain();
+        main.getPreferences().wallets = new Wallet[] {
             new Wallet(ADDRESS1), new Wallet(ADDRESS2), new Wallet(ADDRESS3)
         };
 
-        controller.wallets.addAll(WALLETS);
+        setScene(new EasyWalletFXMLLoader().loadMainWindow(main));
 
-        waitForFxEvents();
-
-        Then.then(lookup(".wallet_card")).hasNWidgets(WALLETS.length);
+        Then.then(lookup(".wallet_card")).hasNWidgets(3);
+        Then.then(lookup('#' + KEY_REFRESH).queryButton()).isEnabled();
     }
 
     @Test
     public void show_add_wallet_dialog() throws Exception {
-        waitForFxEvents();
-        Then.then(lookup(".mfx-dialog")).hasNoWidgets();
+        setScene(new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
 
+        Then.then(lookup(".mfx-dialog")).hasNoWidgets();
         clickOn("#btn_add_wallet"); waitForFxEvents();
         Then.then(lookup(".mfx-dialog")).hasOneWidget();
+    }
 
+
+    // --------------------------------------------------------- private methods
+
+    private void setScene(Pane p) {
+        Platform.runLater(() -> {
+            stage.setScene(new Scene(p));
+        }); waitForFxEvents();
     }
 }

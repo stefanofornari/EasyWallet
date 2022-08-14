@@ -22,19 +22,20 @@ package ste.w3.easywallet.ui;
 
 import java.util.List;
 import java.util.function.Function;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class EasyWalletMainController implements InvalidationListener {
+public class EasyWalletMainController {
 
     private final EasyWalletMain main;
 
@@ -44,34 +45,31 @@ public class EasyWalletMainController implements InvalidationListener {
     @FXML
     Pane walletsPane;
 
-    public final WalletList wallets = new WalletList();
+    @FXML
+    Button addButton;
+
+    @FXML
+    Button refreshButton;
+
 
     public EasyWalletMainController(EasyWalletMain main) {
         this.main = main;
-        wallets.addListener(this);
-        wallets.addAll(main.getPreferences().wallets);
     }
 
     @FXML
     public void initialize() {
-    }
-
-    @Override
-    public void invalidated(Observable o) {
-        Platform.runLater(new Runnable() {
+        walletsPane.getChildren().addListener(new InvalidationListener() {
             @Override
-            public void run() {
-                if (walletsPane == null) {
-                    return;
-                }
+            public void invalidated(Observable o) {
+                refreshButton.disableProperty().set(
+                    ((ObservableList<Node>)o).isEmpty()
+                );
 
-                walletsPane.getChildren().clear();
-
-                for (Wallet wallet : wallets) {
-                    addCard(wallet);
-                }
             }
         });
+        for (Wallet wallet : main.getPreferences().wallets) {
+            addCard(wallet);
+        }
     }
 
     @FXML
@@ -89,8 +87,6 @@ public class EasyWalletMainController implements InvalidationListener {
         };
         dialog.showAndWait();
     }
-
-
 
     // --------------------------------------------------------- private methods
 

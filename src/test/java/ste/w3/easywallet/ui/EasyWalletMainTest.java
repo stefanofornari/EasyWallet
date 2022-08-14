@@ -85,7 +85,7 @@ public class EasyWalletMainTest extends ApplicationTest {
 
         b = lookup('#' + KEY_REFRESH).queryButton();
         then(b.getStyleClass().toArray()).contains("primary-button");
-        Then.then(b).hasText("⟳").isDisabled();
+        Then.then(b).hasText("⟳").isEnabled();
     }
 
     @Test
