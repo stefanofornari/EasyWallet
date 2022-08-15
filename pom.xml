@@ -135,6 +135,22 @@
                     <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
                 </configuration>
             </plugin>
+        </plugins>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+    </build>
+
+    <!--
+        To run in release mode only
+    -->
+    <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -156,12 +172,9 @@
                 </executions>
             </plugin>
         </plugins>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
-    </build>
+      </build>
+    </profile>
+    </profiles>
 
     <repositories>
         <repository>
