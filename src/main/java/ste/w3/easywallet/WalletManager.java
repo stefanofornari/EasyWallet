@@ -33,7 +33,7 @@ public class WalletManager {
         // NOTE: balance is returned in wei
         //
         EthGetBalance balance = web3.ethGetBalance(
-            wallet.address, DefaultBlockParameterName.LATEST
+            "0x" + wallet.address, DefaultBlockParameterName.LATEST
         ).send();
 
         wallet.balance(

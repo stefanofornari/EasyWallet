@@ -56,11 +56,11 @@ public class WalletManagerTest implements TestingConstants {
             then(x).hasMessage("wallet can not be null");
         }
 
-        Wallet w = new Wallet(WALLET1);
+        Wallet w = new Wallet(ADDRESS1.substring(2));
         then(wm.balance(w)).isSameAs(wm);
         then(w.balance().doubleValue()).isEqualTo(9343922.000069);
 
-        w = new Wallet(WALLET2);
+        w = new Wallet(ADDRESS2.substring(2));
         then(wm.balance(w)).isSameAs(wm);
         then(w.balance().doubleValue()).isEqualTo(2113030.001);
     }
