@@ -16,9 +16,11 @@ public class WalletManager {
     private final Web3j web3;
 
     public final String endpoint;
+    public final String appkey;
 
-    public WalletManager(String endpoint) {
+    public WalletManager(final String endpoint, final String appkey) {
         this.endpoint = endpoint;
+        this.appkey = appkey;
         web3 = Web3j.build(new HttpService(endpoint));
     }
 
@@ -31,11 +33,11 @@ public class WalletManager {
         // NOTE: balance is returned in wei
         //
         EthGetBalance balance = web3.ethGetBalance(
-                wallet.address, DefaultBlockParameterName.LATEST
+            wallet.address, DefaultBlockParameterName.LATEST
         ).send();
 
         wallet.balance(
-                Convert.fromWei(balance.getBalance().toString(), Unit.ETHER)
+            Convert.fromWei(balance.getBalance().toString(), Unit.ETHER)
         );
 
         return this;
