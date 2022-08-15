@@ -46,6 +46,22 @@ public class TestingServer implements TestingConstants {
         ethereum.setDispatcher(dispatcher());
     }
 
+    /**
+     * Add a balance entry to <code>TEST_BALANCE</code>
+     *
+     * @param address prefixed by 0x
+     * @param balance as hex (prefixed by 0x)
+     */
+    public void addBalance(String address, String balance) {
+        if (!address.startsWith("0x")) {
+            throw new IllegalArgumentException("address must start with '0x'");
+        }
+        if (!balance.startsWith("0x")) {
+            throw new IllegalArgumentException("balance must start with '0x'");
+        }
+        TEST_BALANCE.put(address, balance);
+    }
+
     // --------------------------------------------------------- private methods
 
     private Dispatcher dispatcher() {
