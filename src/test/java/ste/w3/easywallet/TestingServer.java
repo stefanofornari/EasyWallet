@@ -40,8 +40,8 @@ public class TestingServer implements TestingConstants {
     public final Map<String, String> TEST_BALANCE = new HashMap<>();
 
     public TestingServer() {
-        TEST_BALANCE.put(WALLET1, "0x7baa706cf4a4220055045");
-        TEST_BALANCE.put(WALLET2, "0x1bf7395fc44bec91e8000");
+        TEST_BALANCE.put(ADDRESS1, "0x7baa706cf4a4220055045");
+        TEST_BALANCE.put(ADDRESS2, "0x1bf7395fc44bec91e8000");
         ethereum = new MockWebServer();
         ethereum.setDispatcher(dispatcher());
     }
