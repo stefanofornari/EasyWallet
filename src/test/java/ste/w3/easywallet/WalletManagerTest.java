@@ -1,16 +1,8 @@
 package ste.w3.easywallet;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.LogManager;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Before;
@@ -22,12 +14,10 @@ import org.junit.Test;
  */
 public class WalletManagerTest implements TestingConstants {
 
-    public static MockWebServer server = null;
+    public static TestingServer server = null;
 
     private static final String TEST_APP_KEY_1 = "THSISANAPPKEY";
     private static final String TEST_APP_KEY_2 = "THISISANOTHERAPPKEY";
-
-    private static final Map<String, String> TEST_BALANCE = new HashMap<>();
 
     @BeforeClass
     public static void before_class() {
@@ -37,15 +27,11 @@ public class WalletManagerTest implements TestingConstants {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        TEST_BALANCE.put(WALLET1, "0x7baa706cf4a4220055045");
-        TEST_BALANCE.put(WALLET2, "0x1bf7395fc44bec91e8000");
     }
 
     @Before
     public void before() throws Exception {
-        server = new MockWebServer();
-        server.setDispatcher(dispatcher());
+        server = new TestingServer();
     }
 
     @Test
@@ -61,7 +47,7 @@ public class WalletManagerTest implements TestingConstants {
 
     @Test
     public void get_balance() throws Exception {
-        WalletManager wm = new WalletManager(server.url("v3/PROJECTID1").toString(), TEST_APP_KEY_1);
+        WalletManager wm = new WalletManager(server.ethereum.url("v3/PROJECTID1").toString(), TEST_APP_KEY_1);
 
         try {
             wm.balance(null);
@@ -78,26 +64,4 @@ public class WalletManagerTest implements TestingConstants {
         then(wm.balance(w)).isSameAs(wm);
         then(w.balance().doubleValue()).isEqualTo(2113030.001);
     }
-
-    // --------------------------------------------------------- private methods
-
-    private Dispatcher dispatcher() {
-        return new Dispatcher() {
-            @Override
-            public MockResponse dispatch(RecordedRequest r) throws InterruptedException {
-                Gson g = new Gson();
-
-                HashMap body = g.fromJson(r.getBody().readUtf8(), HashMap.class);
-                String address = (String)((List)body.get("params")).get(0);
-
-                return new MockResponse().setHeader("content-type", "application/json")
-                    .setBody(String.format(
-                        "{\"jsonrpc\":\"2.0\",\"id\":0,\"result\":\"%s\"}", TEST_BALANCE.get(address)
-                    )
-                );
-            }
-
-        };
-    }
-
 }
