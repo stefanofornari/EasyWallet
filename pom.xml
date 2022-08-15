@@ -144,12 +144,12 @@
     </build>
 
     <repositories>
-    <repository>
-      <id>gluon-release</id>
-      <name>Gluon Repository</name>
-      <url>https://nexus.gluonhq.com/nexus/content/repositories/releases</url>
-    </repository>
-  </repositories>
+        <repository>
+            <id>gluon-release</id>
+            <name>Gluon Repository</name>
+            <url>https://nexus.gluonhq.com/nexus/content/repositories/releases</url>
+        </repository>
+    </repositories>
 
 
     <properties>

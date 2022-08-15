@@ -23,7 +23,6 @@ package ste.w3.easywallet.ui;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -43,18 +42,16 @@ import ste.w3.easywallet.TestingConstants;
 /**
  *
  */
-public class AddWalletDialogTest extends ApplicationTest implements Labels {
+public class AddWalletDialogTest extends ApplicationTest implements Labels, TestingUtils {
 
     AddWalletDialog dialog;
 
     @Override
     public void start(Stage stage) throws Exception {
         Pane mainWindow = new BorderPane();
-
-        stage.setScene(new Scene(mainWindow));
-        stage.show();
-
         dialog = new AddWalletDialog(mainWindow);
+
+        showInStage(stage, mainWindow);
 
         dialog.show();
     }

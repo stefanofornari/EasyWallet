@@ -17,7 +17,6 @@ package ste.w3.easywallet.ui;
 
 import java.io.IOException;
 import java.util.function.Function;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -29,7 +28,7 @@ import ste.w3.easywallet.Wallet;
 /**
  *
  */
-public class WalletCardControllerTest extends ApplicationTest implements TestingConstants {
+public class WalletCardControllerTest extends ApplicationTest implements TestingConstants, TestingUtils {
 
     final Wallet WALLET = new Wallet(WALLET1);
 
@@ -38,9 +37,9 @@ public class WalletCardControllerTest extends ApplicationTest implements Testing
     @Override
     public void start(Stage stage) throws IOException {
         Pane card = new EasyWalletFXMLLoader().loadCardPane(WALLET);
-        stage.setScene(new Scene(card));
         controller = (WalletCardController)card.getUserData();
-        stage.show();
+
+        showInStage(stage, card);
     }
 
     @Test

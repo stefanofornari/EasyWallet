@@ -17,7 +17,6 @@ package ste.w3.easywallet.ui;
 
 import java.io.IOException;
 import javafx.application.Platform;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.junit.Test;
@@ -32,7 +31,7 @@ import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
 /**
  *
  */
-public class EasyWalletWindowTest extends ApplicationTest implements TestingConstants {
+public class EasyWalletWindowTest extends ApplicationTest implements TestingConstants, TestingUtils {
 
     private Stage stage;
 
@@ -74,8 +73,7 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
 
     private void setScene(Pane p) {
         Platform.runLater(() -> {
-            stage.setScene(new Scene(p));
-            stage.show();
+            showInStage(stage, p);
         }); waitForFxEvents();
     }
 }
