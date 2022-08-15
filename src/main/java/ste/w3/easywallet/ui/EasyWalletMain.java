@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.Wallet;
+import ste.w3.easywallet.WalletManager;
 
 /**
  * Preferences are stored in a file under $(CONFIG_HOME)/ste.w3.easywallet/preferences.json
@@ -21,6 +22,7 @@ public class EasyWalletMain extends Application {
     public final File configFile = getConfigFile();
 
     private Preferences preferences = new Preferences();
+    private WalletManager walletManager = null;
 
     @Override
     public void start(Stage stage) {
@@ -30,6 +32,8 @@ public class EasyWalletMain extends Application {
         } catch (IOException x) {
             x.printStackTrace();
         }
+
+        walletManager = new WalletManager(preferences.endpoint, preferences.appkey);
 
         stage.setTitle("EasyWallet v0.1");
         stage.setWidth(575);
@@ -74,6 +78,10 @@ public class EasyWalletMain extends Application {
 
     public Preferences getPreferences() {
         return preferences;
+    }
+
+    public WalletManager getWalletManager() {
+        return walletManager;
     }
 
     public void savePreferences() {

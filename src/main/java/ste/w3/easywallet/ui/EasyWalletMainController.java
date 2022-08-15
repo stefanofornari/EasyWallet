@@ -20,8 +20,10 @@
  */
 package ste.w3.easywallet.ui;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
@@ -31,6 +33,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Wallet;
+import ste.w3.easywallet.WalletManager;
 
 /**
  *
@@ -64,7 +67,6 @@ public class EasyWalletMainController {
                 refreshButton.disableProperty().set(
                     ((ObservableList<Node>)o).isEmpty()
                 );
-
             }
         });
         for (Wallet wallet : main.getPreferences().wallets) {
@@ -86,6 +88,29 @@ public class EasyWalletMainController {
             }
         };
         dialog.showAndWait();
+    }
+
+    @FXML
+    protected void onRefresh(ActionEvent event) {
+        //
+        // TODO: use Platform.runLater
+        //
+        Platform.runLater(() -> {
+            WalletManager wm = main.getWalletManager();
+            for (Node n: walletsPane.getChildren()) {
+                WalletCardController cardController = (WalletCardController)n.getUserData();
+                try {
+                    wm.balance(cardController.wallet);
+                    cardController.refreshBalance();
+                } catch (IOException x) {
+                    //
+                    // TODO: handle the exception
+                    //
+                    x.printStackTrace();
+                }
+
+            }
+        });
     }
 
     // --------------------------------------------------------- private methods

@@ -26,6 +26,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
+import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
 import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
 
 /**
@@ -38,17 +39,11 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
     @Override
     public void start(Stage stage) throws IOException {
         this.stage = stage;
-        stage.show();
     }
 
     @Test
     public void no_wallet_no_card() throws Exception {
-        EasyWalletMain main = new EasyWalletMain();
-
-        setScene(
-            new EasyWalletFXMLLoader().loadMainWindow(main)
-        );
-
+        setScene(new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
         Then.then(lookup(".wallet_card")).hasNoWidgets();
         Then.then(lookup('#' + KEY_REFRESH).queryButton()).isDisabled();
     }
@@ -69,9 +64,8 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
     @Test
     public void show_add_wallet_dialog() throws Exception {
         setScene(new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
-
         Then.then(lookup(".mfx-dialog")).hasNoWidgets();
-        clickOn("#btn_add_wallet"); waitForFxEvents();
+        clickOn("#" + KEY_ADD_WALLET); waitForFxEvents();
         Then.then(lookup(".mfx-dialog")).hasOneWidget();
     }
 
@@ -81,6 +75,7 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
     private void setScene(Pane p) {
         Platform.runLater(() -> {
             stage.setScene(new Scene(p));
+            stage.show();
         }); waitForFxEvents();
     }
 }

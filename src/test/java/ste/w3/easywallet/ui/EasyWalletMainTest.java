@@ -17,9 +17,7 @@ package ste.w3.easywallet.ui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -39,7 +37,9 @@ import static ste.w3.easywallet.Labels.LABEL_OK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.TestingConstants;
+import ste.w3.easywallet.TestingServer;
 import ste.w3.easywallet.Wallet;
+import ste.w3.easywallet.WalletManager;
 import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
 import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
 
@@ -49,9 +49,11 @@ import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
  */
 public class EasyWalletMainTest extends ApplicationTest {
 
-    EasyWalletMain main;
-    Preferences preferences;
-    Stage stage;
+    public static TestingServer server = null;
+
+    private EasyWalletMain main;
+    private Preferences preferences;
+    private Stage stage;
 
     private static final String CONFIG_FILE = ".config/ste.w3.easywallet/predferences.json";
 
@@ -61,6 +63,9 @@ public class EasyWalletMainTest extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
+
+        server = new TestingServer();
+
         try {
             preparePreferences();
         } catch (IOException x) {
@@ -94,8 +99,8 @@ public class EasyWalletMainTest extends ApplicationTest {
         VBox[] cards = q.queryAll().toArray(new VBox[0]);
 
         then(cards).hasSize(1);
-        Set<Label> labels = from(cards).lookup(".label").queryAllAs(Label.class);
-        then(labels).extracting(Label::getText).contains("0x" + preferences.wallets[0].address);
+        Then.then(lookup("0x" + preferences.wallets[0].address)).hasWidgets();
+        Then.then(lookup("0.0")).hasWidgets();
     }
 
     @Test
@@ -119,6 +124,14 @@ public class EasyWalletMainTest extends ApplicationTest {
         waitForFxEvents();
         Then.then(lookup("0x" + WALLET)).hasNoWidgets();
         then(getPreferencesFile()).content().doesNotContain(WALLET);
+    }
+
+    @Test
+    public void pressing_refresh_udates_balances() {
+        server.addBalance("0x" + preferences.wallets[0].address, "0x7bad706cf4a42e0055045");
+        clickOn('#' + KEY_REFRESH);
+        waitForFxEvents();
+        Then.then(lookup("9344807.44378454")).hasWidgets();
     }
 
     @Test
@@ -169,6 +182,21 @@ public class EasyWalletMainTest extends ApplicationTest {
         then(p.wallets[2].address).isEqualTo(TestingConstants.WALLET2);
     }
 
+    @Test
+    public void create_wallet_manager_from_preferences() throws Exception {
+        WalletManager wm = main.getWalletManager();
+
+        then(wm).isNotNull();
+        then(wm.endpoint).isEqualTo(preferences.endpoint);
+        then(wm.appkey).isEqualTo(preferences.appkey);
+        //
+        // NOTE: I do not need to do it with different values because
+        // preparePreferences() creates always random values, therefore two
+        // different executions provide already a requirement for the mutable
+        // behaviour
+        //
+    }
+
     // --------------------------------------------------------- private methods
 
     private File getPreferencesFile() throws IOException {
@@ -189,7 +217,7 @@ public class EasyWalletMainTest extends ApplicationTest {
                     .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
                     .build();
         preferences = new Preferences();
-        preferences.endpoint = randomStringGenerator.generate(20);
+        preferences.endpoint = server.ethereum.url("v3/" + randomStringGenerator.generate(20)).toString();
         preferences.appkey = randomStringGenerator.generate(12);
         preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
 
@@ -197,6 +225,7 @@ public class EasyWalletMainTest extends ApplicationTest {
 
         FileUtils.writeStringToFile(preferencesFile, pm.toJSON(preferences), "UTF-8");
     }
+
 
     // ------------------------------------------- EasyWalletMainWithPreferences
 

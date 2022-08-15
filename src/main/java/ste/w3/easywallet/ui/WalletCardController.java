@@ -43,9 +43,11 @@ public class WalletCardController {
     @FXML
     private MFXButton deleteButton;
 
-
     @FXML
     private Label address;
+
+    @FXML
+    private Label labelBalance;
 
     public final Wallet wallet;
 
@@ -68,6 +70,7 @@ public class WalletCardController {
         walletCard.setId(wallet.address);
 
         address.setText("0x" + wallet.address);
+        labelBalance.setText(getBalance());
         editButton.getRippleGenerator().setClipSupplier(
             () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(editButton)
         );
@@ -87,4 +90,16 @@ public class WalletCardController {
             onDelete.apply(wallet.address);
         }
     }
+
+    public void refreshBalance() {
+        labelBalance.setText(getBalance());
+    }
+
+    // --------------------------------------------------------+ private methods
+
+    private String getBalance() {
+        return (wallet.balance() == null) ? "0.0" : String.valueOf(wallet.balance().doubleValue());
+    }
+
+
 }

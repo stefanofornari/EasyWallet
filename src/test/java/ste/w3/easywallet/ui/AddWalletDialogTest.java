@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
 
@@ -137,9 +138,9 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels {
             }
         };
 
-        clickOn(".mfx-text-field");
+        clickOn(".mfx-text-field"); waitForFxEvents();
         address.setText(TestingConstants.WALLET2);
-        clickOn(".primary-button");
+        clickOn(".primary-button"); waitForFxEvents();
         then(ret[0]).isEqualTo(TestingConstants.WALLET2);
     }
 

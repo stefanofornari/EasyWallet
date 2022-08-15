@@ -20,7 +20,7 @@
             </rowConstraints>
             <children>
                 <MFXButton id="btn_add_wallet" fx:id="addButton" maxWidth="1.7976931348623157E308" onAction="#onAddWallet" styleClass="primary-button" text="+" GridPane.columnIndex="1" />
-                <MFXButton id="btn_refresh" fx:id="refreshButton" disable="true" maxWidth="1.7976931348623157E308" styleClass="primary-button" text="⟳" />
+                <MFXButton id="btn_refresh" fx:id="refreshButton" disable="true" maxWidth="1.7976931348623157E308" onAction="#onRefresh" styleClass="primary-button" text="⟳" />
             </children>
         </GridPane>
     </bottom>
