@@ -17,7 +17,6 @@ package ste.w3.easywallet.ui;
 
 import java.io.File;
 import java.io.IOException;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -33,6 +32,7 @@ import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import static ste.w3.easywallet.Labels.LABEL_OK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
@@ -42,18 +42,20 @@ import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
 import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
 import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
+import ste.xtest.reflect.PrivateAccess;
 
 /**
  *
  * @author ste
  */
-public class EasyWalletMainTest extends ApplicationTest {
+public class EasyWalletMainTest extends ApplicationTest implements TestingConstants, TestingUtils {
 
     public static TestingServer server = null;
 
     private EasyWalletMain main;
     private Preferences preferences;
     private Stage stage;
+    private EasyWalletMainController controller;
 
     private static final String CONFIG_FILE = ".config/ste.w3.easywallet/predferences.json";
 
@@ -72,26 +74,19 @@ public class EasyWalletMainTest extends ApplicationTest {
             x.printStackTrace();
         }
 
-        main = new EasyWalletMainWithPreferences();
+        main = new EasyWalletMainWithPreferences(); main.start(stage);
 
-        main.start(stage);
+        controller = getController(lookup("#main").queryAs(Pane.class));
     }
 
     @Test
-    public void should_contain_button_with_text() throws Exception {
+    public void window_titlwe_and_size() throws Exception {
         Pane root = lookup(".root").queryAs(Pane.class);
         then(stage.getTitle()).isEqualTo("EasyWallet v0.1");
         then(root.getScene().getWidth()).isGreaterThanOrEqualTo(400);
         then(root.getScene().getHeight()).isGreaterThanOrEqualTo(600);
-
-        Button b = lookup('#' + KEY_ADD_WALLET).queryButton();
-        then(b.getStyleClass().toArray()).contains("primary-button");
-        Then.then(b).hasText("+");
-
-        b = lookup('#' + KEY_REFRESH).queryButton();
-        then(b.getStyleClass().toArray()).contains("primary-button");
-        Then.then(b).hasText("⟳").isEnabled();
     }
+
 
     @Test
     public void launch_with_wallets_shows_wallets_in_wallet_pane() throws Exception {
@@ -197,6 +192,22 @@ public class EasyWalletMainTest extends ApplicationTest {
         //
     }
 
+    @Test
+    public void error_in_refresh_shows_error_pane_with_text() throws Exception {
+        withIOException();
+
+        Then.then(lookup(".error")).hasNoWidgets();
+        clickOn('#' + Constants.KEY_REFRESH);
+
+        Then.then(lookup(".error")).hasOneWidget();
+        then(controller.errorLabel.getText())
+            .contains(ERR_NETWORK)
+            .contains("network not available");
+
+        clickOn('#' + Constants.KEY_CLOSE_ERROR);
+        Then.then(lookup(".error")).hasNoWidgets();
+    }
+
     // --------------------------------------------------------- private methods
 
     private File getPreferencesFile() throws IOException {
@@ -224,6 +235,16 @@ public class EasyWalletMainTest extends ApplicationTest {
         PreferencesManager pm = new PreferencesManager();
 
         FileUtils.writeStringToFile(preferencesFile, pm.toJSON(preferences), "UTF-8");
+    }
+
+    private void withIOException() throws Exception {
+        PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com", "key") {
+            @Override
+            public WalletManager balance(Wallet wallet) throws IOException {
+                throw new IOException("network not available");
+            }
+
+        });
     }
 
 

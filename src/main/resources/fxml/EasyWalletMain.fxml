@@ -2,13 +2,14 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="easyWalletMain" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.EasyWalletMainController">
+<BorderPane id="main" fx:id="easyWalletMain" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.EasyWalletMainController">
     <bottom>
         <GridPane alignment="BOTTOM_CENTER" maxHeight="-Infinity" BorderPane.alignment="CENTER">
             <columnConstraints>
@@ -31,4 +32,24 @@
             </padding>
         </VBox>
     </center>
+   <top>
+      <BorderPane fx:id="errorPane" styleClass="error" BorderPane.alignment="CENTER">
+         <left>
+             <Label fx:id="errorLabel" maxWidth="400.0" text="error" wrapText="true" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="10.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+             </Label>
+         </left>
+         <right>
+            <MFXButton id="btn_close_error" fx:id="closeErrorButton" onAction="#onCloseError" text="ⓧ" BorderPane.alignment="CENTER" />
+         </right>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+      </BorderPane>
+   </top>
 </BorderPane>

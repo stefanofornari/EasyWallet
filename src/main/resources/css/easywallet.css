@@ -68,9 +68,20 @@
     -fx-background-color: -ew-primary-color;
 }
 
+.error {
+    -fx-background-color: white;
+    -fx-border-width: 2 0 2 0;
+    -fx-border-color: -ew-error-color;
+    -fx-margin: 3;
+    }
+
+.error .label, .error .button {
+    -fx-text-fill: -ew-error-color;
+}
+
 #btn_add_wallet {
     -fx-border-width: 0 0 0 1;
-    -fx-border-color: white;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        -fx-border-color: white;
 }
 
 #btn_refresh {

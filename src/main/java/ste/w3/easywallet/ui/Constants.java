@@ -21,5 +21,6 @@ public class Constants {
 
     public static final String KEY_ADD_WALLET = "btn_add_wallet";
     public static final String KEY_REFRESH = "btn_refresh";
+    public static final String KEY_CLOSE_ERROR = "btn_close_error";
 
 }

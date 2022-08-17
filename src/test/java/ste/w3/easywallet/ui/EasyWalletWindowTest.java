@@ -16,9 +16,9 @@
 package ste.w3.easywallet.ui;
 
 import java.io.IOException;
-import javafx.application.Platform;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
@@ -41,8 +41,23 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
     }
 
     @Test
+    public void initial_state() throws Exception {
+        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
+
+        Button b = lookup('#' + KEY_ADD_WALLET).queryButton();
+        then(b.getStyleClass().toArray()).contains("primary-button");
+        Then.then(b).hasText("+");
+
+        b = lookup('#' + KEY_REFRESH).queryButton();
+        then(b.getStyleClass().toArray()).contains("primary-button");
+        Then.then(b).hasText("⟳").isDisabled();
+
+        Then.then(lookup(".error")).hasNoWidgets();
+    }
+
+    @Test
     public void no_wallet_no_card() throws Exception {
-        setScene(new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
+        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
         Then.then(lookup(".wallet_card")).hasNoWidgets();
         Then.then(lookup('#' + KEY_REFRESH).queryButton()).isDisabled();
     }
@@ -54,7 +69,7 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
             new Wallet(ADDRESS1), new Wallet(ADDRESS2), new Wallet(ADDRESS3)
         };
 
-        setScene(new EasyWalletFXMLLoader().loadMainWindow(main));
+        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(main));
 
         Then.then(lookup(".wallet_card")).hasNWidgets(3);
         Then.then(lookup('#' + KEY_REFRESH).queryButton()).isEnabled();
@@ -62,7 +77,7 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
 
     @Test
     public void show_add_wallet_dialog() throws Exception {
-        setScene(new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
+        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
         Then.then(lookup(".mfx-dialog")).hasNoWidgets();
         clickOn("#" + KEY_ADD_WALLET); waitForFxEvents();
         Then.then(lookup(".mfx-dialog")).hasOneWidget();
@@ -71,9 +86,4 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
 
     // --------------------------------------------------------- private methods
 
-    private void setScene(Pane p) {
-        Platform.runLater(() -> {
-            showInStage(stage, p);
-        }); waitForFxEvents();
-    }
 }

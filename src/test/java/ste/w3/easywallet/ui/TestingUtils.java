@@ -20,9 +20,11 @@
  */
 package ste.w3.easywallet.ui;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
 /**
  *
@@ -43,5 +45,15 @@ public interface TestingUtils {
         }
         stage.show();
     }
+
+    default public void showInStageLater(Stage stage, Pane pane) {
+        Platform.runLater(() -> {
+            showInStage(stage, pane);
+        }); waitForFxEvents();
+    }
+
+    default public <T> T getController(Pane pane) {
+    return (T)pane.getUserData();
+}
 
 }

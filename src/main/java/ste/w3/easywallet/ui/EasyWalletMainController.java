@@ -20,6 +20,9 @@
  */
 package ste.w3.easywallet.ui;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.effects.ripple.RippleClipType;
+import io.github.palexdev.materialfx.factories.RippleClipTypeFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
@@ -30,8 +33,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
 
@@ -43,16 +48,25 @@ public class EasyWalletMainController {
     private final EasyWalletMain main;
 
     @FXML
-    Pane easyWalletMain;
+    protected BorderPane easyWalletMain;
 
     @FXML
-    Pane walletsPane;
+    protected Pane walletsPane;
 
     @FXML
-    Button addButton;
+    protected MFXButton addButton;
 
     @FXML
-    Button refreshButton;
+    protected MFXButton refreshButton;
+
+    @FXML
+    protected MFXButton closeErrorButton;
+
+    @FXML
+    protected Pane errorPane;
+
+    @FXML
+    protected Label errorLabel;
 
 
     public EasyWalletMainController(EasyWalletMain main) {
@@ -61,6 +75,12 @@ public class EasyWalletMainController {
 
     @FXML
     public void initialize() {
+        //
+        // errorPane is in the fxml so that it is clear where it is, but we do
+        // not show it at the beginning
+        //
+        easyWalletMain.setTop(null);
+        //
         walletsPane.getChildren().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable o) {
@@ -72,10 +92,13 @@ public class EasyWalletMainController {
         for (Wallet wallet : main.getPreferences().wallets) {
             addCard(wallet);
         }
+        closeErrorButton.getRippleGenerator().setClipSupplier(
+            () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(closeErrorButton)
+        );
     }
 
     @FXML
-    protected void onAddWallet(ActionEvent event) {
+    private void onAddWallet(ActionEvent event) {
         AddWalletDialog dialog = new AddWalletDialog(easyWalletMain);
         dialog.onOk = new Function<String, Void>() {
             @Override
@@ -91,7 +114,12 @@ public class EasyWalletMainController {
     }
 
     @FXML
-    protected void onRefresh(ActionEvent event) {
+    private void onCloseError(ActionEvent event) {
+        easyWalletMain.setTop(null);
+    }
+
+    @FXML
+    private void onRefresh(ActionEvent event) {
         //
         // TODO: use Platform.runLater
         //
@@ -106,6 +134,7 @@ public class EasyWalletMainController {
                     //
                     // TODO: handle the exception
                     //
+                    showError(x.getMessage());
                     x.printStackTrace();
                 }
 
@@ -134,6 +163,12 @@ public class EasyWalletMainController {
         };
 
         walletsPane.getChildren().add(card);
+    }
+
+    private void showError(String err) {
+        errorLabel.setText(
+            String.format("%s (%s)", ERR_NETWORK, err));
+        easyWalletMain.setTop(errorPane);
     }
 
 }

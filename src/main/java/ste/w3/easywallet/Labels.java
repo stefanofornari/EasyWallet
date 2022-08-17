@@ -30,4 +30,6 @@ public interface Labels {
     public final String LABEL_ADD_WALLET_DIALOG_TITLE = "Add a public wallet";
     public final String LABEL_ADDRESS = "Insert the 20 hex bytes public address:";
     public final String LABEL_ADDRESS_HINT = "eg: 00000000219ab540356cBB839Cbe05303d7705Fa";
+
+    public final String ERR_NETWORK = "I am unable to retrieve the information from the provider, check that your internet connection is working and the endpoint is correct";
 }
