@@ -23,6 +23,8 @@ package ste.w3.easywallet.ui;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.util.HashSet;
+import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -31,21 +33,26 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import org.web3j.crypto.WalletUtils;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
 public class AddWalletController {
 
-    final MFXGenericDialog dialog;
+    private final MFXGenericDialog dialog;
+    private final Set<String> invalidAddresses = new HashSet();
 
     @FXML
     private MFXTextField addrText;
 
 
-
-    public AddWalletController(final MFXGenericDialog dialog) {
+    public AddWalletController(final MFXGenericDialog dialog, final Wallet[] invalidWallets) {
         this.dialog = dialog;
+
+        for (Wallet w: invalidWallets) {
+            invalidAddresses.add(w.address);
+        }
     }
 
     @FXML
@@ -54,7 +61,11 @@ public class AddWalletController {
         addrText.textProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldValue, Object newValue) {
-                boolean valid = WalletUtils.isValidAddress(addrText.getText());
+                String address = addrText.getText();
+                boolean valid = WalletUtils.isValidAddress(address);
+                if (valid) {
+                    valid = !invalidAddresses.contains(address);
+                }
 
                 addrText.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !valid);
                 getOkButton().disableProperty().set(!valid);

@@ -30,35 +30,35 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import static org.assertj.core.api.BDDAssertions.then;
-import org.junit.Before;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
+import ste.w3.easywallet.Wallet;
 
 
 /**
  *
  */
-public class AddWalletDialogTest extends ApplicationTest implements Labels, TestingUtils {
+public class AddWalletDialogTest extends ApplicationTest implements Labels, TestingConstants, TestingUtils {
 
-    AddWalletDialog dialog;
+    private final Wallet[] INVALID_WALLETS = new Wallet[] {
+        new Wallet(ADDRESS1.substring(2)), new Wallet(ADDRESS2.substring(2))
+    };
+
+    private AddWalletDialog dialog;
+
 
     @Override
     public void start(Stage stage) throws Exception {
         Pane mainWindow = new BorderPane();
-        dialog = new AddWalletDialog(mainWindow);
+        dialog = new AddWalletDialog(mainWindow, INVALID_WALLETS);
 
         showInStage(stage, mainWindow);
 
         dialog.show();
-    }
-
-    @Before
-    public void before() {
-
     }
 
     @Test
@@ -118,9 +118,9 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         };
 
         clickOn(".mfx-text-field");
-        address.setText(TestingConstants.WALLET1);
+        address.setText(WALLET1);
         clickOn(".primary-button");
-        then(ret[0]).isEqualTo(TestingConstants.WALLET1);
+        then(ret[0]).isEqualTo(WALLET1);
     }
 
     @Test
@@ -136,9 +136,9 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         };
 
         clickOn(".mfx-text-field"); waitForFxEvents();
-        address.setText(TestingConstants.WALLET2);
+        address.setText(WALLET2);
         clickOn(".primary-button"); waitForFxEvents();
-        then(ret[0]).isEqualTo(TestingConstants.WALLET2);
+        then(ret[0]).isEqualTo(WALLET2);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         };
 
         clickOn(".mfx-text-field");
-        lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET2);
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(WALLET2);
         clickOn(LABEL_CANCEL);
         then(test[0]).isFalse();
     }
@@ -160,11 +160,21 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
     @Test
     public void do_nothing_when_onOk_is_null() {
         clickOn(".mfx-text-field");
-        lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET2);
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(WALLET2);
         clickOn(LABEL_OK);
         //
         // end with no exceptions...
         //
+    }
+
+    @Test
+    public void do_not_add_a_wallet_twice() {
+        TextField t = lookup(".mfx-text-field").queryAs(TextField.class);
+        clickOn(".mfx-text-field");
+        t.setText(ADDRESS1.substring(2));
+        Then.then(lookup(LABEL_OK).queryButton()).isDisabled();
+        t.setText(ADDRESS2.substring(2));
+        Then.then(lookup(LABEL_OK).queryButton()).isDisabled();
     }
 
     /*

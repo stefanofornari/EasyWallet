@@ -30,6 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import ste.w3.easywallet.Labels;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
@@ -38,7 +39,7 @@ public class AddWalletDialog extends MFXStageDialog implements Labels {
 
     public Function<String, Void> onOk;
 
-    public AddWalletDialog(Pane owner) {
+    public AddWalletDialog(Pane owner, Wallet[] invalidWallets) {
         super(
             MFXGenericDialogBuilder.build()
                 .setHeaderText(LABEL_ADD_WALLET_DIALOG_TITLE)
@@ -66,7 +67,7 @@ public class AddWalletDialog extends MFXStageDialog implements Labels {
 
         MFXGenericDialog dialog = (MFXGenericDialog)getContent();
 
-        dialog.setContent(new EasyWalletFXMLLoader().loadAddWalletDialogContent(dialog));
+        dialog.setContent(new EasyWalletFXMLLoader().loadAddWalletDialogContent(dialog, invalidWallets));
         dialog.setStyle("-fx-background-color: blue;");
         dialog.addActions(
             Map.entry(cancelButton, e -> {

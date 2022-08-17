@@ -56,14 +56,17 @@ public class EasyWalletFXMLLoader {
             });
     }
 
-    public Pane loadAddWalletDialogContent(final MFXGenericDialog dialog) {
+    public Pane loadAddWalletDialogContent(
+        final MFXGenericDialog dialog,
+        final Wallet[] invalidWallets
+    ) {
         return loadPane(
             "/fxml/AddWalletDialog.fxml",
             new Callback<Class<?>, Object>() {
                 /* controllerFactory */
                 @Override
                 public Object call(Class<?> p) {
-                    return new AddWalletController(dialog);
+                    return new AddWalletController(dialog, invalidWallets);
                 }
             });
     }
