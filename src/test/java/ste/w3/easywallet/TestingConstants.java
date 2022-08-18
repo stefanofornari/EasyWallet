@@ -25,10 +25,6 @@ package ste.w3.easywallet;
  */
 public interface TestingConstants {
 
-    //
-    // TODO: remove prefix from ADDRESSES
-    //
-
     public final String WALLET1 = "1234567890123456789012345678901234567890";
     public final String WALLET2 = "0123456789012345678901234567890123456789";
 
@@ -50,11 +46,11 @@ public interface TestingConstants {
     // Derived by mnemonic phrase "alert record income curve mercy tree heavy loan hen recycle mean devote" #1
     //
     public final String PRIVATE_KEY6 = "82b4cd6699cc1aee53b492598def7833a5ca8aae948f817c325548cb3e62c610";
-    public final String ADDRESS1 = "0xc2a6927e5e2f27e5fc7d2611cb0246fb3151f034";
-    public final String ADDRESS2 = "0x496ef9de509d5d4b3f48f33eb75e55c4b3005dc7";
-    public final String ADDRESS3 = "0x1489a7dd02ca2294ed999cfc175050c852851dec"; // associated to PRIVATE_KEY3
-    public final String ADDRESS4 = "0x00000000219ab540356cbb839cbe05303d7705fa";
-    public final String ADDRESS5 = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-    public final String ADDRESS6 = "0xb24f4ad87c027f05c58a71eed50193364c1c4a22"; // associated to PRIVATE_KEY6
+    public final String ADDRESS1 = "c2a6927e5e2f27e5fc7d2611cb0246fb3151f034";
+    public final String ADDRESS2 = "496ef9de509d5d4b3f48f33eb75e55c4b3005dc7";
+    public final String ADDRESS3 = "1489a7dd02ca2294ed999cfc175050c852851dec"; // associated to PRIVATE_KEY3
+    public final String ADDRESS4 = "00000000219ab540356cbb839cbe05303d7705fa";
+    public final String ADDRESS5 = "c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+    public final String ADDRESS6 = "b24f4ad87c027f05c58a71eed50193364c1c4a22"; // associated to PRIVATE_KEY6
 
 }

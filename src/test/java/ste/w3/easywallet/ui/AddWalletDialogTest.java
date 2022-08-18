@@ -47,7 +47,7 @@ import ste.w3.easywallet.Wallet;
 public class AddWalletDialogTest extends ApplicationTest implements Labels, TestingConstants, TestingUtils {
 
     private final Wallet[] INVALID_WALLETS = new Wallet[] {
-        new Wallet(ADDRESS1.substring(2)), new Wallet(ADDRESS2.substring(2))
+        new Wallet(ADDRESS1), new Wallet(ADDRESS2)
     };
 
     private AddWalletDialog dialog;
@@ -198,9 +198,9 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
     public void do_not_add_a_wallet_twice() {
         TextField t = lookup(".mfx-text-field").queryAs(TextField.class);
         clickOn(".mfx-text-field");
-        t.setText(ADDRESS1.substring(2));
+        t.setText(ADDRESS1);
         Then.then(lookup(LABEL_BUTTON_OK).queryButton()).isDisabled();
-        t.setText(ADDRESS2.substring(2));
+        t.setText(ADDRESS2);
         Then.then(lookup(LABEL_BUTTON_OK).queryButton()).isDisabled();
     }
 
@@ -218,7 +218,7 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY1);
         clickOn(".primary-button"); waitForFxEvents();
 
-        then(test[0]).isEqualTo(ADDRESS1.substring(2));
+        then(test[0]).isEqualTo(ADDRESS1);
     }
 
     @Test
@@ -235,7 +235,7 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY2);
         clickOn(".primary-button"); waitForFxEvents();
 
-        then(test[0]).isEqualTo(ADDRESS2.substring(2));
+        then(test[0]).isEqualTo(ADDRESS2);
     }
 
 }

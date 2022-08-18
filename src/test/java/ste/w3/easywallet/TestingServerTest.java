@@ -39,23 +39,23 @@ public class TestingServerTest implements TestingConstants {
         // default values
         //
         then(server.TEST_BALANCE).containsExactly(
-                entry(ADDRESS1, "0x7baa706cf4a4220055045"),
-                entry(ADDRESS2, "0x1bf7395fc44bec91e8000")
+                entry(ex(ADDRESS1), "0x7baa706cf4a4220055045"),
+                entry(ex(ADDRESS2), "0x1bf7395fc44bec91e8000")
         );
 
-        server.addBalance(ADDRESS3, "0x00");
+        server.addBalance(ex(ADDRESS3), "0x00");
         then(server.TEST_BALANCE).containsExactly(
-                entry(ADDRESS1, "0x7baa706cf4a4220055045"),
-                entry(ADDRESS2, "0x1bf7395fc44bec91e8000"),
-                entry(ADDRESS3, "0x00")
+                entry(ex(ADDRESS1), "0x7baa706cf4a4220055045"),
+                entry(ex(ADDRESS2), "0x1bf7395fc44bec91e8000"),
+                entry(ex(ADDRESS3), "0x00")
         );
 
-        server.addBalance(ADDRESS4, "0x0011");
+        server.addBalance(ex(ADDRESS4), "0x0011");
         then(server.TEST_BALANCE).containsExactly(
-                entry(ADDRESS1, "0x7baa706cf4a4220055045"),
-                entry(ADDRESS2, "0x1bf7395fc44bec91e8000"),
-                entry(ADDRESS3, "0x00"),
-                entry(ADDRESS4, "0x0011")
+                entry(ex(ADDRESS1), "0x7baa706cf4a4220055045"),
+                entry(ex(ADDRESS2), "0x1bf7395fc44bec91e8000"),
+                entry(ex(ADDRESS3), "0x00"),
+                entry(ex(ADDRESS4), "0x0011")
         );
     }
 
@@ -69,11 +69,17 @@ public class TestingServerTest implements TestingConstants {
             then(x).hasMessage("address must start with '0x'");
         }
         try {
-            server.addBalance(ADDRESS1, "0");
+            server.addBalance(ex(ADDRESS1), "0");
             fail("missing argument validation");
         } catch (IllegalArgumentException x) {
             then(x).hasMessage("balance must start with '0x'");
         }
+    }
+
+    // --------------------------------------------------------- private methods
+
+    private String ex(final String s) {
+        return "0x" + s;
     }
 
 }
