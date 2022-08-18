@@ -33,7 +33,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
-import static ste.w3.easywallet.Labels.LABEL_OK;
+import static ste.w3.easywallet.Labels.LABEL_BUTTON_OK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.TestingConstants;
@@ -46,7 +46,6 @@ import ste.xtest.reflect.PrivateAccess;
 
 /**
  *
- * @author ste
  */
 public class EasyWalletMainTest extends ApplicationTest implements TestingConstants, TestingUtils {
 
@@ -102,7 +101,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
     public void show_added_wallet_in_wallet_pane_and_save_prefs() throws Exception {
         clickOn('#' + KEY_ADD_WALLET);
         lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET1);
-        clickOn(LABEL_OK);
+        clickOn(LABEL_BUTTON_OK);
 
         waitForFxEvents();
 

@@ -68,7 +68,6 @@ public class EasyWalletMainController {
     @FXML
     protected Label errorLabel;
 
-
     public EasyWalletMainController(EasyWalletMain main) {
         this.main = main;
     }
@@ -96,6 +95,8 @@ public class EasyWalletMainController {
             () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(closeErrorButton)
         );
     }
+
+    // --------------------------------------------------------- private methods
 
     @FXML
     private void onAddWallet(ActionEvent event) {
@@ -141,8 +142,6 @@ public class EasyWalletMainController {
             }
         });
     }
-
-    // --------------------------------------------------------- private methods
 
     private void addCard(Wallet wallet) {
         Pane card = new EasyWalletFXMLLoader().loadCardPane(wallet);
