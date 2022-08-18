@@ -69,5 +69,11 @@ public class WalletManagerTest implements TestingConstants {
     public void wallet_from_private_key() {
         then(WalletManager.fromPrivateKey(PRIVATE_KEY1).address).isEqualTo(ADDRESS1);
         then(WalletManager.fromPrivateKey(PRIVATE_KEY2).address).isEqualTo(ADDRESS2);
+        try {
+            then(WalletManager.fromPrivateKey('x' + PRIVATE_KEY2.substring(1)).address).isEqualTo(ADDRESS2);
+            fail("invalid key not checked");
+        } catch (NumberFormatException x) {
+            // OK
+        }
     }
 }

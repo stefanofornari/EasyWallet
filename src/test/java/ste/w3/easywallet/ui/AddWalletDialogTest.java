@@ -122,12 +122,28 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
 
     @Test
     public void valid_address_enables_ok_button() {
-        Button b = lookup(".primary-button").queryAs(Button.class);
+        Button b = lookup(".primary-button").queryButton();
         clickOn(".mfx-text-field"); type(KeyCode.DIGIT0);
         Then.then(b).isDisabled();
         type(KeyCode.DIGIT0); Then.then(b).isDisabled();
         type(KeyCode.DIGIT0, 38); Then.then(b).isEnabled();
         type(KeyCode.BACK_SPACE); Then.then(b).isDisabled();
+        type(KeyCode.Z); Then.then(b).isDisabled();
+        type(KeyCode.BACK_SPACE); type(KeyCode.COLON); Then.then(b).isDisabled();
+    }
+
+    @Test
+    public void valid_private_key_enables_ok_button() {
+        Button b = lookup(".primary-button").queryButton();
+        TextField f = lookup("#text").queryAs(TextField.class);
+
+        clickOn(LABEL_RADIO_PRIVATE_KEY);
+        clickOn(".mfx-text-field"); type(KeyCode.DIGIT0);
+        Then.then(b).isDisabled();
+        type(KeyCode.DIGIT0); Then.then(b).isDisabled();
+        f.setText(PRIVATE_KEY3.substring(2)); waitForFxEvents(); Then.then(b).isDisabled();
+        f.setText(PRIVATE_KEY3); waitForFxEvents(); Then.then(b).isEnabled();
+        type(KeyCode.END, KeyCode.BACK_SPACE); Then.then(b).isDisabled();
         type(KeyCode.Z); Then.then(b).isDisabled();
         type(KeyCode.BACK_SPACE); type(KeyCode.COLON); Then.then(b).isDisabled();
     }
@@ -215,10 +231,10 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         };
 
         clickOn(LABEL_RADIO_PRIVATE_KEY); waitForFxEvents();
-        lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY1);
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY3);
         clickOn(".primary-button"); waitForFxEvents();
 
-        then(test[0]).isEqualTo(ADDRESS1);
+        then(test[0]).isEqualTo(ADDRESS3);
     }
 
     @Test
@@ -232,10 +248,10 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         };
 
         clickOn(LABEL_RADIO_PRIVATE_KEY); waitForFxEvents();
-        lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY2);
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY6);
         clickOn(".primary-button"); waitForFxEvents();
 
-        then(test[0]).isEqualTo(ADDRESS2);
+        then(test[0]).isEqualTo(ADDRESS6);
     }
 
 }

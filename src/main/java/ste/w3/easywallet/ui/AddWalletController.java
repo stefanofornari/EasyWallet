@@ -70,16 +70,24 @@ public class AddWalletController implements Labels {
         text.textProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldValue, Object newValue) {
-                boolean valid = true;
-                String address = text.getText();
+                boolean valid = false;
+                String t = text.getText();
 
                 if (addressRadio.isSelected()) {
-                    valid = WalletUtils.isValidAddress(address);
-                    if (valid) {
-                        valid = !invalidAddresses.contains(address);
+                    valid = WalletUtils.isValidAddress(t);
+                } else {
+                    if (t.length() == 64) {
+                        try {
+                            t = WalletManager.fromPrivateKey(t).address;
+                            valid = true;
+                        } catch (NumberFormatException x) {
+                        }
                     }
-                    text.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !valid);
                 }
+                if (valid) {
+                    valid = !invalidAddresses.contains(t);
+                }
+                text.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !valid);
                 getOkButton().disableProperty().set(!valid);
             }
         });

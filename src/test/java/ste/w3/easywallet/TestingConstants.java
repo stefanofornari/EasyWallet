@@ -52,5 +52,4 @@ public interface TestingConstants {
     public final String ADDRESS4 = "00000000219ab540356cbb839cbe05303d7705fa";
     public final String ADDRESS5 = "c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
     public final String ADDRESS6 = "b24f4ad87c027f05c58a71eed50193364c1c4a22"; // associated to PRIVATE_KEY6
-
 }
