@@ -155,8 +155,8 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         TextField address = lookup(".mfx-text-field").queryAs(TextField.class);
 
         dialog.onOk = new Function<>() {
-            public Void apply(String a) {
-                ret[0] = a; return null;
+            public Void apply(Wallet w) {
+                ret[0] = w.address; return null;
             }
         };
 
@@ -173,8 +173,8 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         TextField address = lookup(".mfx-text-field").queryAs(TextField.class);
 
         dialog.onOk = new Function<>() {
-            public Void apply(String a) {
-                ret[0] = a; return null;
+            public Void apply(Wallet w) {
+                ret[0] = w.address; return null;
             }
         };
 
@@ -189,7 +189,7 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         boolean[] test = new boolean[1];
 
         dialog.onOk = new Function<>() {
-            public Void apply(String a) {
+            public Void apply(Wallet w) {
                 test[0] = true; return null;
             }
         };
@@ -225,8 +225,8 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         final String[] test = new String[1];
 
         dialog.onOk = new Function<>() {
-            public Void apply(String s) {
-                test[0] = s; return null;
+            public Void apply(Wallet w) {
+                test[0] = w.address; return null;
             }
         };
 
@@ -239,11 +239,11 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
 
     @Test
     public void add_wallet_by_private_key2() {
-        final String[] test = new String[1];
+        final String[] ret = new String[1];
 
         dialog.onOk = new Function<>() {
-            public Void apply(String s) {
-                test[0] = s; return null;
+            public Void apply(Wallet w) {
+                ret[0] = w.address; return null;
             }
         };
 
@@ -251,7 +251,7 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY6);
         clickOn(".primary-button"); waitForFxEvents();
 
-        then(test[0]).isEqualTo(ADDRESS6);
+        then(ret[0]).isEqualTo(ADDRESS6);
     }
 
 }

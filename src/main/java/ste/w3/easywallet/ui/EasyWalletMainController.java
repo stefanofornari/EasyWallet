@@ -101,10 +101,9 @@ public class EasyWalletMainController {
     @FXML
     private void onAddWallet(ActionEvent event) {
         AddWalletDialog dialog = new AddWalletDialog(easyWalletMain, main.getPreferences().wallets);
-        dialog.onOk = new Function<String, Void>() {
+        dialog.onOk = new Function<Wallet, Void>() {
             @Override
-            public Void apply(String address) {
-                Wallet wallet = new Wallet(address);
+            public Void apply(Wallet wallet) {
                 main.addWallet(wallet);
                 addCard(wallet);
 

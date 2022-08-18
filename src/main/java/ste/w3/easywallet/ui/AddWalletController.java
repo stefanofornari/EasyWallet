@@ -52,10 +52,6 @@ public class AddWalletController implements Labels {
     @FXML
     private RadioButton addressRadio;
 
-    @FXML
-    private RadioButton keyRadio;
-
-
     public AddWalletController(final MFXGenericDialog dialog, final Wallet[] invalidWallets) {
         this.dialog = dialog;
 
@@ -108,11 +104,8 @@ public class AddWalletController implements Labels {
     }
 
 
-    public String onOk() {
-        //
-        // TODO: this should return the wallet, not only the address...
-        //
-        return addressRadio.isSelected() ? text.getText() : WalletManager.fromPrivateKey(text.getText()).address;
+    public Wallet onOk() {
+        return addressRadio.isSelected() ? new Wallet(text.getText()) : WalletManager.fromPrivateKey(text.getText());
     }
 
 

@@ -32,6 +32,7 @@ import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import ste.w3.easywallet.Labels;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import static ste.w3.easywallet.Labels.LABEL_BUTTON_OK;
 import ste.w3.easywallet.Preferences;
@@ -108,6 +109,20 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         Then.then(lookup("0x" + TestingConstants.WALLET1)).hasWidgets();
         then(getPreferencesFile()).content().contains(
             String.format("{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\"}", TestingConstants.WALLET1)
+        );
+    }
+
+    @Test
+    public void show_added_wallet_by_key_in_wallet_pane_and_save_prefs() throws Exception {
+        clickOn('#' + KEY_ADD_WALLET) ; clickOn(Labels.LABEL_RADIO_PRIVATE_KEY);
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY1);
+        clickOn(LABEL_BUTTON_OK);
+
+        waitForFxEvents();
+
+        Then.then(lookup("0x" + ADDRESS1)).hasWidgets();
+        then(getPreferencesFile()).content().contains(
+            String.format("{\"address\":\"%s\",\"privateKey\":\"%s\",\"mnemonicPhrase\":\"\"}", ADDRESS1, PRIVATE_KEY1)
         );
     }
 

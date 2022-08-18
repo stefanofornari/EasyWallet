@@ -37,7 +37,7 @@ import ste.w3.easywallet.Wallet;
 public class AddWalletDialog extends MFXStageDialog implements Labels {
     private final AddWalletController controller;
 
-    public Function<String, Void> onOk;
+    public Function<Wallet, Void> onOk;
 
     public AddWalletDialog(Pane owner, Wallet[] invalidWallets) {
         super(
