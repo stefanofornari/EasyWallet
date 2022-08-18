@@ -1,12 +1,15 @@
 package ste.w3.easywallet;
 
 import java.io.IOException;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Convert.Unit;
+import org.web3j.utils.Numeric;
 
 /**
  *
@@ -41,6 +44,15 @@ public class WalletManager {
         );
 
         return this;
+    }
+
+    public static Wallet fromPrivateKey(String key) {
+        Wallet w = new Wallet(
+            Keys.getAddress(ECKeyPair.create(Numeric.toBigInt(key)))
+        );
+        w.privateKey = key;
+
+        return w;
     }
 
 }

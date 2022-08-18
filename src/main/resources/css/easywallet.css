@@ -11,7 +11,7 @@
 * MaterialFX                                                                   *
 *                                                                              *
 *******************************************************************************/
-.mfx-text-field {
+.mfx-text-field, .mfx-radio-button {
     -mfx-main: -ew-primary-color;
 }
 

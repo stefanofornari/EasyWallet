@@ -21,9 +21,11 @@
 package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
@@ -70,19 +72,44 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
             new Consumer<MFXButton>() {
                 @Override
                 public void accept(MFXButton b) {
-                    Then.then(b).hasText(LABEL_OK).isDisabled();
+                    Then.then(b).hasText(LABEL_BUTTON_OK).isDisabled();
                     then(b.getStyleClass()).contains("primary-button");
                 }
             },
             new Consumer<MFXButton>() {
                 @Override
                 public void accept(MFXButton b) {
-                    Then.then(b).isEnabled().hasText(LABEL_CANCEL);
+                    Then.then(b).isEnabled().hasText(LABEL_BUTTON_CANCEL);
                 }
             }
         );
 
         Then.then(lookup(".mfx-text-field")).hasOneWidget();
+        Then.then(lookup(".mfx-radio-button")).hasNWidgets(2);
+        then(lookup(".mfx-radio-button").queryAllAs(RadioButton.class).toArray(new RadioButton[0])[0].isDisable()).isFalse();
+
+        //
+        // public address
+        //
+        MFXTextField text = lookup(".mfx-text-field").queryAs(MFXTextField.class);
+        then(text.getTextLimit()).isEqualTo(40);
+        then(text.getFloatingText()).isEqualTo(LABEL_ADDRESS);
+        then(text.getPromptText()).isEqualTo(LABEL_ADDRESS_HINT);
+    }
+
+    @Test
+    public void switch_labels_clicking_on_radios() {
+        MFXTextField text = lookup(".mfx-text-field").queryAs(MFXTextField.class);
+
+        clickOn(LABEL_RADIO_PRIVATE_KEY);
+        then(text.getTextLimit()).isEqualTo(64);
+        then(text.getFloatingText()).isEqualTo(LABEL_PRIVATE_KEY);
+        then(text.getPromptText()).isEqualTo(LABEL_PRIVATE_KEY_HINT);
+
+        clickOn(LABEL_RADIO_PUBLIC_ADDRESS);
+        then(text.getTextLimit()).isEqualTo(40);
+        then(text.getFloatingText()).isEqualTo(LABEL_ADDRESS);
+        then(text.getPromptText()).isEqualTo(LABEL_ADDRESS_HINT);
     }
 
     @Test
@@ -153,7 +180,7 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
 
         clickOn(".mfx-text-field");
         lookup(".mfx-text-field").queryAs(TextField.class).setText(WALLET2);
-        clickOn(LABEL_CANCEL);
+        clickOn(LABEL_BUTTON_CANCEL);
         then(test[0]).isFalse();
     }
 
@@ -161,7 +188,7 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
     public void do_nothing_when_onOk_is_null() {
         clickOn(".mfx-text-field");
         lookup(".mfx-text-field").queryAs(TextField.class).setText(WALLET2);
-        clickOn(LABEL_OK);
+        clickOn(LABEL_BUTTON_OK);
         //
         // end with no exceptions...
         //
@@ -172,17 +199,43 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         TextField t = lookup(".mfx-text-field").queryAs(TextField.class);
         clickOn(".mfx-text-field");
         t.setText(ADDRESS1.substring(2));
-        Then.then(lookup(LABEL_OK).queryButton()).isDisabled();
+        Then.then(lookup(LABEL_BUTTON_OK).queryButton()).isDisabled();
         t.setText(ADDRESS2.substring(2));
-        Then.then(lookup(LABEL_OK).queryButton()).isDisabled();
+        Then.then(lookup(LABEL_BUTTON_OK).queryButton()).isDisabled();
     }
 
-    /*
+    @Test
+    public void add_wallet_by_private_key1() {
+        final String[] test = new String[1];
 
-    expect(
-      find.descendant(of: dialog, matching: find.byType(Radio<AddWalletBy>)
-      ), findsWidgets
-    );
-*/
+        dialog.onOk = new Function<>() {
+            public Void apply(String s) {
+                test[0] = s; return null;
+            }
+        };
+
+        clickOn(LABEL_RADIO_PRIVATE_KEY); waitForFxEvents();
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY1);
+        clickOn(".primary-button"); waitForFxEvents();
+
+        then(test[0]).isEqualTo(ADDRESS1.substring(2));
+    }
+
+    @Test
+    public void add_wallet_by_private_key2() {
+        final String[] test = new String[1];
+
+        dialog.onOk = new Function<>() {
+            public Void apply(String s) {
+                test[0] = s; return null;
+            }
+        };
+
+        clickOn(LABEL_RADIO_PRIVATE_KEY); waitForFxEvents();
+        lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY2);
+        clickOn(".primary-button"); waitForFxEvents();
+
+        then(test[0]).isEqualTo(ADDRESS2.substring(2));
+    }
 
 }

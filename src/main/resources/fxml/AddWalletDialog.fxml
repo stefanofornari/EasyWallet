@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import io.github.palexdev.materialfx.controls.MFXRadioButton?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<VBox id="addressText" fx:id="addWalletDialog" styleClass="content" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.AddWalletController">
+<VBox id="addressText" styleClass="content" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.AddWalletController">
    <children>
-      <MFXTextField fx:id="addrText" accessibleText="Insert the 20 hex bytes public address eg: 00000000219ab540356cBB839Cbe05303d7705Fa" floatingText="Insert the 20 hex bytes public address" prefColumnCount="40" promptText="eg: 00000000219ab540356cBB839Cbe05303d7705Fa" textLimit="40">
+      <FlowPane hgap="20.0">
+         <children>
+            <MFXRadioButton fx:id="addressRadio" onAction="#onPublicAddress" selected="true" text="address">
+               <toggleGroup>
+                  <ToggleGroup fx:id="addWalletBy" />
+               </toggleGroup>
+            </MFXRadioButton>
+            <MFXRadioButton fx:id="ketRadio" onAction="#onPrivateKey" text="private key" toggleGroup="$addWalletBy" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
+         </VBox.margin>
+      </FlowPane>
+      <MFXTextField fx:id="text" accessibleText="Insert the 20 hex bytes public address eg: 00000000219ab540356cBB839Cbe05303d7705Fa" floatingText="Insert the 20 hex bytes public address" prefColumnCount="40" promptText="eg: 00000000219ab540356cBB839Cbe05303d7705Fa" textLimit="40">
          <font>
             <Font name="Roboto Regular" size="12.0" />
          </font>

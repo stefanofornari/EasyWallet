@@ -9,7 +9,7 @@ import org.junit.Test;
 /**
  *
  */
-public class WalletTest {
+public class WalletTest implements TestingConstants {
 
     @Test
     public void construct_wallet() {
@@ -35,5 +35,4 @@ public class WalletTest {
         then(w.balance(new BigDecimal("10.0"))).isSameAs(w);
         then(w.balance().doubleValue()).isEqualTo(10.0);
     }
-
 }

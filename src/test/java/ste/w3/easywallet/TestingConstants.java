@@ -25,6 +25,10 @@ package ste.w3.easywallet;
  */
 public interface TestingConstants {
 
+    //
+    // TODO: remove prefix from ADDRESSES
+    //
+
     public final String WALLET1 = "1234567890123456789012345678901234567890";
     public final String WALLET2 = "0123456789012345678901234567890123456789";
 

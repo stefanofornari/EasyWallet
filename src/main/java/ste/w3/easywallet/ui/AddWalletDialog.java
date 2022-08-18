@@ -26,7 +26,6 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import java.util.Map;
 import java.util.function.Function;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import ste.w3.easywallet.Labels;
@@ -36,6 +35,7 @@ import ste.w3.easywallet.Wallet;
  *
  */
 public class AddWalletDialog extends MFXStageDialog implements Labels {
+    private final AddWalletController controller;
 
     public Function<String, Void> onOk;
 
@@ -60,26 +60,15 @@ public class AddWalletDialog extends MFXStageDialog implements Labels {
         setCenterInOwnerNode(false);
         // ---
 
-        MFXButton okButton = new MFXButton(LABEL_OK);
+        MFXButton okButton = new MFXButton(LABEL_BUTTON_OK);
         okButton.disableProperty().set(true);
         okButton.getStyleClass().add("primary-button");
-        MFXButton cancelButton = new MFXButton(LABEL_CANCEL);
+        MFXButton cancelButton = new MFXButton(LABEL_BUTTON_CANCEL);
 
         MFXGenericDialog dialog = (MFXGenericDialog)getContent();
 
         dialog.setContent(new EasyWalletFXMLLoader().loadAddWalletDialogContent(dialog, invalidWallets));
         dialog.setStyle("-fx-background-color: blue;");
-        dialog.addActions(
-            Map.entry(cancelButton, e -> {
-                close();
-            }),
-            Map.entry(okButton, e -> {
-                if (onOk != null) {
-                    onOk.apply(((TextField)getScene().lookup("#addrText")).getText());
-                }
-                close();
-            })
-        );
         dialog.alwaysOnTopProperty().bind(alwaysOnTopProperty());
         dialog.setOnAlwaysOnTop(event -> setAlwaysOnTop(!dialog.isAlwaysOnTop()));
 	dialog.setOnMinimize(event -> setIconified(true));
@@ -89,6 +78,19 @@ public class AddWalletDialog extends MFXStageDialog implements Labels {
         );
         dialog.setStyle(
             "-fx-border-color: -ew-primary-color;"
+        );
+
+        controller = (AddWalletController)dialog.getContent().getUserData();
+        dialog.addActions(
+            Map.entry(cancelButton, e -> {
+                close();
+            }),
+            Map.entry(okButton, e -> {
+                if (onOk != null) {
+                    onOk.apply(controller.onOk());
+                }
+                close();
+            })
         );
 
         initModality(Modality.APPLICATION_MODAL);

@@ -64,4 +64,10 @@ public class WalletManagerTest implements TestingConstants {
         then(wm.balance(w)).isSameAs(wm);
         then(w.balance().doubleValue()).isEqualTo(2113030.001);
     }
+
+    @Test
+    public void wallet_from_private_key() {
+        then(WalletManager.fromPrivateKey(PRIVATE_KEY1).address).isEqualTo(ADDRESS1.substring(2));
+        then(WalletManager.fromPrivateKey(PRIVATE_KEY2).address).isEqualTo(ADDRESS2.substring(2));
+    }
 }

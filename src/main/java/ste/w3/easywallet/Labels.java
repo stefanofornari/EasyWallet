@@ -24,12 +24,17 @@ package ste.w3.easywallet;
  *
  */
 public interface Labels {
-    public final String LABEL_OK = "OK";
-    public final String LABEL_CANCEL = "CANCEL";
+    public final String LABEL_BUTTON_OK = "OK";
+    public final String LABEL_BUTTON_CANCEL = "CANCEL";
+    public final String LABEL_RADIO_PRIVATE_KEY = "private key";
+    public final String LABEL_RADIO_PUBLIC_ADDRESS = "address";
 
     public final String LABEL_ADD_WALLET_DIALOG_TITLE = "Add a public wallet";
-    public final String LABEL_ADDRESS = "Insert the 20 hex bytes public address:";
+    public final String LABEL_ADDRESS = "Insert the 20 hex bytes public address";
     public final String LABEL_ADDRESS_HINT = "eg: 00000000219ab540356cBB839Cbe05303d7705Fa";
+
+    public final String LABEL_PRIVATE_KEY = "Insert the 32 hex bytes private key";
+    public final String LABEL_PRIVATE_KEY_HINT = "008a2b2d41febc2bef749ecec009b86e5fa18753439b28789658eb7b411397abb6";
 
     public final String ERR_NETWORK = "I am unable to retrieve the information from the provider, check that your internet connection is working and the endpoint is correct";
 }
