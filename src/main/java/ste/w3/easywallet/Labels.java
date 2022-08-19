@@ -26,6 +26,7 @@ package ste.w3.easywallet;
 public interface Labels {
     public final String LABEL_BUTTON_OK = "OK";
     public final String LABEL_BUTTON_CANCEL = "CANCEL";
+    public final String LABEL_BUTTON_SEARCH = "SEARCH";
     public final String LABEL_RADIO_PRIVATE_KEY = "private key";
     public final String LABEL_RADIO_PUBLIC_ADDRESS = "address";
 
@@ -36,5 +37,9 @@ public interface Labels {
     public final String LABEL_PRIVATE_KEY = "Insert the 32 hex bytes private key";
     public final String LABEL_PRIVATE_KEY_HINT = "008a2b2d41febc2bef749ecec009b86e5fa18753439b28789658eb7b411397abb6";
 
+    public final String LABEL_EDIT_WALLET_PRIVATE_KEY_TITLE = "Edit 0x'%s Private Key";
+
     public final String ERR_NETWORK = "I am unable to retrieve the information from the provider, check that your internet connection is working and the endpoint is correct";
+
+
 }

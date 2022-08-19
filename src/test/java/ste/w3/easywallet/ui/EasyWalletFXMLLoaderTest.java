@@ -51,4 +51,14 @@ public class EasyWalletFXMLLoaderTest extends ApplicationTest {
         then(pane.getId()).isEqualTo(TestingConstants.WALLET2);
     }
 
+    @Test
+    public void loaded_edit_wallet_content_has_controller() {
+        final Wallet W = new Wallet(TestingConstants.WALLET1);
+        Pane pane = instance.loadEditWalletDialogContent(W);
+
+        EditWalletController controller = (EditWalletController)pane.getUserData();
+        then(controller).isNotNull().isInstanceOf(EditWalletController.class);
+        then(controller.wallet).isSameAs(W);
+    }
+
 }

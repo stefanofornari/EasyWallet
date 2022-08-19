@@ -1,5 +1,10 @@
 /*
- * Copyright (C) 2022 Stefano Fornari.
+ * EasyWallet
+ * ----------
+ *
+ * Copyright (C) 2022 Stefano Fornari. Licensed under the
+ * EUPL-1.2 or later (see LICENSE).
+ *
  * All Rights Reserved.  No use, copying or distribution of this
  * work may be made except in accordance with a valid license
  * agreement from Stefano Fornari.  This notice must be
@@ -16,64 +21,41 @@
 package ste.w3.easywallet.ui;
 
 import java.io.IOException;
-import java.util.function.Function;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
+import static ste.w3.easywallet.TestingConstants.WALLET1;
 import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class WalletCardControllerTest
+public class EditWalletControllerTest
 extends ApplicationTest
 implements Labels, TestingConstants, TestingUtils {
 
     final Wallet WALLET = new Wallet(WALLET1);
 
-    private WalletCardController controller = null;
+    private EditWalletController controller = null;
 
     @Override
     public void start(Stage stage) throws IOException {
-        Pane card = new EasyWalletFXMLLoader().loadCardPane(WALLET);
-        controller = (WalletCardController)card.getUserData();
+        Pane pane = new EasyWalletFXMLLoader().loadEditWalletDialogContent(WALLET);
+        controller = (EditWalletController)pane.getUserData();
 
-        showInStage(stage, card);
+        showInStage(stage, pane);
     }
+
 
     @Test
-    public void onDelete_when_delete_button_is_pressed() throws Exception {
-        final boolean[] TEST = new boolean[] {false};
+    public void initial_state() {
+        System.out.println(controller);
+        Then.then(controller.okButton).isDisabled();
 
-        controller.onDelete = new Function<String, Void>() {
-            @Override
-            public Void apply(String wallet) {
-                TEST[0] = true; return null;
-            }
-        };
-
-        clickOn("mfx-delete");
-
-        then(TEST[0]).isTrue();
-    }
-
-    @Test
-    public void nothing_when_delete_button_is_pressed_and_onDelete_is_null() throws Exception {
-        clickOn(".delete-button");
-        //
-        // nothing happens
-        //
-    }
-
-        @Test
-    public void show_private_key_dialog_when() {
-        clickOn(".edit-button");
-        Then.then(lookup(String.format(LABEL_EDIT_WALLET_PRIVATE_KEY_TITLE, WALLET.address))).hasWidgets();
     }
 
 }

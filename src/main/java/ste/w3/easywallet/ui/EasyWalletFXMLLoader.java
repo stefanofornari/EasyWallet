@@ -71,6 +71,18 @@ public class EasyWalletFXMLLoader {
             });
     }
 
+    public Pane loadEditWalletDialogContent(final Wallet wallet) {
+        return loadPane(
+            "/fxml/EditWalletDialog.fxml",
+            new Callback<Class<?>, Object>() {
+                /* controllerFactory */
+                @Override
+                public Object call(Class<?> p) {
+                    return new EditWalletController(wallet);
+                }
+            });
+    }
+
     public Pane loadPane(String resource, Callback<Class<?>, Object> controllerFactory) {
         try {
             final Object[] controllerWrapper = new Object[1];

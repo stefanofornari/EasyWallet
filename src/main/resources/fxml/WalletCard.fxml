@@ -61,12 +61,12 @@
             <children>
                 <MFXButton fx:id="editButton" contentDisplay="GRAPHIC_ONLY" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#editWallet" prefHeight="30.0" prefWidth="30.0" styleClass="rounded" text="mfx-gear">
                     <graphic>
-                        <MFXFontIcon description="mfx-gear" size="20.0" />
+                        <MFXFontIcon description="mfx-gear" size="20.0" styleClass="edit-button"/>
                     </graphic>
                 </MFXButton>
                 <MFXButton fx:id="deleteButton" contentDisplay="GRAPHIC_ONLY" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#deleteWallet" prefHeight="30.0" prefWidth="30.0" styleClass="rounded" text="mfx-delete">
                     <graphic>
-                        <MFXFontIcon description="mfx-delete" size="20.0" />
+                        <MFXFontIcon description="mfx-delete" size="20.0" styleClass="delete-button"/>
                     </graphic>
                 </MFXButton>
             </children>

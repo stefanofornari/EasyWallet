@@ -21,13 +21,7 @@
 package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTextField;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -35,7 +29,6 @@ import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
-import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
@@ -44,19 +37,17 @@ import ste.w3.easywallet.Wallet;
 /**
  *
  */
-public class AddWalletDialogTest extends ApplicationTest implements Labels, TestingConstants, TestingUtils {
+public class EditWalletDialogTest extends ApplicationTest implements Labels, TestingConstants, TestingUtils {
 
-    private final Wallet[] INVALID_WALLETS = new Wallet[] {
-        new Wallet(ADDRESS1), new Wallet(ADDRESS2)
-    };
+    private EditWalletDialog dialog;
 
-    private AddWalletDialog dialog;
+    private static final Wallet WALLET = new Wallet(WALLET1);
 
 
     @Override
     public void start(Stage stage) throws Exception {
         Pane mainWindow = new BorderPane();
-        dialog = new AddWalletDialog(mainWindow, INVALID_WALLETS);
+        dialog = new EditWalletDialog(WALLET);
 
         showInStage(stage, mainWindow);
 
@@ -64,54 +55,41 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
     }
 
     @Test
-    public void add_wallet_dialog_widgets() {
+    public void edit_wallet_dialog_widgets() {
         //
-        // The OK button is diantil there is a valid address
+        // The OK button is disabled until there is a valid address
         //
         then(lookup(".button").queryAllAs(MFXButton.class)).satisfiesExactlyInAnyOrder(
             new Consumer<MFXButton>() {
                 @Override
                 public void accept(MFXButton b) {
-                    Then.then(b).hasText(LABEL_BUTTON_OK).isDisabled();
+                    Then.then(b).hasText(LABEL_BUTTON_OK);
                     then(b.getStyleClass()).contains("primary-button");
                 }
             },
             new Consumer<MFXButton>() {
                 @Override
                 public void accept(MFXButton b) {
-                    Then.then(b).isEnabled().hasText(LABEL_BUTTON_CANCEL);
+                    Then.then(b).hasText(LABEL_BUTTON_CANCEL);
+                }
+            },
+            new Consumer<MFXButton>() {
+                @Override
+                public void accept(MFXButton b) {
+                    Then.then(b).hasText(LABEL_BUTTON_SEARCH);
                 }
             }
         );
 
-        Then.then(lookup(".mfx-text-field")).hasOneWidget();
-        Then.then(lookup(".mfx-radio-button")).hasNWidgets(2);
-        then(lookup(".mfx-radio-button").queryAllAs(RadioButton.class).toArray(new RadioButton[0])[0].isDisable()).isFalse();
-
-        //
-        // public address
-        //
-        MFXTextField text = lookup(".mfx-text-field").queryAs(MFXTextField.class);
-        then(text.getTextLimit()).isEqualTo(40);
-        then(text.getFloatingText()).isEqualTo(LABEL_ADDRESS);
-        then(text.getPromptText()).isEqualTo(LABEL_ADDRESS_HINT);
+        Then.then(lookup(".mfx-text-field")).hasNWidgets(2);
     }
 
     @Test
-    public void switch_labels_clicking_on_radios() {
-        MFXTextField text = lookup(".mfx-text-field").queryAs(MFXTextField.class);
-
-        clickOn(LABEL_RADIO_PRIVATE_KEY);
-        then(text.getTextLimit()).isEqualTo(64);
-        then(text.getFloatingText()).isEqualTo(LABEL_PRIVATE_KEY);
-        then(text.getPromptText()).isEqualTo(LABEL_PRIVATE_KEY_HINT);
-
-        clickOn(LABEL_RADIO_PUBLIC_ADDRESS);
-        then(text.getTextLimit()).isEqualTo(40);
-        then(text.getFloatingText()).isEqualTo(LABEL_ADDRESS);
-        then(text.getPromptText()).isEqualTo(LABEL_ADDRESS_HINT);
+    public void controller() {
+        then(dialog.controller).isNotNull();
     }
 
+    /*
     @Test
     public void no_more_than_40_chars() {
         clickOn(".mfx-text-field"); type(KeyCode.DIGIT0, 50);
@@ -253,4 +231,5 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
 
         then(ret[0]).isEqualTo(ADDRESS6);
     }
+    */
 }

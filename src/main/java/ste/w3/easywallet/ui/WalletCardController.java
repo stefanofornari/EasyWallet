@@ -81,7 +81,19 @@ public class WalletCardController {
 
     @FXML
     public void editWallet() {
-        System.out.println("HELLO!");
+        EditWalletDialog dialog = new EditWalletDialog(wallet);
+        /*
+        dialog.onOk = new Function<Wallet, Void>() {
+            @Override
+            public Void apply(Wallet wallet) {
+                main.addWallet(wallet);
+                addCard(wallet);
+
+                return null;
+            }
+        };
+        */
+        dialog.showAndWait();
     }
 
     @FXML
