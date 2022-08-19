@@ -27,23 +27,17 @@ import java.util.HashSet;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
-import javafx.scene.layout.Pane;
 import org.web3j.crypto.WalletUtils;
-import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
 
 /**
  *
  */
-public class AddWalletController implements Labels {
+public class AddWalletController extends WalletDialogController {
 
-    private final MFXGenericDialog dialog;
     private final Set<String> invalidAddresses = new HashSet();
 
     @FXML
@@ -52,16 +46,21 @@ public class AddWalletController implements Labels {
     @FXML
     private RadioButton addressRadio;
 
-    public AddWalletController(final MFXGenericDialog dialog, final Wallet[] invalidWallets) {
-        this.dialog = dialog;
+    public AddWalletController(final MFXGenericDialog dialog) {
+        super(dialog);
+    }
 
-        for (Wallet w: invalidWallets) {
-            invalidAddresses.add(w.address);
+    public void setInvalidWallets(Wallet[] wallets) {
+        if (wallets != null) {
+            for (Wallet w: wallets) {
+                invalidAddresses.add(w.address);
+            }
         }
     }
 
     @FXML
     public void initialize() {
+        super.initialize();
         text.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         text.textProperty().addListener(new ChangeListener() {
             @Override
@@ -84,7 +83,7 @@ public class AddWalletController implements Labels {
                     valid = !invalidAddresses.contains(t);
                 }
                 text.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !valid);
-                getOkButton().disableProperty().set(!valid);
+                okButton.disableProperty().set(!valid);
             }
         });
     }
@@ -106,13 +105,5 @@ public class AddWalletController implements Labels {
 
     public Wallet onOk() {
         return addressRadio.isSelected() ? new Wallet(text.getText()) : WalletManager.fromPrivateKey(text.getText());
-    }
-
-
-    // --------------------------------------------------------- private methods
-
-    private Button getOkButton() {
-        ObservableList<Node> actions = ((Pane)dialog.getBottom()).getChildren();
-        return (Button)actions.get(1);
     }
 }

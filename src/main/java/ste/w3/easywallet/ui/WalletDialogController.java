@@ -21,21 +21,36 @@
 package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class AddWalletDialog extends WalletDialog {
-    public AddWalletDialog(Pane owner, Wallet[] invalidWallets) {
-        super(owner, LABEL_ADD_WALLET_DIALOG_TITLE);
-        ((AddWalletController)controller).setInvalidWallets(invalidWallets);
+public abstract class  WalletDialogController implements Labels {
+
+    protected final MFXGenericDialog dialog;
+
+    protected Button okButton, cancelButton;
+
+    public WalletDialogController(final MFXGenericDialog dialog) {
+        this.dialog = dialog;
     }
 
-    @Override
-    protected Pane content() {
-        return new EasyWalletFXMLLoader().loadAddWalletDialogContent((MFXGenericDialog)getContent());
+    @FXML
+    public void initialize() {
+        ObservableList<Node> actions = ((Pane)dialog.getBottom()).getChildren();
     }
+
+    public void setActionButtons(Button ok, Button cancel) {
+        okButton = ok; cancelButton = cancel;
+    }
+
+    abstract protected Wallet onOk();
 
 }

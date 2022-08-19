@@ -72,14 +72,18 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
             new Consumer<MFXButton>() {
                 @Override
                 public void accept(MFXButton b) {
+                    System.out.println("CHECK1 " + b);
                     Then.then(b).hasText(LABEL_BUTTON_OK).isDisabled();
                     then(b.getStyleClass()).contains("primary-button");
+                    System.out.println("CHECK2");
                 }
             },
             new Consumer<MFXButton>() {
                 @Override
                 public void accept(MFXButton b) {
+                    System.out.println("CHECK3" + b);
                     Then.then(b).isEnabled().hasText(LABEL_BUTTON_CANCEL);
+                    System.out.println("CHECK4");
                 }
             }
         );
