@@ -79,7 +79,7 @@ public class WalletCardController {
 
     @FXML
     public void editWallet() {
-        EditWalletDialog dialog = new EditWalletDialog(walletCard, wallet);
+        EditWalletDialog dialog = new EditWalletDialog((Pane)walletCard.getScene().getRoot(), wallet);
         dialog.showAndWait();
     }
 
