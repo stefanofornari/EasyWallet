@@ -22,13 +22,20 @@ package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.TitledPane;
 import ste.w3.easywallet.Wallet;
+import ste.w3.easywallet.WalletManager;
 
 /**
  *
  */
-public class EditWalletController {
+public class EditWalletController extends WalletDialogController {
 
     @FXML
     protected MFXButton searchButton;
@@ -39,21 +46,73 @@ public class EditWalletController {
     @FXML
     protected MFXTextField keyText;
 
-    protected MFXButton okButton = new MFXButton();
-    protected MFXButton cancelButton;
+    @FXML
+    protected TitledPane mnemonicPane;
 
+    private Wallet wallet;
 
-    protected final Wallet wallet;
-
-    public EditWalletController(Wallet wallet) {
-        this.wallet = wallet;
+    public EditWalletController(final MFXGenericDialog dialog) {
+        super(dialog);
     }
 
     @FXML
     public void initialize() {
-        okButton.setDisable(true);
+        super.initialize();
+        mnemonicPane.setExpanded(false);
+
+        mnemonicPane.expandedProperty().addListener( (obs, oldValue, newValue) -> {
+            Platform.runLater( () -> {
+                mnemonicPane.requestLayout();
+                mnemonicPane.getScene().getWindow().sizeToScene();
+            });
+        });
+
+        keyText.textProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue o, Object oldValue, Object newValue) {
+                boolean valid = false;
+                String t = keyText.getText();
+
+                if (t.length() == 64) {
+                    try {
+                        t = WalletManager.fromPrivateKey(t).address;
+                        valid = true;
+                    } catch (NumberFormatException x) {
+                    }
+                }
+                keyText.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !valid);
+                okButton.setDisable(!valid);
+            }
+        });
+    }
+
+    public Wallet wallet() {
+        return wallet;
+    }
+
+    public void wallet(final Wallet wallet) {
+        this.wallet = wallet;
+        if ((wallet != null) && (wallet.privateKey != null)) {
+            keyText.setText(wallet.privateKey);
+        }
     }
 
     // --------------------------------------------------------- private methods
+
+    /**
+     * Invoked when the ok button is pressed.
+     *
+     * @return the updated wallet
+     *
+     * @throws IllegalStateException if wallet has not been set
+     */
+    @Override
+    protected Wallet onOk() throws IllegalStateException {
+        if (wallet == null) {
+            throw new IllegalStateException("wallet shall be set before onOk can be invoked");
+        }
+        wallet.privateKey = keyText.getText();
+        return wallet;
+    }
 
 }

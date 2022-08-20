@@ -40,7 +40,7 @@ implements Labels, TestingConstants, TestingUtils {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Pane card = new EasyWalletFXMLLoader().loadCardPane(WALLET);
+        Pane card = new EasyWalletFXMLLoader().loadCardPane(new Wallet[0], WALLET);
         controller = (WalletCardController)card.getUserData();
 
         showInStage(stage, card);

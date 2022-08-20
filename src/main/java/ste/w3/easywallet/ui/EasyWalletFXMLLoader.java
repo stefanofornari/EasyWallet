@@ -32,7 +32,7 @@ import ste.w3.easywallet.Wallet;
  */
 public class EasyWalletFXMLLoader {
 
-    public Pane loadMainWindow(EasyWalletMain main) {
+    public Pane loadMainWindow(final EasyWalletMain main) {
         return loadPane(
             "/fxml/EasyWalletMain.fxml",
             new Callback<Class<?>, Object>() {
@@ -44,14 +44,14 @@ public class EasyWalletFXMLLoader {
             });
     }
 
-    public Pane loadCardPane(Wallet wallet) {
+    public Pane loadCardPane(final Wallet[] invalidWallets, final Wallet wallet) {
         return loadPane(
             "/fxml/WalletCard.fxml",
             new Callback<Class<?>, Object>() {
                 /* controllerFactory */
                 @Override
                 public Object call(Class<?> p) {
-                    return new WalletCardController(wallet);
+                    return new WalletCardController(invalidWallets, wallet);
                 }
             });
     }
@@ -70,14 +70,16 @@ public class EasyWalletFXMLLoader {
             });
     }
 
-    public Pane loadEditWalletDialogContent(final Wallet wallet) {
+    public Pane loadEditWalletDialogContent(
+        final MFXGenericDialog dialog
+    ) {
         return loadPane(
             "/fxml/EditWalletDialog.fxml",
             new Callback<Class<?>, Object>() {
                 /* controllerFactory */
                 @Override
                 public Object call(Class<?> p) {
-                    return new EditWalletController(wallet);
+                    return new EditWalletController(dialog);
                 }
             });
     }

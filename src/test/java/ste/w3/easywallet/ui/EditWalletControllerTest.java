@@ -23,12 +23,13 @@ package ste.w3.easywallet.ui;
 import java.io.IOException;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import static org.assertj.core.api.BDDAssertions.fail;
+import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
-import static ste.w3.easywallet.TestingConstants.WALLET1;
 import ste.w3.easywallet.Wallet;
 
 /**
@@ -38,24 +39,53 @@ public class EditWalletControllerTest
 extends ApplicationTest
 implements Labels, TestingConstants, TestingUtils {
 
-    final Wallet WALLET = new Wallet(WALLET1);
+    final Wallet WALLET = new Wallet(ADDRESS3);
 
     private EditWalletController controller = null;
 
     @Override
     public void start(Stage stage) throws IOException {
-        Pane pane = new EasyWalletFXMLLoader().loadEditWalletDialogContent(WALLET);
-        controller = (EditWalletController)pane.getUserData();
+        WALLET.privateKey = PRIVATE_KEY3;
+        EditWalletDialog dialog = new EditWalletDialog(new Pane(), WALLET);
+        controller = (EditWalletController)dialog.controller;
 
-        showInStage(stage, pane);
+        showInStage(stage, dialog.getOwnerNode());
+
+        dialog.show();
     }
-
 
     @Test
     public void initial_state() {
-        System.out.println(controller);
-        Then.then(controller.okButton).isDisabled();
-
+        Then.then(controller.keyText).hasText(PRIVATE_KEY3);
+        Then.then(controller.okButton).isEnabled();
+        then(controller.mnemonicPane.isExpanded()).isFalse();
     }
 
+    @Test
+    public void IllegalStateException_is_wallet_is_null_on_onOk() {
+        controller.wallet(null);
+        try {
+            controller.onOk();
+            fail("illegal state not detected");
+        } catch (IllegalStateException x) {
+            then(x).hasMessage("wallet shall be set before onOk can be invoked");
+        }
+    }
+
+    @Test
+    public void set_and_get_wallet() {
+        final Wallet W = new Wallet(WALLET1);
+        final String MNEMONIC = "this is a fake mnemonic phrase";
+        final String KEY = "this is a fake private key";
+
+        W.mnemonicPhrase = MNEMONIC; W.privateKey = KEY;
+
+        controller.wallet(null);
+        then(controller.wallet()).isNull();
+        controller.wallet(W);
+        then(controller.wallet()).isSameAs(W);
+        then(W.address).isEqualTo(WALLET1);
+        then(W.mnemonicPhrase).isEqualTo(MNEMONIC);
+        then(W.privateKey).isEqualTo(KEY);
+    }
 }

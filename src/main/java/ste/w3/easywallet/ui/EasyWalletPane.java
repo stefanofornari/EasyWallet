@@ -34,7 +34,7 @@ public class EasyWalletPane extends Pane {
         if (wallets != null) {
             for(Wallet wallet: wallets) {
                 getChildren().add(
-                    new EasyWalletFXMLLoader().loadCardPane(wallet)
+                    new EasyWalletFXMLLoader().loadCardPane(wallets, wallet)
                 );
             }
         }

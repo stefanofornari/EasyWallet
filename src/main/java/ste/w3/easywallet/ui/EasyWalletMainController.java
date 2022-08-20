@@ -91,6 +91,7 @@ public class EasyWalletMainController {
         for (Wallet wallet : main.getPreferences().wallets) {
             addCard(wallet);
         }
+
         closeErrorButton.getRippleGenerator().setClipSupplier(
             () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(closeErrorButton)
         );
@@ -143,7 +144,7 @@ public class EasyWalletMainController {
     }
 
     private void addCard(Wallet wallet) {
-        Pane card = new EasyWalletFXMLLoader().loadCardPane(wallet);
+        Pane card = new EasyWalletFXMLLoader().loadCardPane(main.getPreferences().wallets, wallet);
         WalletCardController controller = (WalletCardController)card.getUserData();
         controller.onDelete = new Function<String, Void>() {
             @Override

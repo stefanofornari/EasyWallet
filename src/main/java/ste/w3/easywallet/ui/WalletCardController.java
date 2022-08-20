@@ -50,15 +50,13 @@ public class WalletCardController {
     private Label labelBalance;
 
     public final Wallet wallet;
+    public final Wallet[] invalidWallets;
 
     public Function<String, Void> onDelete;
 
-    public WalletCardController(Wallet wallet) {
+    public WalletCardController(Wallet[] invalidWallets, Wallet wallet) {
+        this.invalidWallets = invalidWallets;
         this.wallet = wallet;
-    }
-
-    public WalletCardController() {
-        wallet = null;
     }
 
     @FXML
@@ -81,18 +79,7 @@ public class WalletCardController {
 
     @FXML
     public void editWallet() {
-        EditWalletDialog dialog = new EditWalletDialog(wallet);
-        /*
-        dialog.onOk = new Function<Wallet, Void>() {
-            @Override
-            public Void apply(Wallet wallet) {
-                main.addWallet(wallet);
-                addCard(wallet);
-
-                return null;
-            }
-        };
-        */
+        EditWalletDialog dialog = new EditWalletDialog(walletCard, wallet);
         dialog.showAndWait();
     }
 

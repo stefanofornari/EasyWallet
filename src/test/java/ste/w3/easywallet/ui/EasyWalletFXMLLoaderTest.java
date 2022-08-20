@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import javafx.scene.layout.Pane;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
@@ -34,6 +35,8 @@ public class EasyWalletFXMLLoaderTest extends ApplicationTest {
 
     private final EasyWalletFXMLLoader instance = new EasyWalletFXMLLoader();
 
+    private final static Wallet[] I = new Wallet[0]; // invlid wallets
+
 
     @Test
     public void loaded_main_window_pane_has_controller() {
@@ -43,22 +46,25 @@ public class EasyWalletFXMLLoaderTest extends ApplicationTest {
 
     @Test
     public void loaded_card_pane_has_controller_and_id() {
-        Pane pane = instance.loadCardPane(new Wallet(TestingConstants.WALLET1));
+        Pane pane = instance.loadCardPane(I, new Wallet(TestingConstants.WALLET1));
         then(pane.getUserData()).isNotNull().isInstanceOf(WalletCardController.class);
         then(pane.getId()).isEqualTo(TestingConstants.WALLET1);
 
-        pane = instance.loadCardPane(new Wallet(TestingConstants.WALLET2));
+        then(pane).isNotNull();
+        pane = instance.loadCardPane(I, new Wallet(TestingConstants.WALLET2));
         then(pane.getId()).isEqualTo(TestingConstants.WALLET2);
     }
 
     @Test
     public void loaded_edit_wallet_content_has_controller() {
         final Wallet W = new Wallet(TestingConstants.WALLET1);
-        Pane pane = instance.loadEditWalletDialogContent(W);
 
+        Pane pane = instance.loadEditWalletDialogContent(MFXGenericDialogBuilder.build().get());
+
+        then(pane).isNotNull();
         EditWalletController controller = (EditWalletController)pane.getUserData();
         then(controller).isNotNull().isInstanceOf(EditWalletController.class);
-        then(controller.wallet).isSameAs(W);
+        then(controller.wallet()).isNull();
     }
 
 }

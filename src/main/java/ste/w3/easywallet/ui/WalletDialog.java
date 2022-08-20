@@ -49,7 +49,7 @@ public abstract class WalletDialog extends MFXStageDialog implements Labels {
                 .get()
         );
 
-        setScrimOwner(false);
+        setScrimOwner(true);
         setOverlayClose(true);
         // ---
         // At the moment centerInOwnernode shows a bad effect appearing in the

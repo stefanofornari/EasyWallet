@@ -35,7 +35,7 @@ public interface Labels {
     public final String LABEL_ADDRESS_HINT = "eg: 00000000219ab540356cBB839Cbe05303d7705Fa";
 
     public final String LABEL_PRIVATE_KEY = "Insert the 32 hex bytes private key";
-    public final String LABEL_PRIVATE_KEY_HINT = "008a2b2d41febc2bef749ecec009b86e5fa18753439b28789658eb7b411397abb6";
+    public final String LABEL_PRIVATE_KEY_HINT = "8a2b2d41febc2bef749ecec009b86e5fa18753439b28789658eb7b411397abb6";
 
     public final String LABEL_EDIT_WALLET_PRIVATE_KEY_TITLE = "Edit 0x'%s Private Key";
 

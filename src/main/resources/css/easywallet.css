@@ -43,17 +43,21 @@
 *******************************************************************************/
 
 .root {
+    -fx-background-color: -ew-primary-bg-color;
     -fx-border-color: white;
     -fx-border-width: 3 3 3 3;
 }
 
 .button {
+    -fx-border-radius: 0;
+    -fx-border-color: rgba(0, 0, 0, 0.33);
     -fx-background-radius:  0;
 }
 
 .rounded {
     -fx-background-radius: 25;
     -fx-border-radius: 25;
+    -fx-border-width: 0;
 }
 
 .primary-color {
@@ -77,6 +81,10 @@
 
 .error .label, .error .button {
     -fx-text-fill: -ew-error-color;
+}
+
+.titled-pane {
+    -fx-background-color: white;
 }
 
 #btn_add_wallet {
