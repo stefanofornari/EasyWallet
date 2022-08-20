@@ -117,11 +117,17 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
     }
 
     @Test
-    public void no_more_than_40_chars() {
+    public void no_more_than_40_64_chars() {
         clickOn(".mfx-text-field"); type(KeyCode.DIGIT0, 50);
         Then.then(
             lookup(".mfx-text-field").queryAs(TextField.class)
         ).hasText("0000000000000000000000000000000000000000"); // only 40 chars
+
+        clickOn(LABEL_RADIO_PRIVATE_KEY); clickOn(".mfx-text-field"); type(KeyCode.DIGIT0, 30);
+        Then.then(
+            lookup(".mfx-text-field").queryAs(TextField.class)
+        ).hasText("0000000000000000000000000000000000000000000000000000000000000000"); // only 64 chars
+
     }
 
     @Test
@@ -145,8 +151,8 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         clickOn(".mfx-text-field"); type(KeyCode.DIGIT0);
         Then.then(b).isDisabled();
         type(KeyCode.DIGIT0); Then.then(b).isDisabled();
-        f.setText(PRIVATE_KEY3.substring(2)); waitForFxEvents(); Then.then(b).isDisabled();
-        f.setText(PRIVATE_KEY3); waitForFxEvents(); Then.then(b).isEnabled();
+        f.setText(PRIVATE_KEY3.substring(2)); Then.then(b).isDisabled();
+        f.setText(PRIVATE_KEY3); Then.then(b).isEnabled();
         type(KeyCode.END, KeyCode.BACK_SPACE); Then.then(b).isDisabled();
         type(KeyCode.Z); Then.then(b).isDisabled();
         type(KeyCode.BACK_SPACE); type(KeyCode.COLON); Then.then(b).isDisabled();
