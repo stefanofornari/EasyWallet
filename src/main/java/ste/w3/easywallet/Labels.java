@@ -37,6 +37,10 @@ public interface Labels {
     public final String LABEL_PRIVATE_KEY = "Insert the 32 hex bytes private key";
     public final String LABEL_PRIVATE_KEY_HINT = "8a2b2d41febc2bef749ecec009b86e5fa18753439b28789658eb7b411397abb6";
 
+    public final String LABEL_MNEMONIC_TITLE = "I do not have the privide key, I have a mnemonic phrase...";
+    public final String LABEL_MNEMONIC_PHRASE = "Insert the 12 word mnemonic phrase";
+    public final String LABEL_MNEMONIC_PHRASE_HINT = "alert record income curve mercy tree heavy loan hen recycle mean devote";
+
     public final String LABEL_EDIT_WALLET_PRIVATE_KEY_TITLE = "Edit 0x'%s Private Key";
 
     public final String ERR_NETWORK = "I am unable to retrieve the information from the provider, check that your internet connection is working and the endpoint is correct";

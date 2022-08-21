@@ -24,8 +24,8 @@
                <children>
                   <VBox alignment="TOP_CENTER" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
-                        <MFXTextField fx:id="mnemonicText" floatingText="Insert the 12 word mnemonic phrase" prefColumnCount="36" promptText="alert record income curve mercy tree heavy loan hen recycle mean devote" />
-                        <MFXButton text="SEARCH" />
+                        <MFXTextField fx:id="mnemonicText" floatingText="Insert the 12 word mnemonic phrase" prefColumnCount="36" promptText="alert record income curve mercy tree heavy loan hen recycle mean devote" textLimit="200" />
+                        <MFXButton fx:id="searchButton" onAction="#onSearch" text="SEARCH" />
                      </children>
                      <padding>
                         <Insets top="10.0" />

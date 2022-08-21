@@ -24,11 +24,15 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TitledPane;
+import org.apache.commons.lang.StringUtils;
+import ste.w3.easywallet.BIP32Utils;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
 
@@ -84,6 +88,18 @@ public class EditWalletController extends WalletDialogController {
                 okButton.setDisable(!valid);
             }
         });
+
+        mnemonicText.textProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue o, Object oldValue, Object newValue) {
+                final String text = ((String)newValue);
+
+                boolean valid = (StringUtils.split(text).length == 12);
+
+                mnemonicText.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !valid);
+                searchButton.setDisable(!valid);
+            }
+        });
     }
 
     public Wallet wallet() {
@@ -92,9 +108,29 @@ public class EditWalletController extends WalletDialogController {
 
     public void wallet(final Wallet wallet) {
         this.wallet = wallet;
-        if ((wallet != null) && (wallet.privateKey != null)) {
-            keyText.setText(wallet.privateKey);
+        if (wallet != null) {
+            if (wallet.privateKey != null) {
+                keyText.setText(wallet.privateKey);
+            }
+            if (wallet.mnemonicPhrase != null) {
+                mnemonicText.setText(wallet.mnemonicPhrase);
+            }
         }
+    }
+
+    @FXML
+    protected void onSearch(ActionEvent e) {
+        BIP32Utils BIP32 = new BIP32Utils();
+
+        BIP32.privateKeyFromMnemonicAndAddress(
+            mnemonicText.getText(), wallet.address,
+            new Function<>() {
+                @Override
+                public Boolean apply(String key) {
+                    keyText.setText(key); return true;
+                }
+            }
+        );
     }
 
     // --------------------------------------------------------- private methods
