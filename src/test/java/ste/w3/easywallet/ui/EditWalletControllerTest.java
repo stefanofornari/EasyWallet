@@ -47,7 +47,7 @@ implements Labels, TestingConstants, TestingUtils {
     public void start(Stage stage) throws IOException {
         WALLET.privateKey = PRIVATE_KEY3;
         EditWalletDialog dialog = new EditWalletDialog(new Pane(), WALLET);
-        controller = (EditWalletController)dialog.controller;
+        controller = dialog.controller;
 
         showInStage(stage, dialog.getOwnerNode());
 

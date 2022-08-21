@@ -34,8 +34,8 @@ import ste.w3.easywallet.Wallet;
 /**
  *
  */
-public abstract class WalletDialog extends MFXStageDialog implements Labels {
-    protected WalletDialogController controller;
+public abstract class WalletDialog<T extends WalletDialogController> extends MFXStageDialog implements Labels {
+    protected T controller;
 
     public Function<Wallet, Void> onOk;
 
@@ -80,7 +80,7 @@ public abstract class WalletDialog extends MFXStageDialog implements Labels {
             "-fx-border-color: -ew-primary-color;"
         );
 
-        controller = (WalletDialogController)dialog.getContent().getUserData();
+        controller = (T)dialog.getContent().getUserData();
         dialog.addActions(
             Map.entry(cancelButton, e -> {
                 close();
@@ -98,7 +98,7 @@ public abstract class WalletDialog extends MFXStageDialog implements Labels {
         setDraggable(true);
         setOwnerNode(owner);
     }
-
+    
     abstract Pane content();
 
 }

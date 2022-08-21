@@ -27,10 +27,10 @@ import ste.w3.easywallet.Wallet;
 /**
  *
  */
-public class AddWalletDialog extends WalletDialog {
+public class AddWalletDialog extends WalletDialog<AddWalletController> {
     public AddWalletDialog(Pane owner, Wallet[] invalidWallets) {
         super(owner, LABEL_ADD_WALLET_DIALOG_TITLE);
-        ((AddWalletController)controller).setInvalidWallets(invalidWallets);
+        controller.setInvalidWallets(invalidWallets);
     }
 
     @Override
