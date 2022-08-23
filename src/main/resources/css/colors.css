@@ -5,6 +5,5 @@
 	-ew-secondary-color: #eb934c;
         -ew-error-color: #ef6e6b;
         -ew-primary-bg-color: white;
-        /*-ew-neutral-dark-gray: black rgb(62, 62, 62);*/
-        -ew-neutral-dark-gray: black;
+        -ew-neutral-dark-gray: black rgb(50, 50, 50);
 }
