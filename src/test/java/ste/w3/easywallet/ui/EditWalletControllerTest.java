@@ -29,11 +29,11 @@ import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
+import static org.testfx.util.WaitForAsyncUtils.waitFor;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
-import ste.xtest.concurrent.WaitFor;
 
 /**
  *
@@ -92,7 +92,7 @@ implements Labels, TestingConstants, TestingUtils {
         then(W.privateKey).isEqualTo(KEY);
     }
 
-    @Test
+    @Test(timeout = 5000)
     public void onSearch_finds_valid_key() {
         final Wallet W3 = new Wallet(ADDRESS3);
         final Wallet W6 = new Wallet(ADDRESS6);
@@ -101,26 +101,18 @@ implements Labels, TestingConstants, TestingUtils {
             controller.wallet(W6);
             controller.mnemonicText.setText(MNEMONIC3);
             controller.onSearch(null);
-        });
+        }); waitForFxEvents();
 
-        waitForFxEvents();
-
-
-        new WaitFor(250, () -> {
-            return PRIVATE_KEY6.equals(controller.keyText.getText());
-        });
+        waitFor(controller.searchTask);
+        Then.then(controller.keyText).hasText(PRIVATE_KEY6);
 
         Platform.runLater(() -> {
             controller.wallet(W3);
             controller.mnemonicText.setText(LABEL_MNEMONIC_PHRASE_HINT);
             controller.onSearch(null);
-        });
+        }); waitForFxEvents();
 
-        waitForFxEvents();
-
-        new WaitFor(250, () -> {
-            return PRIVATE_KEY3.equals(controller.keyText.getText());
-        });
-
+        waitFor(controller.searchTask);
+        Then.then(controller.keyText).hasText(PRIVATE_KEY3);
     }
 }

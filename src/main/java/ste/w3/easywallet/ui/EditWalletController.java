@@ -28,6 +28,7 @@ import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TitledPane;
@@ -52,6 +53,8 @@ public class EditWalletController extends WalletDialogController {
 
     @FXML
     protected TitledPane mnemonicPane;
+
+    protected Task searchTask;
 
     private Wallet wallet;
 
@@ -120,17 +123,56 @@ public class EditWalletController extends WalletDialogController {
 
     @FXML
     protected void onSearch(ActionEvent e) {
-        BIP32Utils BIP32 = new BIP32Utils();
 
-        BIP32.privateKeyFromMnemonicAndAddress(
-            mnemonicText.getText(), wallet.address,
-            new Function<>() {
-                @Override
-                public Boolean apply(String key) {
-                    keyText.setText(key); return true;
-                }
+        //
+        // todo: prevent to start a task if one is already running
+        //
+        searchTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("STARTED!");
+
+                BIP32Utils BIP32 = new BIP32Utils();
+
+                BIP32.privateKeyFromMnemonicAndAddress(
+                    mnemonicText.getText(), wallet.address,
+                    new Function<>() {
+                        @Override
+                        public Boolean apply(String key) {
+                            //System.out.println(key);
+                            updateMessage(key); return true; // TODO: make it stoppable
+                        }
+                    }
+                );
+                System.out.println("DONE!");
+                return null;
             }
-        );
+
+            @Override
+            protected void succeeded() {
+                cleanup();
+            }
+
+            @Override
+            protected void failed() {
+                cleanup();
+            }
+
+            @Override
+            protected void cancelled() {
+                cleanup();
+            }
+
+            private void cleanup() {
+                System.out.println("CLEANUP");
+                keyText.textProperty().unbind();
+            }
+
+        };
+
+        keyText.textProperty().bind(searchTask.messageProperty());
+
+        new Thread(searchTask).start();
     }
 
     // --------------------------------------------------------- private methods

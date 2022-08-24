@@ -64,7 +64,7 @@ implements Labels, TestingConstants, TestingUtils {
 
     @Test
     public void nothing_when_delete_button_is_pressed_and_onDelete_is_null() throws Exception {
-        clickOn(".delete-button");
+        clickOn("#deleteButton");
         //
         // nothing happens
         //
@@ -72,7 +72,7 @@ implements Labels, TestingConstants, TestingUtils {
 
         @Test
     public void show_private_key_dialog_when() {
-        clickOn(".edit-button");
+        clickOn("#editButton");
         Then.then(lookup(String.format(LABEL_EDIT_WALLET_PRIVATE_KEY_TITLE, WALLET.address))).hasWidgets();
     }
 
