@@ -82,6 +82,12 @@ public class EditWalletDialogTest extends ApplicationTest implements Labels, Tes
                 public void accept(MFXButton b) {
                     Then.then(b).hasText(LABEL_BUTTON_SEARCH);
                 }
+            },
+            new Consumer<MFXButton>() {
+                @Override
+                public void accept(MFXButton b) {
+                    Then.then(b).hasText(LABEL_BUTTON_CANCEL);
+                }
             }
         );
 

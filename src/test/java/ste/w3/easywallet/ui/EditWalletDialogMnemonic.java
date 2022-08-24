@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -29,6 +30,7 @@ import javafx.stage.Stage;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
@@ -94,7 +96,24 @@ public class EditWalletDialogMnemonic extends ApplicationTest implements Labels,
         new WaitFor(250, () -> {
             return PRIVATE_KEY6.equals(lookup("#keyText").queryAs(TextField.class).getText());
         });
+    }
 
+    @Test
+    public void search_button_turns_into_cancel_and_back_to_search() {
+        Platform.runLater(() -> {
+            dialog.controller.wallet(new Wallet(ADDRESS7));
+        }); waitForFxEvents();
+
+        lookup("#mnemonicText").queryAs(TextField.class).setText(LABEL_MNEMONIC_PHRASE_HINT);
+        clickOn("#searchButton");
+        Then.then(lookup("#searchButton").queryButton()).isDisabled().isInvisible();
+        sleep(50);
+        clickOn("#cancelButton");
+
+        new WaitFor(50, () -> {
+            Button b = lookup("#searchButton").queryButton();
+            return b.isVisible() && !b.isDisabled();
+        });
     }
 
     // --------------------------------------------------------- private methods

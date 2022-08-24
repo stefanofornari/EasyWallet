@@ -5,6 +5,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -25,7 +26,12 @@
                   <VBox alignment="TOP_CENTER" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
                         <MFXTextField fx:id="mnemonicText" floatingText="Insert the 12 word mnemonic phrase" prefColumnCount="36" promptText="alert record income curve mercy tree heavy loan hen recycle mean devote" textLimit="200" />
-                        <MFXButton fx:id="searchButton" onAction="#onSearch" text="SEARCH" />
+                        <StackPane>
+                           <children>
+                              <MFXButton fx:id="searchCancelButton" disable="true" onAction="#onSearchCancel" text="CANCEL" visible="false" />
+                              <MFXButton fx:id="searchButton" onAction="#onSearch" text="SEARCH" />
+                           </children>
+                        </StackPane>
                      </children>
                      <padding>
                         <Insets top="10.0" />

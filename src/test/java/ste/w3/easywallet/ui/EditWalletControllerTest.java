@@ -21,6 +21,7 @@
 package ste.w3.easywallet.ui;
 
 import java.io.IOException;
+import java.util.concurrent.CancellationException;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -34,6 +35,7 @@ import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
+import ste.w3.easywallet.ui.EditWalletController.KeySearchTask;
 
 /**
  *
@@ -62,6 +64,8 @@ implements Labels, TestingConstants, TestingUtils {
         Then.then(controller.keyText).hasText(PRIVATE_KEY3);
         Then.then(controller.okButton).isEnabled();
         then(controller.mnemonicPane.isExpanded()).isFalse();
+        Then.then(controller.searchButton).isVisible().isEnabled();
+        Then.then(controller.searchCancelButton).isInvisible().isDisabled();
     }
 
     @Test
@@ -114,5 +118,44 @@ implements Labels, TestingConstants, TestingUtils {
 
         waitFor(controller.searchTask);
         Then.then(controller.keyText).hasText(PRIVATE_KEY3);
+    }
+
+    @Test(timeout = 5000)
+    public void onSearchCancel_stops_the_search() {
+        Platform.runLater(() -> {
+            controller.wallet(new Wallet(ADDRESS7));
+            controller.mnemonicText.setText(MNEMONIC3);
+            controller.onSearch(null);
+            sleep(25);
+            controller.onSearchCancel(null);
+        }); waitForFxEvents();
+
+        try {
+            waitFor(controller.searchTask);
+        } catch (CancellationException x) {
+            // OK!
+        }
+
+        Platform.runLater(() -> {
+            then(controller.searchTask.isRunning()).isFalse();
+            then(controller.searchTask.isCancelled()).isTrue();
+            then(controller.keyText.getText()).isNotEqualTo(PRIVATE_KEY3);
+        }); waitForFxEvents();
+    }
+
+    @Test
+    public void search_button_turns_into_cancel_and_back_to_search() {
+        KeySearchTask task = new KeySearchTask(controller);
+        controller.searchTask = task;
+
+        Platform.runLater(() -> {
+            task.running();
+            Then.then(controller.searchButton).isInvisible().isDisabled();
+            Then.then(controller.searchCancelButton).isVisible().isEnabled();
+
+            task.succeeded();
+            Then.then(controller.searchButton).isVisible().isEnabled();
+            Then.then(controller.searchCancelButton).isInvisible().isDisabled();
+        }); waitForFxEvents();
     }
 }

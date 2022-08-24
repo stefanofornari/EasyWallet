@@ -46,6 +46,9 @@ public class EditWalletController extends WalletDialogController {
     protected MFXButton searchButton;
 
     @FXML
+    protected MFXButton searchCancelButton;
+
+    @FXML
     protected MFXTextField mnemonicText;
 
     @FXML
@@ -122,60 +125,18 @@ public class EditWalletController extends WalletDialogController {
     }
 
     @FXML
+    protected void onSearchCancel(ActionEvent e) {
+        searchTask.cancel();
+    }
+
+    @FXML
     protected void onSearch(ActionEvent e) {
 
         //
         // todo: prevent to start a task if one is already running
         //
-        searchTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                System.out.println("STARTED!");
-
-                BIP32Utils BIP32 = new BIP32Utils();
-
-                BIP32.privateKeyFromMnemonicAndAddress(
-                    mnemonicText.getText(), wallet.address,
-                    new Function<>() {
-                        @Override
-                        public Boolean apply(String key) {
-                            //System.out.println(key);
-                            updateMessage(key); return true; // TODO: make it stoppable
-                        }
-                    }
-                );
-                System.out.println("DONE!");
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                cleanup();
-            }
-
-            @Override
-            protected void failed() {
-                cleanup();
-            }
-
-            @Override
-            protected void cancelled() {
-                cleanup();
-            }
-
-            private void cleanup() {
-                System.out.println("CLEANUP");
-                keyText.textProperty().unbind();
-            }
-
-        };
-
-        keyText.textProperty().bind(searchTask.messageProperty());
-
-        new Thread(searchTask).start();
+        new Thread(searchTask = new KeySearchTask(this)).start();
     }
-
-    // --------------------------------------------------------- private methods
 
     /**
      * Invoked when the ok button is pressed.
@@ -193,4 +154,67 @@ public class EditWalletController extends WalletDialogController {
         return wallet;
     }
 
+    // --------------------------------------------------------- private methods
+
+    private void swapButtons() {
+        searchButton.setDisable(!searchButton.isDisabled());
+        searchButton.setVisible(!searchButton.isVisible());
+        searchCancelButton.setDisable(!searchCancelButton.isDisabled());
+        searchCancelButton.setVisible(!searchCancelButton.isVisible());
+    }
+
+
+    // ----------------------------------------------------------- KeySearchTask
+
+    protected static class KeySearchTask extends Task<Void>{
+        private final EditWalletController controller;
+
+        public KeySearchTask(EditWalletController controller) {
+            this.controller = controller;
+        }
+
+        @Override
+        protected Void call() throws Exception {
+            BIP32Utils BIP32 = new BIP32Utils();
+
+            BIP32.privateKeyFromMnemonicAndAddress(
+                controller.mnemonicText.getText(), controller.wallet.address,
+                new Function<>() {
+                    @Override
+                    public Boolean apply(String key) {
+                        updateMessage(key);
+                        return !isCancelled();
+                    }
+                }
+            );
+            return null;
+        }
+
+        @Override
+        protected void running() {
+            controller.keyText.textProperty().bind(controller.searchTask.messageProperty());
+            controller.swapButtons();
+        }
+
+        @Override
+        protected void succeeded() {
+            cleanup();
+        }
+
+        @Override
+        protected void failed() {
+            cleanup();
+        }
+
+        @Override
+        protected void cancelled() {
+            cleanup();
+        }
+
+        private void cleanup() {
+            controller.swapButtons();
+            controller.keyText.textProperty().unbind();
+        }
+
+    };
 }
