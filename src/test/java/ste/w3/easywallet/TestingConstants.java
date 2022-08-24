@@ -43,15 +43,15 @@ public interface TestingConstants {
     //
     public final String PRIVATE_KEY6 = "82b4cd6699cc1aee53b492598def7833a5ca8aae948f817c325548cb3e62c610";
     //
-    // Derived by mnemonic phrase "alert record income curve mercy tree heavy loan hen recycle mean devote" #3
+    // Derived by mnemonic phrase "alert record income curve mercy tree heavy loan hen recycle mean devote" #592
     //
-    public final String PRIVATE_KEY7 = "a850017f110e9030d806b749a58bf15e150fa1e0edf492593af1d28e9390c796";
+    public final String PRIVATE_KEY7 = "746b9882de6dc67d18da80e4b67dcfa67344b096510157b65422060fe624998d";
     //
     // Derived by mnemonic phrase "alert record income curve mercy tree heavy loan hen recycle mean devote" #14
     //
     public final String PRIVATE_KEY3 = "c8f12c80b8c0325bb15aa8546f7b0bea133c884da3cfb6f2096368d94192cb37";
     //
-    // Derived by mnemonic phrase "alert record income curve mercy tree heavy loan hen recycle mean devote" #3825
+    // Derived by mnemonic phrase "alert record income curve mercy tree heavy loan hen recycle mean devote" #3
     //
     public final String PRIVATE_KEY8 = "21de2c51db9ac0cf564140c6e803036ffc22c0879a21fdf57866aca969aacdbc";
 
@@ -62,6 +62,7 @@ public interface TestingConstants {
     public final String ADDRESS4 = "00000000219ab540356cbb839cbe05303d7705fa";
     public final String ADDRESS5 = "c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
     public final String ADDRESS6 = "b24f4ad87c027f05c58a71eed50193364c1c4a22"; // associated to PRIVATE_KEY6
+    public final String ADDRESS7 = "ec46d43d82e517e8255728b77d130c589c1d69e1"; // associated to PRIVATE_KEY7
     public final String ADDRESS8 = "e85d9ca59611232428e1bb26b6b1bef7c4d32329"; // associated to PRIVATE_KEY8
 
     public final String MNEMONIC1 = "wild quiz always market robust board acid wild quiz always market robust board acid";

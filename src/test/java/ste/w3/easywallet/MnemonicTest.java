@@ -61,7 +61,7 @@ public class MnemonicTest implements TestingConstants {
 
         then(
             Numeric.toHexStringNoPrefix(
-                Bip32ECKeyPair.deriveKeyPair(masterKeyPair, bip32.childDerivationPath(3824)).getPrivateKey()
+                Bip32ECKeyPair.deriveKeyPair(masterKeyPair, bip32.childDerivationPath(591)).getPrivateKey()
             )
         ).isEqualTo(PRIVATE_KEY7);
     }
