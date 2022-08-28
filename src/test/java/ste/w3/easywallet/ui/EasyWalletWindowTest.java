@@ -82,7 +82,7 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
         clickOn("#" + KEY_ADD_WALLET); waitForFxEvents();
         Then.then(lookup(".mfx-dialog")).hasOneWidget();
     }
- 
+
     // --------------------------------------------------------- private methods
 
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import ste.w3.easywallet.Preferences;
@@ -38,6 +39,8 @@ public class EasyWalletMain extends Application {
         stage.setTitle("EasyWallet v0.1");
         stage.setWidth(575);
         stage.setHeight(800);
+        stage.getIcons().add(new Image(EasyWalletMain.class.getResourceAsStream("/images/easy-wallet-icon-64x64.png")));
+        stage.getIcons().add(new Image(EasyWalletMain.class.getResourceAsStream("/images/easy-wallet-icon-128x128.png")));
 
         Scene scene = new Scene(
             new EasyWalletFXMLLoader().loadMainWindow(this)
