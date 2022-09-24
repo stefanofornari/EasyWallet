@@ -107,7 +107,7 @@ implements Labels, TestingConstants, TestingUtils {
             controller.onSearch(null);
         }); waitForFxEvents();
 
-        waitFor(controller.searchTask);
+        waitFor(controller.searchTask); waitForFxEvents();
         Then.then(controller.keyText).hasText(PRIVATE_KEY6);
 
         Platform.runLater(() -> {
@@ -116,7 +116,7 @@ implements Labels, TestingConstants, TestingUtils {
             controller.onSearch(null);
         }); waitForFxEvents();
 
-        waitFor(controller.searchTask);
+        waitFor(controller.searchTask); waitForFxEvents();
         Then.then(controller.keyText).hasText(PRIVATE_KEY3);
     }
 
