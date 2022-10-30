@@ -34,14 +34,6 @@
                 </Label>
                 <FlowPane alignment="CENTER" columnHalignment="CENTER">
                     <children>
-                        <Label prefHeight="15.0" text="ETH" textFill="#909090">
-                            <font>
-                                <Font name="Roboto Regular" size="28.0" />
-                            </font>
-                     <padding>
-                        <Insets right="5.0" />
-                     </padding>
-                        </Label>
                         <Label fx:id="labelBalance" layoutX="10.0" layoutY="10.0" prefHeight="15.0" text="0.0" textFill="#909090">
                             <font>
                                 <Font name="Roboto Regular" size="28.0" />

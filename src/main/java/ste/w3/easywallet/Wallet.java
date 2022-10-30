@@ -1,6 +1,8 @@
 package ste.w3.easywallet;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -12,23 +14,26 @@ public class Wallet {
     public String privateKey = "";
     public String mnemonicPhrase = "";
 
-    transient private BigDecimal balance;
+    final private Map<String, BigDecimal> balances = new HashMap<>();
 
     public Wallet(String address) {
         this.address = address;
-        balance = BigDecimal.ZERO;
     }
 
-    public Wallet balance(BigDecimal balance) {
+    public Wallet balance(Amount balance) {
         if (balance == null) {
             throw new IllegalArgumentException("balance can not be null");
         }
-        this.balance = balance;
+        balances.put(balance.symbol, balance.value);
+
         return this;
     }
 
-    public BigDecimal balance()  {
-        return balance;
+    public BigDecimal balance(Coin coin)  {
+        if (coin == null) {
+            throw new IllegalArgumentException("coin can not be null");
+        }
+        return balances.get(coin.symbol);
     }
 
 }

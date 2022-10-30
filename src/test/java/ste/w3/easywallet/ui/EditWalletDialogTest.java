@@ -103,7 +103,6 @@ public class EditWalletDialogTest extends ApplicationTest implements Labels, Tes
         text.setText("0000000000000000000000000000000000000000");
         clickOn(".mfx-text-field"); type(KeyCode.DIGIT0, 30);
         Then.then(text).hasText("0000000000000000000000000000000000000000000000000000000000000000"); // only 64 chars
-
     }
 
     @Test

@@ -1,10 +1,10 @@
 
 package ste.w3.easywallet;
 
-import java.math.BigDecimal;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
+import static ste.w3.easywallet.Coin.ETH;
 
 /**
  *
@@ -24,15 +24,24 @@ public class WalletTest implements TestingConstants {
     public void get_and_set_wallet_balance() {
         Wallet w = new Wallet("0x00000000219ab540356cBB839Cbe05303d7705Fa");
 
-        then(w.balance().doubleValue()).isEqualTo(0.0);
+        try {
+            w.balance((Coin)null);
+            fail("missing sanity check");
+        } catch (IllegalArgumentException x) {
+            then(x).hasMessage("coin can not be null");
+        }
 
         try {
-            w.balance(null);
+            w.balance((Amount)null);
             fail("missing sanity check");
         } catch (IllegalArgumentException x) {
             then(x).hasMessage("balance can not be null");
         }
-        then(w.balance(new BigDecimal("10.0"))).isSameAs(w);
-        then(w.balance().doubleValue()).isEqualTo(10.0);
+        then(w.balance(new Amount(ETH, "10000000000000000000"))).isSameAs(w);
+        then(w.balance(ETH).doubleValue()).isEqualTo(10.0);
     }
+
+    //
+    // TODO: what to do if asking the balance of a unset coin
+    //
 }

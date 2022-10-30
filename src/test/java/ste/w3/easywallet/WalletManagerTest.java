@@ -1,13 +1,14 @@
 package ste.w3.easywallet;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.LogManager;
+import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import okhttp3.mockwebserver.RecordedRequest;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import static ste.w3.easywallet.Coin.ETH;
+import static ste.w3.easywallet.Coin.STORJ;
 
 /**
  *
@@ -19,23 +20,13 @@ public class WalletManagerTest implements TestingConstants {
     private static final String TEST_APP_KEY_1 = "THSISANAPPKEY";
     private static final String TEST_APP_KEY_2 = "THISISANOTHERAPPKEY";
 
-    @BeforeClass
-    public static void before_class() {
-        try (InputStream is = WalletTest.class.getClassLoader().
-                getResourceAsStream("logging.properties")) {
-            LogManager.getLogManager().readConfiguration(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Before
     public void before() throws Exception {
         server = new TestingServer();
     }
 
     @Test
-    public void construc_wallet_manager() {
+    public void construct_wallet_manager() {
         WalletManager wm = new WalletManager("https://mainnet.infura.io/v3/PROJECTID1", TEST_APP_KEY_1);
         then(wm.endpoint).isEqualTo("https://mainnet.infura.io/v3/PROJECTID1");
         then(wm.appkey).isEqualTo(TEST_APP_KEY_1);
@@ -47,8 +38,17 @@ public class WalletManagerTest implements TestingConstants {
 
     @Test
     public void get_balance() throws Exception {
+        server.addBalanceRequest(ETH, "0x" + ADDRESS1, new BigDecimal("9343922.000069"));
+        server.addBalanceRequest(STORJ, "0x" + ADDRESS1, new BigDecimal("534.09876543"));
+        server.addBalanceRequest(ETH, "0x" + ADDRESS2, new BigDecimal("2113030.001"));
+        server.addBalanceRequest(STORJ, "0x" + ADDRESS2, new BigDecimal("123.456789"));
+
         WalletManager wm = new WalletManager(server.ethereum.url("v3/PROJECTID1").toString(), TEST_APP_KEY_1);
 
+        //
+        // Ethereum network (ETH, STORJ)
+        // ----------------
+        //
         try {
             wm.balance(null);
             fail("missing sanity check");
@@ -58,11 +58,21 @@ public class WalletManagerTest implements TestingConstants {
 
         Wallet w = new Wallet(ADDRESS1);
         then(wm.balance(w)).isSameAs(wm);
-        then(w.balance().doubleValue()).isEqualTo(9343922.000069);
+
+        then(server.ethereum.getRequestCount()).isEqualTo(2); // ETH and STORJ
+        RecordedRequest r = server.ethereum.takeRequest();
+        then(r.getBody().readString(Charset.defaultCharset())).contains("\"method\":\"eth_getBalance\"");
+        r = server.ethereum.takeRequest();
+        then(r.getBody().readString(Charset.defaultCharset())).contains("\"method\":\"eth_call\"");
+
+        then(w.balance(ETH)).isEqualTo("9343922.000069");
+        then(w.balance(STORJ)).isEqualTo("534.09876543");
 
         w = new Wallet(ADDRESS2);
         then(wm.balance(w)).isSameAs(wm);
-        then(w.balance().doubleValue()).isEqualTo(2113030.001);
+        then(w.balance(ETH)).isEqualTo("2113030.001");
+        then(w.balance(STORJ)).isEqualTo("123.45678900");
+        // ----------------
     }
 
     @Test

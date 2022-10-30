@@ -20,10 +20,14 @@
  */
 package ste.w3.easywallet;
 
+import java.math.BigDecimal;
+import java.net.URL;
 import static org.assertj.core.api.BDDAssertions.entry;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
+import static ste.w3.easywallet.Coin.GLM;
+import static ste.w3.easywallet.Coin.STORJ;
 import static ste.w3.easywallet.TestingConstants.ADDRESS1;
 
 /**
@@ -73,6 +77,24 @@ public class TestingServerTest implements TestingConstants {
             fail("missing argument validation");
         } catch (IllegalArgumentException x) {
             then(x).hasMessage("balance must start with '0x'");
+        }
+    }
+
+    @Test
+    public void add_balance_request_enqueues_a_request() throws Exception {
+        final String TEST1 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x000000000000000000000000000000000000000000000000000000011a2f36c1\"}";
+        final String TEST2 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x0000000000000000000000000000000000000000000000005a850fa96456afd7\"}";
+        TestingServer server = new TestingServer();
+        server.addBalanceRequest(STORJ, "0x" + ADDRESS1, new BigDecimal("47.34269121"));
+        server.addBalanceRequest(GLM, "0x" + ADDRESS1, new BigDecimal("6.522636855523323863"));
+        server.ethereum.start();
+
+        try {
+            URL url = new URL(server.ethereum.url("something").toString());
+            then(url.openConnection().getInputStream()).hasContent(TEST1);
+            then(url.openConnection().getInputStream()).hasContent(TEST2);
+        } finally {
+            server.ethereum.shutdown();
         }
     }
 

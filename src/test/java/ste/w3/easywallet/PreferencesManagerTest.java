@@ -54,12 +54,12 @@ public class PreferencesManagerTest {
           new Wallet("wallet1")
         };
         p.wallets[0].privateKey = "privatekey1";
-        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"endpoint\",\"appkey\":\"appkey\",\"wallets\":[{\"address\":\"wallet1\",\"privateKey\":\"privatekey1\",\"mnemonicPhrase\":\"\"}]}");
+        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"endpoint\",\"appkey\":\"appkey\",\"wallets\":[{\"address\":\"wallet1\",\"privateKey\":\"privatekey1\",\"mnemonicPhrase\":\"\",\"balances\":{}}]}");
 
         p.wallets = new Wallet[] { p.wallets[0], new Wallet("wallet2") };
         p.wallets[1].privateKey = "privatekey2";
         p.wallets[1].mnemonicPhrase = "mnemonic2";
-        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"endpoint\",\"appkey\":\"appkey\",\"wallets\":[{\"address\":\"wallet1\",\"privateKey\":\"privatekey1\",\"mnemonicPhrase\":\"\"},{\"address\":\"wallet2\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\"}]}");
+        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"endpoint\",\"appkey\":\"appkey\",\"wallets\":[{\"address\":\"wallet1\",\"privateKey\":\"privatekey1\",\"mnemonicPhrase\":\"\",\"balances\":{}},{\"address\":\"wallet2\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}]}");
     }
 
     @Test

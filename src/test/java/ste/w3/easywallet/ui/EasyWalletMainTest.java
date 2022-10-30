@@ -17,6 +17,7 @@ package ste.w3.easywallet.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -32,6 +33,8 @@ import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import static ste.w3.easywallet.Coin.ETH;
+import static ste.w3.easywallet.Coin.STORJ;
 import ste.w3.easywallet.Labels;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import static ste.w3.easywallet.Labels.LABEL_BUTTON_OK;
@@ -57,7 +60,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
     private Stage stage;
     private EasyWalletMainController controller;
 
-    private static final String CONFIG_FILE = ".config/ste.w3.easywallet/predferences.json";
+    private static final String CONFIG_FILE = ".config/ste.w3.easywallet/preferences.json";
 
     @Rule
     public TemporaryFolder HOME = new TemporaryFolder();
@@ -96,7 +99,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
 
         then(cards).hasSize(1);
         Then.then(lookup("0x" + preferences.wallets[0].address)).hasWidgets();
-        Then.then(lookup("0.0")).hasWidgets();
+        Then.then(lookup("ETH 0.0 - STORJ 0.0")).hasWidgets();
     }
 
     @Test
@@ -109,7 +112,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
 
         Then.then(lookup("0x" + TestingConstants.WALLET1)).hasWidgets();
         then(getPreferencesFile()).content().contains(
-            String.format("{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\"}", TestingConstants.WALLET1)
+            String.format("{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}", TestingConstants.WALLET1)
         );
     }
 
@@ -123,7 +126,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
 
         Then.then(lookup("0x" + ADDRESS1)).hasWidgets();
         then(getPreferencesFile()).content().contains(
-            String.format("{\"address\":\"%s\",\"privateKey\":\"%s\",\"mnemonicPhrase\":\"\"}", ADDRESS1, PRIVATE_KEY1)
+            String.format("{\"address\":\"%s\",\"privateKey\":\"%s\",\"mnemonicPhrase\":\"\",\"balances\":{}}", ADDRESS1, PRIVATE_KEY1)
         );
     }
 
@@ -137,11 +140,13 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
     }
 
     @Test
-    public void pressing_refresh_udates_balances() {
-        server.addBalance("0x" + preferences.wallets[0].address, "0x7bad706cf4a42e0055045");
+    public void pressing_refresh_udates_balances() throws Exception {
+        server.addBalanceRequest(ETH, "0x" + preferences.wallets[0].address, new BigDecimal("47.34269121"));
+        server.addBalanceRequest(STORJ, "0x" + preferences.wallets[0].address, new BigDecimal("534.09876543"));
         clickOn('#' + KEY_REFRESH);
         waitForFxEvents();
-        Then.then(lookup("9344807.44378454")).hasWidgets();
+
+        Then.then(lookup("ETH 47.34269121 - STORJ 534.09876543")).hasWidgets();
     }
 
     @Test
@@ -162,7 +167,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         Preferences p = main.getPreferences();
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(String.format(
-            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\"}]}",
+            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}]}",
             p.endpoint, p.appkey, p.wallets[0].address
         ));
 
@@ -175,7 +180,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
 
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(
-            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\"},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\"}]}"
+            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}]}"
         );
     }
 

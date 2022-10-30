@@ -27,6 +27,8 @@ import java.util.function.Function;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import static ste.w3.easywallet.Coin.ETH;
+import static ste.w3.easywallet.Coin.STORJ;
 import ste.w3.easywallet.Wallet;
 
 /**
@@ -94,10 +96,14 @@ public class WalletCardController {
         labelBalance.setText(getBalance());
     }
 
-    // --------------------------------------------------------+ private methods
+    // --------------------------------------------------------- private methods
 
     private String getBalance() {
-        return (wallet.balance() == null) ? "0.0" : String.valueOf(wallet.balance().doubleValue());
+        return String.format(
+            "ETH %s - STORJ %s",
+            (wallet.balance(ETH) == null) ? "0.0" : String.valueOf(wallet.balance(ETH)),
+            (wallet.balance(STORJ) == null) ? "0.0" : String.valueOf(wallet.balance(STORJ))
+        );
     }
 
 
