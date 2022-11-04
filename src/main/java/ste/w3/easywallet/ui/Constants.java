@@ -23,4 +23,6 @@ public class Constants {
     public static final String KEY_REFRESH = "btn_refresh";
     public static final String KEY_CLOSE_ERROR = "btn_close_error";
 
+    public static final String CONFIG_FILE = ".config/ste.w3.easywallet/preferences.json";
+
 }

@@ -29,6 +29,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.Wallet;
+import static ste.w3.easywallet.ui.Constants.CONFIG_FILE;
 
 /**
  *
@@ -39,8 +40,6 @@ public class EasyWalletMainPreferencesTest extends ApplicationTest {
     EasyWalletMain main;
     Preferences preferences;
     Stage stage;
-
-    private static final String CONFIG_FILE = ".config/ste.w3.easywallet/predferences.json";
 
     @Rule
     public TemporaryFolder HOME = new TemporaryFolder();
@@ -63,7 +62,7 @@ public class EasyWalletMainPreferencesTest extends ApplicationTest {
     @Test
     public void preferences_file_default() {
         then(new EasyWalletMain().configFile).isEqualTo(
-            new File(FileUtils.getUserDirectory(), ".config/ste.w3.easywallet/preferences.json")
+            new File(FileUtils.getUserDirectory(), CONFIG_FILE)
         );
     }
 

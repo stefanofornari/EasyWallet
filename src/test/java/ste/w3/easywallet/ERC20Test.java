@@ -20,9 +20,11 @@
  */
 package ste.w3.easywallet;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import org.junit.Ignore;
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +33,29 @@ import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
+import static ste.w3.easywallet.ui.Constants.CONFIG_FILE;
+
 
 /**
- * NOTE: set system property 'endpoint' to the network provider endpoint
+ * NOTE: this is not a unit test, it is meant to try the functionality of the
+ * api. It uses the default configuration in <code>Constants.CONFIG_FILE</code>
  */
-@Ignore
+//@Ignore
 public class ERC20Test {
 
-    public final String ENDPOINT = System.getProperty("endpoint");
+    private Preferences preferences;
+
+    @Before
+    public void before() throws Exception {
+        PreferencesManager pm = new PreferencesManager();
+
+        preferences = pm.fromJSON(
+            FileUtils.readFileToString(
+                new File(FileUtils.getUserDirectory(), CONFIG_FILE),
+                "utf8"
+            )
+        );
+    }
 
     /*
     token.symbol().send()
@@ -127,7 +144,7 @@ public class ERC20Test {
 
         TestingServer server = new TestingServer();
 
-        Web3j web3j = Web3j.build(new HttpService(ENDPOINT));
+        Web3j web3j = Web3j.build(new HttpService(preferences.endpoint));
 
         //
         // Create and use fake credentuials (no credentials are needed to get
