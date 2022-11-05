@@ -131,6 +131,7 @@ public class EasyWalletMainController {
                 try {
                     wm.balance(cardController.wallet, main.getPreferences().coins);
                     cardController.refreshBalance();
+                    main.savePreferences();
                 } catch (IOException x) {
                     //
                     // TODO: handle the exception

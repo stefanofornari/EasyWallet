@@ -138,13 +138,14 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
     }
 
     @Test
-    public void pressing_refresh_udates_balances() throws Exception {
+    public void pressing_refresh_udates_balances_in_ui_and_preferences() throws Exception {
         server.addBalanceRequest(ETH, "0x" + preferences.wallets[0].address, new BigDecimal("47.34269121"));
         server.addBalanceRequest(STORJ, "0x" + preferences.wallets[0].address, new BigDecimal("534.09876543"));
         clickOn('#' + KEY_REFRESH);
         waitForFxEvents();
 
         Then.then(lookup("ETH 47.34269121 - STORJ 534.09876543")).hasWidgets();
+        then(main.getConfigFile()).content().contains("{\"ETH\":47.34269121,\"STORJ\":534.09876543}");
     }
 
     @Test
