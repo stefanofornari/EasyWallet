@@ -50,6 +50,7 @@ public class EasyWalletMain extends Application {
         stylesheets.addAll(EasyWalletMain.class.getResource("/css/easywallet.css").toExternalForm());
 
         stage.setScene(scene);
+
         stage.show();
     }
 

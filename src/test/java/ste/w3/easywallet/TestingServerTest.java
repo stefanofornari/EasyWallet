@@ -26,8 +26,6 @@ import static org.assertj.core.api.BDDAssertions.entry;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
-import static ste.w3.easywallet.Coin.GLM;
-import static ste.w3.easywallet.Coin.STORJ;
 import static ste.w3.easywallet.TestingConstants.ADDRESS1;
 
 /**

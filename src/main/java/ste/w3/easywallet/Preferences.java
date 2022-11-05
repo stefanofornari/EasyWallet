@@ -25,4 +25,5 @@ public class Preferences {
     public String   endpoint   = "";
     public String   appkey     = "";
     public Wallet[] wallets    = {};
+    public Coin[]   coins      = {};
 }

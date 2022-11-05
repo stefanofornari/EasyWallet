@@ -7,8 +7,6 @@ import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Before;
 import org.junit.Test;
-import static ste.w3.easywallet.Coin.ETH;
-import static ste.w3.easywallet.Coin.STORJ;
 
 /**
  *
@@ -45,10 +43,6 @@ public class WalletManagerTest implements TestingConstants {
 
         WalletManager wm = new WalletManager(server.ethereum.url("v3/PROJECTID1").toString(), TEST_APP_KEY_1);
 
-        //
-        // Ethereum network (ETH, STORJ)
-        // ----------------
-        //
         try {
             wm.balance(null);
             fail("missing sanity check");
@@ -58,7 +52,10 @@ public class WalletManagerTest implements TestingConstants {
 
         Wallet w = new Wallet(ADDRESS1);
         then(wm.balance(w)).isSameAs(wm);
+        then(w.balances).isEmpty();
+        then(server.ethereum.getRequestCount()).isZero();
 
+        wm.balance(w, ETH, STORJ);
         then(server.ethereum.getRequestCount()).isEqualTo(2); // ETH and STORJ
         RecordedRequest r = server.ethereum.takeRequest();
         then(r.getBody().readString(Charset.defaultCharset())).contains("\"method\":\"eth_getBalance\"");
@@ -69,10 +66,9 @@ public class WalletManagerTest implements TestingConstants {
         then(w.balance(STORJ)).isEqualTo("534.09876543");
 
         w = new Wallet(ADDRESS2);
-        then(wm.balance(w)).isSameAs(wm);
+        then(wm.balance(w, ETH, STORJ)).isSameAs(wm);
         then(w.balance(ETH)).isEqualTo("2113030.001");
         then(w.balance(STORJ)).isEqualTo("123.45678900");
-        // ----------------
     }
 
     @Test

@@ -20,30 +20,64 @@
  */
 package ste.w3.easywallet;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
- * ERC20 Contracts:
- *
- * Ethereum
- * StorjToken - STORJ - 0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac
- *
- * Polygon
- * Golem Network Token - GLM: 0x0B220b82F3eA3B7F6d9A1D8ab58930C064A2b5Bf
- * StorjToken - STORJ - 0xd72357dAcA2cF11A5F155b9FF7880E595A3F5792
  *
  */
-public enum Coin {
-    ETH(null, "ETH", "Ether", 18),
-    STORJ("0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac", "STORJ", "StorjToken - Ethereum network", 8),
-    GLM("0x0B220b82F3eA3B7F6d9A1D8ab58930C064A2b5Bf", "GLM", "Golem Network Token (PoS)", 18);
-
-    Coin(String contract, String symbol, String name, int decimals) {
-        this.contract = contract;
-        this.symbol  = symbol;
-        this.name     = name;
-        this.decimals = decimals;
-    }
-
+public class Coin {
     public final String contract, symbol, name;
     public final int decimals;
+
+    /**
+     *
+     * @param symbol - coin's symbol - not null
+     * @param name - coin's display name - not null
+     * @param contract - coin's contract - may be null if this is the main coin for the network
+     * @param decimals - coin's significant decimals - > 0
+     *
+     * @throws IllegalArgumentException in case of invalid arguments
+     *
+     * TODO: arguments check
+     */
+    public Coin(final String symbol, final String name, final String contract, final int decimals)
+    throws IllegalArgumentException {
+        if (StringUtils.isBlank(symbol)) {
+            throw new IllegalArgumentException("symbol can not be blank");
+        } else {
+            this.symbol = symbol;
+
+        }
+
+        if (StringUtils.isBlank(name)) {
+            throw new IllegalArgumentException("name can not be blank");
+        } else {
+            this.name = name;
+        }
+
+        if ((contract != null) && StringUtils.isBlank(contract)) {
+            throw new IllegalArgumentException("contract can not be blank");
+        } else {
+            this.contract = contract;
+        }
+
+        if (decimals < 1) {
+            throw new IllegalArgumentException("decimals can not be less than 1");
+        } else {
+            this.decimals = decimals;
+        }
+    }
+
+    /**
+     * Same as this(symbol, name, null, decimals), this represents the main coin
+     * for a network.
+     *
+     * @param symbol
+     * @param name
+     * @param decimals
+     */
+    public Coin(final String symbol, final String name, final int decimals) {
+        this(symbol, name, null, decimals);
+    }
 }
 

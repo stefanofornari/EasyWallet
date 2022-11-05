@@ -33,8 +33,7 @@ import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
-import static ste.w3.easywallet.Coin.ETH;
-import static ste.w3.easywallet.Coin.STORJ;
+import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Labels;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import static ste.w3.easywallet.Labels.LABEL_BUTTON_OK;
@@ -99,7 +98,6 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
 
         then(cards).hasSize(1);
         Then.then(lookup("0x" + preferences.wallets[0].address)).hasWidgets();
-        Then.then(lookup("ETH 0.0 - STORJ 0.0")).hasWidgets();
     }
 
     @Test
@@ -167,7 +165,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         Preferences p = main.getPreferences();
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(String.format(
-            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}]}",
+            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"0x14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}]}",
             p.endpoint, p.appkey, p.wallets[0].address
         ));
 
@@ -180,7 +178,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
 
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(
-            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}]}"
+            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"0x14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}]}"
         );
     }
 
@@ -251,6 +249,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         preferences.endpoint = server.ethereum.url("v3/" + randomStringGenerator.generate(20)).toString();
         preferences.appkey = randomStringGenerator.generate(12);
         preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
+        preferences.coins = new Coin[] {ETH, STORJ};
 
         PreferencesManager pm = new PreferencesManager();
 
@@ -260,7 +259,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
     private void withIOException() throws Exception {
         PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com", "key") {
             @Override
-            public WalletManager balance(Wallet wallet) throws IOException {
+            public WalletManager balance(Wallet wallet, Coin... coins) throws IOException {
                 throw new IOException("network not available");
             }
 

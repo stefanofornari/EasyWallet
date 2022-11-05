@@ -23,6 +23,9 @@ package ste.w3.easywallet;
 import java.math.BigDecimal;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
+import static ste.w3.easywallet.TestingConstants.ETH;
+import static ste.w3.easywallet.TestingConstants.GLM;
+import static ste.w3.easywallet.TestingConstants.STORJ;
 
 /**
  *
@@ -31,31 +34,25 @@ public class AmountTest {
 
     @Test
     public void constructors() {
+        then(new Amount(STORJ, "934480744378454").value).isEqualTo(new BigDecimal("9344807.44378454"));
+        then(new Amount(STORJ, "123456789000000").value).isEqualTo(new BigDecimal("1234567.89000000"));
 
-        for(Coin t: Coin.values()) {
-            Amount a = new Amount(t, "000000000000000");
-            then(a.symbol).isEqualTo(t.symbol);
-        }
+        then(new Amount(GLM, "934480744378454").value).isEqualTo(new BigDecimal("0.000934480744378454"));
+        then(new Amount(GLM, "123456789000000").value).isEqualTo(new BigDecimal("0.000123456789000000"));
 
-        then(new Amount(Coin.STORJ, "934480744378454").value).isEqualTo(new BigDecimal("9344807.44378454"));
-        then(new Amount(Coin.STORJ, "123456789000000").value).isEqualTo(new BigDecimal("1234567.89000000"));
-
-        then(new Amount(Coin.GLM, "934480744378454").value).isEqualTo(new BigDecimal("0.000934480744378454"));
-        then(new Amount(Coin.GLM, "123456789000000").value).isEqualTo(new BigDecimal("0.000123456789000000"));
-
-        then(new Amount(Coin.ETH, new BigDecimal("10.0")).value).isEqualTo(new BigDecimal("10.0"));
+        then(new Amount(ETH, new BigDecimal("10.0")).value).isEqualTo(new BigDecimal("10.0"));
     }
 
     @Test
     public void asDouble() {
-        then(new Amount(Coin.STORJ, "934480744378454").asDouble()).isEqualTo(9344807.44378454);
-        then(new Amount(Coin.STORJ, "123456789000000").asDouble()).isEqualTo(1234567.89000000);
+        then(new Amount(STORJ, "934480744378454").asDouble()).isEqualTo(9344807.44378454);
+        then(new Amount(STORJ, "123456789000000").asDouble()).isEqualTo(1234567.89000000);
     }
 
     @Test
     public void asString() {
-        then(new Amount(Coin.STORJ, "934480744378454").toString()).isEqualTo("9344807.44378454");
-        then(new Amount(Coin.GLM, "123456789000000").toString()).isEqualTo("0.000123456789000000");
+        then(new Amount(STORJ, "934480744378454").toString()).isEqualTo("9344807.44378454");
+        then(new Amount(GLM, "123456789000000").toString()).isEqualTo("0.000123456789000000");
     }
 
 }

@@ -14,7 +14,7 @@ public class Wallet {
     public String privateKey = "";
     public String mnemonicPhrase = "";
 
-    final private Map<String, BigDecimal> balances = new HashMap<>();
+    final public Map<String, BigDecimal> balances = new HashMap<>();
 
     public Wallet(String address) {
         this.address = address;
@@ -33,7 +33,16 @@ public class Wallet {
         if (coin == null) {
             throw new IllegalArgumentException("coin can not be null");
         }
+
         return balances.get(coin.symbol);
+    }
+
+    public BigDecimal balance(String symbol)  {
+        if (symbol == null) {
+            throw new IllegalArgumentException("symbol can not be null");
+        }
+
+        return balances.get(symbol);
     }
 
 }

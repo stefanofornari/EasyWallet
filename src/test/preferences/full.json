@@ -1,0 +1,24 @@
+
+{
+  "endpoint":"http://etheremum.network.endpoint",
+  "appkey":"0123456789",
+  "wallets":[
+  {
+    "address":"0123456789012345678901234567890123456789",
+    "mnemonicPhrase":"alert record income curve mercy tree heavy loan hen recycle mean devote",
+    "privateKey":"8a2b2d41febc2bef749ecec009b86e5fa18753439b28789658eb7b411397abb6"
+  }],
+  "coins":[
+  {
+    "symbol":"ETH",
+    "name":"Ether",
+    "decimals":18
+  },
+  {
+    "symbol":"STORJ",
+    "name":"StorjToken",
+    "contract":"0x1234567890abcdefghijklmnopqrtuwyzABCDEFG",
+    "decimals":8
+  }
+  ]
+}

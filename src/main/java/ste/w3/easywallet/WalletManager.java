@@ -13,8 +13,6 @@ import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Convert.Unit;
 import org.web3j.utils.Numeric;
-import static ste.w3.easywallet.Coin.ETH;
-import static ste.w3.easywallet.Coin.STORJ;
 
 /**
  *
@@ -32,49 +30,49 @@ public class WalletManager {
         web3 = Web3j.build(new HttpService(endpoint));
     }
 
-    public WalletManager balance(Wallet wallet) throws IOException {
+    public WalletManager balance(Wallet wallet, Coin... coins) throws IOException {
         if (wallet == null) {
             throw new IllegalArgumentException("wallet can not be null");
         }
 
-        //
-        // Ethereum network
-        // ----------------
+        if (coins == null) return this;
 
         //
-        // ETH
+        // Notes:
+        // 1) if a coin has null contract, we assume it is the main coin for
+        // the network (i.g. ETH for Etherem, MATIC for Polygon)
+        // 2) we do not need any credentials to read the balance
         //
-        //
-        // NOTE: balance is returned in wei
-        //
-        EthGetBalance eth = web3.ethGetBalance(
-            "0x" + wallet.address, DefaultBlockParameterName.LATEST
-        ).send();
-
-        wallet.balance(
-            new Amount(ETH, Convert.fromWei(eth.getBalance().toString(), Unit.ETHER))
-        );
-
-        //
-        // STORJ
-        //
-        // NOTE: we do not need any credentials to read the balance
         Credentials credentials = Credentials.create("0x0000000000000000000000000000000000000000000000000000000000000000");
-        ERC20 token = ERC20.load(STORJ.contract, web3, credentials, new DefaultGasProvider());
-        try {
-            wallet.balance(new Amount(
-                STORJ,
-                String.valueOf(token.balanceOf("0x3eAE5d25Aa262a8821357f8b03545d9a6eB1D9F2").send())
-            ));
-        } catch (IOException x) {
-            throw x;
-        } catch (Exception x) {
-            //
-            // TODO: handle exception (log it?)
-            //
-            x.printStackTrace();
+        for (Coin c: coins) {
+            if (c.contract == null) {
+                //
+                // NOTE: balance is returned in wei
+                //
+                EthGetBalance eth = web3.ethGetBalance(
+                    "0x" + wallet.address, DefaultBlockParameterName.LATEST
+                ).send();
+
+                wallet.balance(
+                    new Amount(c, Convert.fromWei(eth.getBalance().toString(), Unit.ETHER))
+                );
+            } else {
+                ERC20 token = ERC20.load(c.contract, web3, credentials, new DefaultGasProvider());
+                try {
+                    wallet.balance(new Amount(
+                        c,
+                        String.valueOf(token.balanceOf("0x3eAE5d25Aa262a8821357f8b03545d9a6eB1D9F2").send())
+                    ));
+                } catch (IOException x) {
+                    throw x;
+                } catch (Exception x) {
+                    //
+                    // TODO: handle exception (log it?)
+                    //
+                    x.printStackTrace();
+                }
+            }
         }
-        // ----------------
 
         return this;
     }

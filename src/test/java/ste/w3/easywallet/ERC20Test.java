@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ import static ste.w3.easywallet.ui.Constants.CONFIG_FILE;
  * NOTE: this is not a unit test, it is meant to try the functionality of the
  * api. It uses the default configuration in <code>Constants.CONFIG_FILE</code>
  */
-//@Ignore
+@Ignore
 public class ERC20Test {
 
     private Preferences preferences;

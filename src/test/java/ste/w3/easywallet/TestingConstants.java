@@ -77,4 +77,11 @@ public interface TestingConstants {
     // derived from MNEMONIC2
     //
     public final String SEED2 = "77e6a9b1236d6b53eaa64e2727b5808a55ce09eb899e1938ed55ef5d4f8153170a2c8f4674eb94ce58be7b75922e48e6e56582d806253bd3d72f4b3d896738a4";
+
+    //
+    // Coins (no real contracts)
+    //
+    public final Coin ETH = new Coin("ETH", "Ether", 18);
+    public final Coin STORJ = new Coin("STORJ", "StorjToken", "0x14F2c84A58e065C846c5fDDdadE0d3548F97A517", 8);
+    public final Coin GLM = new Coin("GLM", "Golem Network Token", "0x55110C24859411822932a5263C6E44318cc3E682", 18);
 }

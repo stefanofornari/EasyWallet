@@ -129,7 +129,7 @@ public class EasyWalletMainController {
             for (Node n: walletsPane.getChildren()) {
                 WalletCardController cardController = (WalletCardController)n.getUserData();
                 try {
-                    wm.balance(cardController.wallet);
+                    wm.balance(cardController.wallet, main.getPreferences().coins);
                     cardController.refreshBalance();
                 } catch (IOException x) {
                     //

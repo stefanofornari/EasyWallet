@@ -16,13 +16,17 @@
 package ste.w3.easywallet.ui;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.function.Function;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import ste.w3.easywallet.Amount;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
@@ -70,10 +74,31 @@ implements Labels, TestingConstants, TestingUtils {
         //
     }
 
-        @Test
+    @Test
     public void show_private_key_dialog_when() {
         clickOn("#editButton");
         Then.then(lookup(String.format(LABEL_EDIT_WALLET_PRIVATE_KEY_TITLE, WALLET.address))).hasWidgets();
+    }
+
+    @Test
+    public void show_coins_balance() throws Exception {
+        WALLET.balance(
+            new Amount(ETH, new BigDecimal("10.0"))
+        );
+        Platform.runLater(() -> {
+            controller.refreshBalance();
+        }); waitForFxEvents();
+
+        Then.then(lookup("ETH 10.0")).hasWidgets();
+
+        WALLET.balance(
+            new Amount(STORJ, new BigDecimal("15.15"))
+        );
+        Platform.runLater(() -> {
+            controller.refreshBalance();
+        }); waitForFxEvents();
+
+        Then.then(lookup("ETH 10.0 - STORJ 15.15")).hasWidgets();
     }
 
 }
