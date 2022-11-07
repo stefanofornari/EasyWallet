@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.DropShadow?>
@@ -32,18 +33,19 @@
                         <Font name="Roboto Bold" size="18.0" />
                     </font>
                 </Label>
-                <FlowPane alignment="CENTER" columnHalignment="CENTER">
-                    <children>
-                        <Label fx:id="labelBalance" layoutX="10.0" layoutY="10.0" prefHeight="15.0" text="0.0" textFill="#909090">
-                            <font>
-                                <Font name="Roboto Regular" size="28.0" />
-                            </font>
-                        </Label>
-                    </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-                </FlowPane>
+            <MFXScrollPane fitToWidth="true" minHeight="50.0" vbarPolicy="NEVER">
+               <content>
+                      <FlowPane alignment="CENTER" columnHalignment="CENTER">
+                     <children>
+                              <Label fx:id="labelBalance" text="0.0" textFill="#909090">
+                                  <font>
+                                      <Font name="Roboto Regular" size="28.0" />
+                                  </font>
+                              </Label>
+                     </children>
+                      </FlowPane>
+               </content>
+            </MFXScrollPane>
             </children>
             <VBox.margin>
                 <Insets left="55.0" right="20.0" top="20.0" />
