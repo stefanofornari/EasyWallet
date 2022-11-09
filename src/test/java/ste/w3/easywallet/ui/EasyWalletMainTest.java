@@ -160,7 +160,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         TEST_WALLETS[1].privateKey = "privatekey1";
         TEST_WALLETS[1].privateKey = "privatekey2";
 
-        //
+        //      
         // actual preferences
         //
         Preferences p = main.getPreferences();

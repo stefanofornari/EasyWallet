@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
@@ -25,13 +26,6 @@
             </children>
         </GridPane>
     </bottom>
-    <center>
-        <VBox fx:id="walletsPane" spacing="10.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-            </padding>
-        </VBox>
-    </center>
    <top>
       <BorderPane fx:id="errorPane" styleClass="error" BorderPane.alignment="CENTER">
          <left>
@@ -52,4 +46,15 @@
          </BorderPane.margin>
       </BorderPane>
    </top>
+   <center>
+      <MFXScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
+         <content>
+              <VBox fx:id="walletsPane" spacing="10.0">
+                  <padding>
+                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                  </padding>
+              </VBox>
+         </content>
+      </MFXScrollPane>
+   </center>
 </BorderPane>
