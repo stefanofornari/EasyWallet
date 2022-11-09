@@ -6,11 +6,11 @@ EasyWallet reads and updates the configuration file $(HOME)/.config/ste.w3.easyw
 
 The content looks like the following:
 
->{
->  "endpoint":"https://the.network.endpoint",
->  "appkey":"the endpoint app key",
->  "wallets":[
->  {
+`{
+  "endpoint":"https://the.network.endpoint",
+  "appkey":"the endpoint app key",
+  "wallets":[
+  {
     "address":"the wallet address",
     "privateKey":"the private key if any",
     "mnemonicPhrase":"the mnemonic phrase to generate the keys if any",
@@ -32,4 +32,4 @@ The content looks like the following:
   },
   ...
   ]
-}
+}`
