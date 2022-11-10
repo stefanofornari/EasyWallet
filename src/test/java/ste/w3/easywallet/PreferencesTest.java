@@ -17,21 +17,27 @@
  */
 package ste.w3.easywallet;
 
-import org.apache.commons.lang.StringUtils;
+import static org.assertj.core.api.BDDAssertions.then;
+import org.junit.Test;
 
 /**
  *
- *
  */
-public class Preferences {
-    public String   endpoint   = "";
-    public String   appkey     = "";
-    public Wallet[] wallets    = {};
-    public Coin[]   coins      = {};
+public class PreferencesTest {
 
-    public String url() {
-        return StringUtils.removeEnd(endpoint, "/") +
-               "/" +
-               StringUtils.removeStart(appkey, "/");
+    @Test
+    public void get_url_combines_endpoint_and_appkey() {
+        final String ENDPOINT1 = "https://somewere.com";
+        final String ENDPOINT2 = "https://nowhere.com/";
+        final String APPKEY1 = "thekey1";
+        final String APPKEY2 = "thekey2";
+
+        Preferences p = new Preferences();
+
+        p.endpoint = ENDPOINT1; p.appkey = APPKEY1;
+        then(p.url()).isEqualTo(ENDPOINT1 + "/" + APPKEY1);
+
+        p.endpoint = ENDPOINT2; p.appkey = APPKEY2;
+        then(p.url()).isEqualTo(ENDPOINT2 + APPKEY2);
     }
 }

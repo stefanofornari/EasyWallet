@@ -22,11 +22,9 @@ public class WalletManager {
     private final Web3j web3;
 
     public final String endpoint;
-    public final String appkey;
 
-    public WalletManager(final String endpoint, final String appkey) {
+    public WalletManager(final String endpoint) {
         this.endpoint = endpoint;
-        this.appkey = appkey;
         web3 = Web3j.build(new HttpService(endpoint));
     }
 

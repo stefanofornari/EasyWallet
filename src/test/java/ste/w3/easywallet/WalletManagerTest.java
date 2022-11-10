@@ -25,13 +25,11 @@ public class WalletManagerTest implements TestingConstants {
 
     @Test
     public void construct_wallet_manager() {
-        WalletManager wm = new WalletManager("https://mainnet.infura.io/v3/PROJECTID1", TEST_APP_KEY_1);
-        then(wm.endpoint).isEqualTo("https://mainnet.infura.io/v3/PROJECTID1");
-        then(wm.appkey).isEqualTo(TEST_APP_KEY_1);
+        WalletManager wm = new WalletManager("https://mainnet.infura.io/v3/PROJECTID1/"+ TEST_APP_KEY_1);
+        then(wm.endpoint).isEqualTo("https://mainnet.infura.io/v3/PROJECTID1/" + TEST_APP_KEY_1);
 
-        wm = new WalletManager("https://mainnet.infura.io/v3/PROJECTID2", TEST_APP_KEY_2);
-        then(wm.endpoint).isEqualTo("https://mainnet.infura.io/v3/PROJECTID2");
-        then(wm.appkey).isEqualTo(TEST_APP_KEY_2);
+        wm = new WalletManager("https://mainnet.infura.io/v3/PROJECTID2/" + TEST_APP_KEY_2);
+        then(wm.endpoint).isEqualTo("https://mainnet.infura.io/v3/PROJECTID2/" + TEST_APP_KEY_2);
     }
 
     @Test
@@ -41,7 +39,7 @@ public class WalletManagerTest implements TestingConstants {
         server.addBalanceRequest(ETH, "0x" + ADDRESS2, new BigDecimal("2113030.001"));
         server.addBalanceRequest(STORJ, "0x" + ADDRESS2, new BigDecimal("123.456789"));
 
-        WalletManager wm = new WalletManager(server.ethereum.url("v3/PROJECTID1").toString(), TEST_APP_KEY_1);
+        WalletManager wm = new WalletManager(server.ethereum.url("v3/PROJECTID1/" + TEST_APP_KEY_1).toString());
 
         try {
             wm.balance(null);

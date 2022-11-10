@@ -160,7 +160,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         TEST_WALLETS[1].privateKey = "privatekey1";
         TEST_WALLETS[1].privateKey = "privatekey2";
 
-        //      
+        //
         // actual preferences
         //
         Preferences p = main.getPreferences();
@@ -201,8 +201,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         WalletManager wm = main.getWalletManager();
 
         then(wm).isNotNull();
-        then(wm.endpoint).isEqualTo(preferences.endpoint);
-        then(wm.appkey).isEqualTo(preferences.appkey);
+        then(wm.endpoint).isEqualTo(preferences.url());
         //
         // NOTE: I do not need to do it with different values because
         // preparePreferences() creates always random values, therefore two
@@ -258,7 +257,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
     }
 
     private void withIOException() throws Exception {
-        PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com", "key") {
+        PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com/key") {
             @Override
             public WalletManager balance(Wallet wallet, Coin... coins) throws IOException {
                 throw new IOException("network not available");

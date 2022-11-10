@@ -34,7 +34,7 @@ public class EasyWalletMain extends Application {
             x.printStackTrace();
         }
 
-        walletManager = new WalletManager(preferences.endpoint, preferences.appkey);
+        walletManager = new WalletManager(preferences.url());
 
         stage.setTitle("EasyWallet v0.1");
         stage.setWidth(575);
