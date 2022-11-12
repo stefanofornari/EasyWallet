@@ -34,6 +34,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Coin;
+import ste.w3.easywallet.EasyWalletException;
 import ste.w3.easywallet.Labels;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import static ste.w3.easywallet.Labels.LABEL_BUTTON_OK;
@@ -212,7 +213,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
 
     @Test
     public void error_in_refresh_shows_error_pane_with_text() throws Exception {
-        withIOException();
+        withConnectionException();
 
         Then.then(lookup(".error")).hasNoWidgets();
         clickOn('#' + Constants.KEY_REFRESH);
@@ -256,11 +257,11 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         FileUtils.writeStringToFile(preferencesFile, pm.toJSON(preferences), "UTF-8");
     }
 
-    private void withIOException() throws Exception {
+    private void withConnectionException() throws Exception {
         PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com/key") {
             @Override
-            public WalletManager balance(Wallet wallet, Coin... coins) throws IOException {
-                throw new IOException("network not available");
+            public WalletManager balance(Wallet wallet, Coin... coins) throws EasyWalletException {
+                throw new EasyWalletException("network not available");
             }
 
         });

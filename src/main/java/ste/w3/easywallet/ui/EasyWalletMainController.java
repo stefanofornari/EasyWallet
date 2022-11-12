@@ -23,7 +23,6 @@ package ste.w3.easywallet.ui;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.effects.ripple.RippleClipType;
 import io.github.palexdev.materialfx.factories.RippleClipTypeFactory;
-import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 import javafx.application.Platform;
@@ -36,6 +35,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import ste.w3.easywallet.EasyWalletException;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
@@ -119,7 +119,7 @@ public class EasyWalletMainController {
         easyWalletMain.setTop(null);
     }
 
-    @FXML
+@FXML
     private void onRefresh(ActionEvent event) {
         //
         // TODO: use Platform.runLater
@@ -132,11 +132,11 @@ public class EasyWalletMainController {
                     wm.balance(cardController.wallet, main.getPreferences().coins);
                     cardController.refreshBalance();
                     main.savePreferences();
-                } catch (IOException x) {
-                    //
-                    // TODO: handle the exception
-                    //
+                } catch (EasyWalletException x) {
                     showError(x.getMessage());
+                    //
+                    // TODO: do something different here, maybe log?
+                    //
                     x.printStackTrace();
                 }
 

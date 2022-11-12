@@ -2,7 +2,9 @@ package ste.w3.easywallet;
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.RecordedRequest;
+import okhttp3.mockwebserver.SocketPolicy;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Before;
@@ -78,6 +80,62 @@ public class WalletManagerTest implements TestingConstants {
             fail("invalid key not checked");
         } catch (NumberFormatException x) {
             // OK
+        }
+    }
+
+    @Test
+    public void reports_client_errors() throws Exception {
+        // Invalid response received: 401; project id required in the url
+        // Invalid response received: 401; invalid project id
+        // IOException
+        /*
+        HTTP/1.1 401 Unauthorized
+        Date: Thu, 10 Nov 2022 07:42:04 GMT
+        Content-Type: text/plain; charset=utf-8
+        Content-Length: 31
+        Connection: keep-alive
+        Vary: Accept-Encoding
+        Vary: Origin
+        Www-Authenticate: Basic realm="Project ID is required in the URL"
+        X-Content-Type-Options: nosniff
+
+        project id required in the url
+        */
+        server.ethereum.enqueue(
+            new MockResponse().setResponseCode(401).setHeader("Content-Type", "text/plain")
+                .setBody("project id required in the url")
+        );
+
+        WalletManager wm = new WalletManager(server.ethereum.url("v3").toString());
+        try {
+            wm.balance(new Wallet(ADDRESS1), ETH);
+        } catch (EasyWalletException x) {
+            then(x).hasMessageContaining("project id required in the url");
+        }
+
+        server.ethereum.enqueue(
+            new MockResponse().setResponseCode(401).setHeader("Content-Type", "text/plain")
+                .setBody("invalid project id")
+        );
+
+        try {
+            wm.balance(new Wallet(ADDRESS1), ETH);
+        } catch (EasyWalletException x) {
+            then(x).hasMessageContaining("invalid project id");
+        }
+    }
+
+    @Test
+    public void reports_connection_errors() throws Exception {
+        server.ethereum.enqueue(
+            new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
+        );
+
+        WalletManager wm = new WalletManager(server.ethereum.url("v3").toString());
+        try {
+            wm.balance(new Wallet(ADDRESS1), ETH);
+        } catch (EasyWalletException x) {
+            then(x).hasMessageContaining("check your network");
         }
     }
 }

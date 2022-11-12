@@ -145,7 +145,7 @@ public class ERC20Test {
 
         TestingServer server = new TestingServer();
 
-        Web3j web3j = Web3j.build(new HttpService(preferences.endpoint));
+        Web3j web3j = Web3j.build(new HttpService(preferences.url()));
 
         //
         // Create and use fake credentuials (no credentials are needed to get

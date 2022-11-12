@@ -8,6 +8,7 @@ import org.web3j.crypto.Keys;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.exceptions.ClientConnectionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
@@ -28,7 +29,7 @@ public class WalletManager {
         web3 = Web3j.build(new HttpService(endpoint));
     }
 
-    public WalletManager balance(Wallet wallet, Coin... coins) throws IOException {
+    public WalletManager balance(Wallet wallet, Coin... coins) throws EasyWalletException {
         if (wallet == null) {
             throw new IllegalArgumentException("wallet can not be null");
         }
@@ -47,13 +48,19 @@ public class WalletManager {
                 //
                 // NOTE: balance is returned in wei
                 //
-                EthGetBalance eth = web3.ethGetBalance(
-                    "0x" + wallet.address, DefaultBlockParameterName.LATEST
-                ).send();
+                try {
+                    EthGetBalance eth = web3.ethGetBalance(
+                        "0x" + wallet.address, DefaultBlockParameterName.LATEST
+                    ).send();
 
-                wallet.balance(
-                    new Amount(c, Convert.fromWei(eth.getBalance().toString(), Unit.ETHER))
-                );
+                    wallet.balance(
+                        new Amount(c, Convert.fromWei(eth.getBalance().toString(), Unit.ETHER))
+                    );
+                } catch (IOException x) {
+                    throw new EasyWalletException(x, "Error retrieving balance for %s, check your network", c.symbol);
+                } catch (ClientConnectionException x) {
+                    throw new EasyWalletException(x, "Error '%s' retrieving balance for %s, check your configuration", x.getMessage(), c.symbol);
+                }
             } else {
                 ERC20 token = ERC20.load(c.contract, web3, credentials, new DefaultGasProvider());
                 try {
@@ -62,12 +69,9 @@ public class WalletManager {
                         String.valueOf(token.balanceOf("0x3eAE5d25Aa262a8821357f8b03545d9a6eB1D9F2").send())
                     ));
                 } catch (IOException x) {
-                    throw x;
+                    throw new EasyWalletException(x, "Error retrieving balance for %s, check your network", c.symbol);
                 } catch (Exception x) {
-                    //
-                    // TODO: handle exception (log it?)
-                    //
-                    x.printStackTrace();
+                    throw new EasyWalletException(x, "Error '%s' retrieving balance for %s, check your configuration", x.getMessage(), c.symbol);
                 }
             }
         }
