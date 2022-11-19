@@ -84,6 +84,20 @@ public class EasyWalletFXMLLoader {
             });
     }
 
+    public Pane loadLedgerDialogContent(
+        final MFXGenericDialog dialog
+    ) {
+        return loadPane(
+            "/fxml/LedgerDialog.fxml",
+            new Callback<Class<?>, Object>() {
+                /* controllerFactory */
+                @Override
+                public Object call(Class<?> p) {
+                    return new LedgerController(dialog);
+                }
+            });
+    }
+
     public Pane loadPane(String resource, Callback<Class<?>, Object> controllerFactory) {
         try {
             final Object[] controllerWrapper = new Object[1];

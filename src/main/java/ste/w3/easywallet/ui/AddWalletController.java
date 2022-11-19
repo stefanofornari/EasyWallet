@@ -102,7 +102,6 @@ public class AddWalletController extends WalletDialogController {
         text.setPromptText(LABEL_ADDRESS_HINT);
     }
 
-
     public Wallet onOk() {
         return addressRadio.isSelected() ? new Wallet(text.getText()) : WalletManager.fromPrivateKey(text.getText());
     }

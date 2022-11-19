@@ -27,6 +27,7 @@ public interface Labels {
     public final String LABEL_BUTTON_OK = "OK";
     public final String LABEL_BUTTON_CANCEL = "CANCEL";
     public final String LABEL_BUTTON_SEARCH = "SEARCH";
+    public final String LABEL_BUTTON_CLOSE = "CLOSE";
     public final String LABEL_RADIO_PRIVATE_KEY = "private key";
     public final String LABEL_RADIO_PUBLIC_ADDRESS = "address";
 
@@ -45,5 +46,5 @@ public interface Labels {
 
     public final String ERR_NETWORK = "I am unable to retrieve the information from the provider, check that your internet connection is working and the endpoint is correct";
 
-
+    public final String LABEL_LEDGER_DIALOG_TITLE = "0x%s's incoming token transfers";
 }

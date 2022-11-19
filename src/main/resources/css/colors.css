@@ -1,9 +1,10 @@
 
 
 * {
-	-ew-primary-color: #8bc34a;
-	-ew-secondary-color: #eb934c;
-        -ew-error-color: #ef6e6b;
-        -ew-primary-bg-color: white;
-        -ew-neutral-dark-gray: black rgb(50, 50, 50);
+    -ew-primary-color: #8bc34a;
+    -ew-secondary-color: #eb934c;
+    -ew-error-color: #ef6e6b;
+    -ew-primary-bg-color: white;
+    -ew-neutral-dark-gray: black;
+    -ew-neutral-light-gray: rgb(210, 210, 210);
 }

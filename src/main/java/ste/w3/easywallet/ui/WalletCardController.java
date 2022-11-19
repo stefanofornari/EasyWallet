@@ -25,6 +25,7 @@ import io.github.palexdev.materialfx.effects.ripple.RippleClipType;
 import io.github.palexdev.materialfx.factories.RippleClipTypeFactory;
 import java.util.function.Function;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Wallet;
@@ -42,6 +43,9 @@ public class WalletCardController {
 
     @FXML
     private MFXButton deleteButton;
+
+    @FXML
+    private MFXButton ledgerButton;
 
     @FXML
     private Label address;
@@ -69,12 +73,19 @@ public class WalletCardController {
 
         address.setText("0x" + wallet.address);
         labelBalance.setText(getBalance());
-        editButton.getRippleGenerator().setClipSupplier(
-            () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(editButton)
-        );
-        deleteButton.getRippleGenerator().setClipSupplier(
-            () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(deleteButton)
-        );
+
+        //
+        // Use a circula ripple when icon buttons are pressed
+        //
+        for(Node n: walletCard.lookupAll(".icon-button")) {
+            if (n instanceof MFXButton) {
+                MFXButton b = (MFXButton)n;
+                b.getRippleGenerator().setClipSupplier(
+                    () -> new RippleClipTypeFactory(RippleClipType.ROUNDED_RECTANGLE).setArcs(40).build(b)
+                );
+            }
+        }
+        // ---
     }
 
     @FXML
@@ -88,6 +99,12 @@ public class WalletCardController {
         if (onDelete != null) {
             onDelete.apply(wallet.address);
         }
+    }
+
+    @FXML
+    public void showLedger() {
+        LedgerDialog dialog = new LedgerDialog((Pane)walletCard.getScene().getRoot(), wallet);
+        dialog.showAndWait();
     }
 
     public void refreshBalance() {

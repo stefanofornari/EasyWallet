@@ -15,8 +15,11 @@
  */
 package ste.w3.easywallet.ui;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.effects.ripple.MFXCircleRippleGenerator;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
@@ -25,6 +28,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Amount;
 import ste.w3.easywallet.Labels;
@@ -48,6 +52,25 @@ implements Labels, TestingConstants, TestingUtils {
         controller = (WalletCardController)card.getUserData();
 
         showInStage(stage, card);
+    }
+
+    @Test
+    public void initiale_state() throws Exception {
+        NodeQuery q = lookup(".icon-button");
+        MFXButton[] buttons = q.queryAll().toArray(new MFXButton[0]);
+
+        //
+        // I could not find a better way to check buttons have the proper ripple
+        //
+        then(buttons).hasSize(3).allSatisfy(new Consumer<MFXButton>() {
+            @Override
+            public void accept(MFXButton b) {
+                then(b.getRippleGenerator().getClipSupplier().getClass().getName())
+                    .doesNotStartWith(MFXCircleRippleGenerator.class.getName());
+            }
+
+        });
+
     }
 
     @Test
@@ -99,6 +122,12 @@ implements Labels, TestingConstants, TestingUtils {
         }); waitForFxEvents();
 
         Then.then(lookup("ETH 10.0 - STORJ 15.15")).hasWidgets();
+    }
+
+    @Test
+    public void show_ledger_dialog_when() {
+        clickOn("#ledgerButton");
+        Then.then(lookup(LABEL_LEDGER_DIALOG_TITLE)).hasWidgets();
     }
 
 }

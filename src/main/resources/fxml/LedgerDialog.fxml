@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXPaginatedTableView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox id="addressText" alignment="CENTER" spacing="5.0" styleClass="content" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.LedgerController">
+    <padding>
+        <Insets bottom="15.0" />
+    </padding>
+    <children>
+        <MFXPaginatedTableView fx:id="transactions" rowsPerPage="10" />
+    </children>
+</VBox>
