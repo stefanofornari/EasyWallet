@@ -2,9 +2,18 @@
 
 * {
     -ew-primary-color: #8bc34a;
+    -ew-primary-color-light: #b2d787;
+    -ew-primary-color-lighter: #d1e7b7;
     -ew-secondary-color: #eb934c;
+    -ew-secondary-color-light: #efa970;
+    -ew-secondary-color-lighter: #f5cba9;
+    -ew-text-color: black;
     -ew-error-color: #ef6e6b;
     -ew-primary-bg-color: white;
     -ew-neutral-dark-gray: black;
     -ew-neutral-light-gray: rgb(210, 210, 210);
+    -mfx-main: -ew-primary-color;
+    -mfx-main-light: -ew-primary-color-light;
+    -mfx-main-lighter: -ew-primary-color-lighter;
+    -mfx-gray: -ew-neutral-dark-gray
 }

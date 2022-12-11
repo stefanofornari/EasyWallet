@@ -28,6 +28,8 @@ public interface Labels {
     public final String LABEL_BUTTON_CANCEL = "CANCEL";
     public final String LABEL_BUTTON_SEARCH = "SEARCH";
     public final String LABEL_BUTTON_CLOSE = "CLOSE";
+    public final String LABEL_BUTTON_APPLY = "APPLY";
+    public final String LABEL_BUTTON_RESET = "RESET";
     public final String LABEL_RADIO_PRIVATE_KEY = "private key";
     public final String LABEL_RADIO_PUBLIC_ADDRESS = "address";
 

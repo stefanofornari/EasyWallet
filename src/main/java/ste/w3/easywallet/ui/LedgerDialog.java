@@ -85,8 +85,11 @@ public class LedgerDialog extends MFXStageDialog implements Labels {
             })
         );
 
-        initModality(Modality.APPLICATION_MODAL);
+        setMinWidth(800); setMinHeight(600);
+
         setDraggable(true);
         setOwnerNode(owner);
+        initOwner(owner.getScene().getWindow());
+        initModality(Modality.APPLICATION_MODAL);
     }
 }

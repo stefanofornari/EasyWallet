@@ -8,58 +8,6 @@
 
 /*******************************************************************************
 *                                                                              *
-* MaterialFX                                                                   *
-*                                                                              *
-*******************************************************************************/
-.mfx-text-field, .mfx-radio-button {
-    -mfx-main: -ew-primary-color;
-}
-
-.mfx-dialog {
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
-    -fx-border-style: solid;
-
-    /* These are note picked up for some reason... see AddWalletDialog
-    -fx-border-color: black;
-    -fx-border-width: 1;
-    */
-}
-
-.mfx-button .mfx-ripple-generator {
-    -mfx-ripple-color: -ew-primary-color;
-}
-
-.mfx-dialog .actions-pane .mfx-button {
-    -fx-background-radius: 0;
-    -fx-pref-width: 75;
-}
-
-.mfx-text-field:invalid .floating-text {
-    -fx-text-fill: -mfx-red;
-}
-
-.mfx-table-view {
-   -fx-border-width: 0px;
-}
-
-.mfx-table-view .columns-container {
-    -fx-border-width: 0px;
-    -fx-background-color: -ew-secondary-color;
-}
-
-.mfx-table-view .columns-container .mfx-table-column {
-    -fx-border-width: 0 0 0 1;
-    -fx-border-color: white;
-    -fx-font-weight: bold;
-}
-
-.mfx-pagination .mfx-page:selected {
-    -fx-background-color: -ew-primary-color;
-}
-
-/*******************************************************************************
-*                                                                              *
 * EasyWallet                                                                   *
 *                                                                              *
 *******************************************************************************/
@@ -122,4 +70,98 @@
 #btn_refresh {
     -fx-border-width: 0 1 0 0;
     -fx-border-color: white;
+}
+
+/*******************************************************************************
+*                                                                              *
+* MaterialFX                                                                   *
+*                                                                              *
+*******************************************************************************/
+.mfx-text-field, .mfx-radio-button {
+    -mfx-main: -ew-primary-color;
+}
+
+.mfx-dialog {
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-style: solid;
+}
+
+.mfx-button .mfx-ripple-generator {
+    -mfx-ripple-color: -ew-primary-color;
+}
+
+.mfx-dialog .actions-pane .mfx-button {
+    -fx-background-radius: 0;
+    -fx-pref-width: 75;
+}
+
+.mfx-text-field:invalid .floating-text {
+    -fx-text-fill: -mfx-red;
+}
+
+/** MFXTableView **/
+
+.mfx-table-view {
+   -fx-border-width: 0px;
+}
+
+.mfx-table-view .columns-container {
+    -fx-border-width: 0px;
+    -fx-background-color: -ew-secondary-color;
+}
+
+.mfx-table-view .columns-container .mfx-table-column {
+    -fx-border-width: 0 0 0 1;
+    -fx-border-color: white;
+    -fx-font-weight: bold;
+}
+
+.mfx-pagination .mfx-page:selected {
+    -fx-background-color: -ew-primary-color;
+}
+
+.mfx-filter-dialog {
+    -fx-border-color: -ew-primary-color;
+    -fx-border-width: 3px;
+    -fx-background-radius: 5;
+}
+
+.mfx-filter-pane .header {
+    visibility: hidden;
+}
+
+.mfx-filter-pane .mfx-combo-box .caret .mfx-ripple-generator {
+    -mfx-ripple-color: -ew-primary-color-lighter;
+}
+
+.mfx-filter-pane .mfx-button .mfx-ripple-generator {
+    -mfx-ripple-color: -ew-primary-color-lighter;
+    -mfx-ripple-radius: 45;
+}
+
+.mfx-filter-pane .filter-combo {
+    -fx-background-color: -ew-primary-color;
+    -fx-border-width: 0px;
+}
+
+.mfx-filter-pane .predicates-combo {
+    -fx-background-color: -ew-primary-color;
+    -fx-border-width: 0px;
+}
+
+.mfx-filter-pane .active-filter {
+    -fx-background-color: -ew-secondary-color-light;
+}
+
+.mfx-filter-pane .mfx-button {
+    -fx-pref-width: 135;
+    -fx-pref-height: 36;
+    -fx-background-color: -mfx-main;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-width: 0px;
+    -fx-text-fill: white;
+
+    -fx-font-family: "Open Sans Bold";
 }
