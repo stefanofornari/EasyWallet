@@ -48,6 +48,8 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
     @Override
     public void start(Stage stage) throws Exception {
         Pane mainWindow = new BorderPane();
+        showInStage(stage, mainWindow);
+
         dialog = new LedgerDialog(mainWindow, WALLET);
         //
         // Setting minimum size to make sure all elements are displayed in
@@ -55,8 +57,6 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
         //
         dialog.setMinHeight(600);dialog.setMinWidth(600);
         // ---
-
-        showInStage(stage, mainWindow);
 
         dialog.show();
     }

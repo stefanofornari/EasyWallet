@@ -127,7 +127,7 @@ implements Labels, TestingConstants, TestingUtils {
     @Test
     public void show_ledger_dialog_when() {
         clickOn("#ledgerButton");
-        Then.then(lookup(LABEL_LEDGER_DIALOG_TITLE)).hasWidgets();
+        Then.then(lookup(String.format(LABEL_LEDGER_DIALOG_TITLE, WALLET1))).hasWidgets();
     }
 
 }
