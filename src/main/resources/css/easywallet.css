@@ -121,6 +121,11 @@
     -fx-background-color: -ew-primary-color;
 }
 
+.mfx-table-view .default-footer .mfx-icon-wrapper .mfx-ripple-generator {
+	-mfx-ripple-radius: 18;
+        -mfx-ripple-color: -ew-primary-color;
+}
+
 .mfx-filter-dialog {
     -fx-border-color: -ew-primary-color;
     -fx-border-width: 3px;
