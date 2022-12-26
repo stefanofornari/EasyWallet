@@ -66,7 +66,7 @@ public class WalletManager {
                 try {
                     wallet.balance(new Amount(
                         c,
-                        String.valueOf(token.balanceOf("0x3eAE5d25Aa262a8821357f8b03545d9a6eB1D9F2").send())
+                        String.valueOf(token.balanceOf("0x" + wallet.address).send())
                     ));
                 } catch (IOException x) {
                     throw new EasyWalletException(x, "Error retrieving balance for %s, check your network", c.symbol);

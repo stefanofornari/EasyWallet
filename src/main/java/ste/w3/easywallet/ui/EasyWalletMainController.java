@@ -121,9 +121,6 @@ public class EasyWalletMainController {
 
 @FXML
     private void onRefresh(ActionEvent event) {
-        //
-        // TODO: use Platform.runLater
-        //
         Platform.runLater(() -> {
             WalletManager wm = main.getWalletManager();
             for (Node n: walletsPane.getChildren()) {

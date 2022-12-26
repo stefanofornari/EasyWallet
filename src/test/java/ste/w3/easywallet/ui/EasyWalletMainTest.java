@@ -18,6 +18,7 @@ package ste.w3.easywallet.ui;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -142,6 +143,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
     public void pressing_refresh_udates_balances_in_ui_and_preferences() throws Exception {
         server.addBalanceRequest(ETH, "0x" + preferences.wallets[0].address, new BigDecimal("47.34269121"));
         server.addBalanceRequest(STORJ, "0x" + preferences.wallets[0].address, new BigDecimal("534.09876543"));
+
         clickOn('#' + KEY_REFRESH);
         waitForFxEvents();
 
@@ -243,8 +245,7 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         //
         RandomStringGenerator randomStringGenerator =
             new RandomStringGenerator.Builder()
-                    .withinRange('0', 'f')
-                    .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
+                    .selectFrom("0123456789abcdef".toCharArray())
                     .build();
         preferences = new Preferences();
         preferences.endpoint = server.ethereum.url("v3/" + randomStringGenerator.generate(20)).toString();
