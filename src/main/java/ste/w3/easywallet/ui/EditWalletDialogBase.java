@@ -20,21 +20,32 @@
  */
 package ste.w3.easywallet.ui;
 
+import static io.github.palexdev.materialfx.builders.base.ControlBuilder.control;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import java.util.Map;
+import java.util.function.Function;
 import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class AddWalletDialog extends EditWalletDialogBase {
-    public AddWalletDialog(Pane owner, Wallet[] invalidWallets) {
-        super(owner, LABEL_ADD_WALLET_DIALOG_TITLE);
-        ((AddWalletController)controller).setInvalidWallets(invalidWallets);
-    }
+public abstract class EditWalletDialogBase extends EasyWalletDialog {
 
-    @Override
-    protected Pane content() {
-        return new EasyWalletFXMLLoader().loadAddWalletDialogContent((MFXGenericDialog)getContent());
+    public Function<Wallet, Void> onOk;
+
+    public EditWalletDialogBase(final Pane owner, final String title) {
+        super(owner, title);
+
+        MFXGenericDialog dialog = (MFXGenericDialog)getContent();
+        dialog.addActions(
+            Map.entry(controller.okButton, e -> {
+                if (onOk != null) {
+                    onOk.apply(((EditWalletControllerBase)controller).onOk());
+                }
+                close();
+            })
+        );
     }
 }

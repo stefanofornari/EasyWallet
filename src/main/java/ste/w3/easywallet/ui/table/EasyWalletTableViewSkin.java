@@ -42,6 +42,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.SkinBase;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -114,6 +115,7 @@ public class EasyWalletTableViewSkin<T> extends SkinBase<MFXTableView<T>> {
 
         MFXButton applyButton =  new MFXButton(Labels.LABEL_BUTTON_APPLY);
         applyButton.getStyleClass().add("primary-button");
+
         MFXButton refreshButton =  new MFXButton(Labels.LABEL_BUTTON_RESET);
         dialog.addActions(
             Map.entry(refreshButton, e -> {
@@ -123,6 +125,12 @@ public class EasyWalletTableViewSkin<T> extends SkinBase<MFXTableView<T>> {
                 filterPane.getOnFilter().handle(e);
             })
         );
+
+        dialog.onKeyTypedProperty().setValue((event) -> {
+            if (event.getCharacter().charAt(0) == 27) {  // ESC
+                filterDialog.close();
+            }
+        });
 
         getChildren().setAll(container);
 

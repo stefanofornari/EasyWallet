@@ -40,7 +40,7 @@ import ste.w3.easywallet.WalletManager;
 /**
  *
  */
-public class EditWalletController extends WalletDialogController {
+public class EditWalletController extends EditWalletControllerBase {
 
     @FXML
     protected MFXButton searchButton;
@@ -67,7 +67,6 @@ public class EditWalletController extends WalletDialogController {
 
     @FXML
     public void initialize() {
-        super.initialize();
         mnemonicPane.setExpanded(false);
 
         mnemonicPane.expandedProperty().addListener( (obs, oldValue, newValue) -> {

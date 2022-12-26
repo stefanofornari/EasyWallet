@@ -27,10 +27,10 @@ import ste.w3.easywallet.Wallet;
 /**
  *
  */
-public class EditWalletDialog extends WalletDialog<EditWalletController> {
+public class EditWalletDialog extends EditWalletDialogBase {
     public EditWalletDialog(final Pane owner, final Wallet wallet) {
         super(owner, String.format(LABEL_EDIT_WALLET_PRIVATE_KEY_TITLE, wallet.address));
-        controller.wallet(wallet);
+        ((EditWalletController)controller).wallet(wallet);
     }
 
     @Override

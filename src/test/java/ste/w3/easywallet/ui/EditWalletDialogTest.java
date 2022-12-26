@@ -127,6 +127,7 @@ public class EditWalletDialogTest extends ApplicationTest implements Labels, Tes
 
         dialog.onOk = new Function<>() {
             public Void apply(Wallet w) {
+                System.out.println(w.address);
                 wrapper[0] = w; return null;
             }
         };
@@ -181,5 +182,12 @@ public class EditWalletDialogTest extends ApplicationTest implements Labels, Tes
         lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY1);
         clickOn(LABEL_BUTTON_OK);
         Then.then(lookup(".mfx-dialog")).hasNoWidgets();
+    }
+
+    @Test
+    public void close_on_ESC() {
+        then(dialog.isShowing()).isTrue();
+        type(KeyCode.ESCAPE);
+        then(dialog.isShowing()).isFalse();
     }
 }

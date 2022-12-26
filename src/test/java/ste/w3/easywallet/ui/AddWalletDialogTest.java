@@ -56,10 +56,9 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
     @Override
     public void start(Stage stage) throws Exception {
         Pane mainWindow = new BorderPane();
-        dialog = new AddWalletDialog(mainWindow, INVALID_WALLETS);
-
         showInStage(stage, mainWindow);
 
+        dialog = new AddWalletDialog(mainWindow, INVALID_WALLETS);
         dialog.show();
     }
 
@@ -258,5 +257,12 @@ public class AddWalletDialogTest extends ApplicationTest implements Labels, Test
         clickOn(".primary-button"); waitForFxEvents();
 
         then(ret[0]).isEqualTo(ADDRESS6);
+    }
+
+    @Test
+    public void close_on_ESC() {
+        then(dialog.isShowing()).isTrue();
+        type(KeyCode.ESCAPE);
+        then(dialog.isShowing()).isFalse();
     }
 }

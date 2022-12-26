@@ -23,8 +23,6 @@ package ste.w3.easywallet.ui;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-import java.util.HashSet;
-import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -36,9 +34,7 @@ import ste.w3.easywallet.WalletManager;
 /**
  *
  */
-public class AddWalletController extends WalletDialogController {
-
-    private final Set<String> invalidAddresses = new HashSet();
+public class AddWalletController extends EditWalletControllerBase {
 
     @FXML
     private MFXTextField text;
@@ -50,17 +46,8 @@ public class AddWalletController extends WalletDialogController {
         super(dialog);
     }
 
-    public void setInvalidWallets(Wallet[] wallets) {
-        if (wallets != null) {
-            for (Wallet w: wallets) {
-                invalidAddresses.add(w.address);
-            }
-        }
-    }
-
     @FXML
     public void initialize() {
-        super.initialize();
         text.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         text.textProperty().addListener(new ChangeListener() {
             @Override

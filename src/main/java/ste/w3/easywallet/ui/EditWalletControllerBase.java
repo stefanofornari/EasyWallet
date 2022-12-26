@@ -21,20 +21,31 @@
 package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import javafx.scene.layout.Pane;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
+import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class AddWalletDialog extends EditWalletDialogBase {
-    public AddWalletDialog(Pane owner, Wallet[] invalidWallets) {
-        super(owner, LABEL_ADD_WALLET_DIALOG_TITLE);
-        ((AddWalletController)controller).setInvalidWallets(invalidWallets);
+public abstract class  EditWalletControllerBase extends EasyWalletDialogController<Wallet> implements Labels {
+
+    protected final Set<String> invalidAddresses = new HashSet();
+
+    public EditWalletControllerBase(final MFXGenericDialog dialog) {
+        super(dialog);
     }
 
-    @Override
-    protected Pane content() {
-        return new EasyWalletFXMLLoader().loadAddWalletDialogContent((MFXGenericDialog)getContent());
+    public void setInvalidWallets(Wallet[] wallets) {
+        if (wallets != null) {
+            for (Wallet w: wallets) {
+                invalidAddresses.add(w.address);
+            }
+        }
     }
+
+    protected abstract Wallet onOk();
+
 }

@@ -22,6 +22,7 @@ package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -51,18 +52,13 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
         showInStage(stage, mainWindow);
 
         dialog = new LedgerDialog(mainWindow, WALLET);
-        //
-        // Setting minimum size to make sure all elements are displayed in
-        // headless testing as well
-        //
-        dialog.setMinHeight(600);dialog.setMinWidth(600);
-        // ---
-
         dialog.show();
     }
 
     @Test
     public void ledger_dialog_widgets_and_controller() {
+        LedgerController controller = (LedgerController)dialog.controller;
+
         //
         // The OK button is disabled until there is a valid address
         //
@@ -71,13 +67,13 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
         Then.then(lookup(LABEL_BUTTON_CLOSE)).hasWidgets();
         Then.then(lookup(".mfx-paginated-table-view")).hasOneWidget();
 
-        then(dialog.controller).isNotNull().isInstanceOf(LedgerController.class);
-        then(dialog.controller.transactions.getTableColumns()).hasSize(3);
+        then(controller).isNotNull().isInstanceOf(LedgerController.class);
+        then(controller.transactions.getTableColumns()).hasSize(3);
         then(lookup(LABEL_BUTTON_CLOSE).queryAs(MFXButton.class).getStyleClass()).contains("primary-button");
 
         final String[] TITLES = { "when", "amount", "from"};
         for (int i=0; i<TITLES.length; ++i) {
-            MFXTableColumn column = (MFXTableColumn)dialog.controller.transactions.getTableColumns().get(i);
+            MFXTableColumn column = (MFXTableColumn)controller.transactions.getTableColumns().get(i);
             Then.then(column).hasText(TITLES[i]);
         }
     }
@@ -86,6 +82,12 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
     public void pressing_close_closes_the_dialog() throws Exception {
         clickOn(LABEL_BUTTON_CLOSE); waitForFxEvents();
         Then.then(lookup(TITLE)).hasNoWidgets();
+    }
+
+    @Test
+    public void close_on_ESC() {
+        type(KeyCode.ESCAPE);
+        then(dialog.isShowing()).isFalse();
     }
 
 }

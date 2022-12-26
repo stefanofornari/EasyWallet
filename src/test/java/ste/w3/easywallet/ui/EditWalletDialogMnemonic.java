@@ -52,7 +52,7 @@ public class EditWalletDialogMnemonic extends ApplicationTest implements Labels,
         WALLET.mnemonicPhrase = TEST_MNEMONIC;
         Pane mainWindow = new BorderPane();
         dialog = new EditWalletDialog(mainWindow, WALLET);
-        dialog.controller.mnemonicPane.setExpanded(true);
+        ((EditWalletController)dialog.controller).mnemonicPane.setExpanded(true);
 
         showInStage(stage, mainWindow);
 
@@ -101,7 +101,7 @@ public class EditWalletDialogMnemonic extends ApplicationTest implements Labels,
     @Test
     public void search_button_turns_into_cancel_and_back_to_search() {
         Platform.runLater(() -> {
-            dialog.controller.wallet(new Wallet(ADDRESS7));
+            ((EditWalletController)dialog.controller).wallet(new Wallet(ADDRESS7));
         }); waitForFxEvents();
 
         lookup("#mnemonicText").queryAs(TextField.class).setText(LABEL_MNEMONIC_PHRASE_HINT);

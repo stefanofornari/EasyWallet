@@ -32,16 +32,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import ste.w3.easywallet.Transaction;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public class LedgerController {
+public class LedgerController extends EasyWalletDialogController<Void> {
 
     @FXML
     protected MFXPaginatedTableView transactions;
 
     public LedgerController(final MFXGenericDialog dialog) {
+        super(dialog);
     }
 
     @FXML
@@ -85,6 +87,11 @@ public class LedgerController {
             );
         }
         transactions.setItems(data);
+    }
+
+    @Override
+    protected Void onOk() {
+        return null;
     }
 
 }

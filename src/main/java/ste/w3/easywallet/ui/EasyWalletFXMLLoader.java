@@ -110,7 +110,6 @@ public class EasyWalletFXMLLoader {
                     @Override
                     public Object call(Class<?> p) {
                         return (controllerWrapper[0] = controllerFactory.call(p));
-
                     }
                 }
             );

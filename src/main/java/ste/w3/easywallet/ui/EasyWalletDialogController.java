@@ -20,37 +20,29 @@
  */
 package ste.w3.easywallet.ui;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Labels;
-import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public abstract class  WalletDialogController implements Labels {
+public abstract class  EasyWalletDialogController<R> implements Labels {
 
     protected final MFXGenericDialog dialog;
 
-    protected Button okButton, cancelButton;
+    public final MFXButton okButton, cancelButton;
 
-    public WalletDialogController(final MFXGenericDialog dialog) {
+    public EasyWalletDialogController(final MFXGenericDialog dialog) {
         this.dialog = dialog;
+        okButton = new MFXButton(LABEL_BUTTON_OK);
+        cancelButton = new MFXButton(LABEL_BUTTON_CANCEL);
     }
 
-    @FXML
-    public void initialize() {
-        ObservableList<Node> actions = ((Pane)dialog.getBottom()).getChildren();
-    }
+    protected R onOk() {
+        return null;
+    };
 
-    public void setActionButtons(Button ok, Button cancel) {
-        okButton = ok; cancelButton = cancel;
-    }
 
-    abstract protected Wallet onOk();
 
 }

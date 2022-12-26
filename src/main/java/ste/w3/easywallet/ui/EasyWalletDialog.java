@@ -20,26 +20,21 @@
  */
 package ste.w3.easywallet.ui;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import java.util.Map;
-import java.util.function.Function;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import ste.w3.easywallet.Labels;
-import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
-public abstract class WalletDialog<T extends WalletDialogController> extends MFXStageDialog implements Labels {
-    protected T controller;
+public abstract class EasyWalletDialog extends MFXStageDialog implements Labels {
+    public final EasyWalletDialogController controller;
 
-    public Function<Wallet, Void> onOk;
-
-    public WalletDialog(final Pane owner, final String title) {
+    public EasyWalletDialog(final Pane owner, final String title) {
         super(
             MFXGenericDialogBuilder.build()
                 .setHeaderText(title)
@@ -61,14 +56,10 @@ public abstract class WalletDialog<T extends WalletDialogController> extends MFX
         setCenterInOwnerNode(false);
         // ---
 
-        MFXButton okButton = new MFXButton(LABEL_BUTTON_OK);
-        okButton.setDisable(true);
-        okButton.getStyleClass().add("primary-button");
-        MFXButton cancelButton = new MFXButton(LABEL_BUTTON_CANCEL);
-
         MFXGenericDialog dialog = (MFXGenericDialog)getContent();
 
-        dialog.setContent(content());
+        Pane content = content();
+        dialog.setContent(content);
         dialog.alwaysOnTopProperty().bind(alwaysOnTopProperty());
         dialog.setOnAlwaysOnTop(event -> setAlwaysOnTop(!dialog.isAlwaysOnTop()));
 	dialog.setOnMinimize(event -> setIconified(true));
@@ -80,25 +71,23 @@ public abstract class WalletDialog<T extends WalletDialogController> extends MFX
             "-fx-border-color: -ew-primary-color;"
         );
 
-        controller = (T)dialog.getContent().getUserData();
+        controller = (EasyWalletDialogController)content.getUserData();
+        controller.okButton.setDisable(true);
+        controller.okButton.getStyleClass().add("primary-button");
+        controller.cancelButton.setCancelButton(true);
+        controller.cancelButton.onActionProperty().setValue((event) -> close());
+
         dialog.addActions(
-            Map.entry(cancelButton, e -> {
-                close();
-            }),
-            Map.entry(okButton, e -> {
-                if (onOk != null) {
-                    onOk.apply(controller.onOk());
-                }
+            Map.entry(controller.cancelButton, e -> {
                 close();
             })
         );
-        controller.setActionButtons(okButton, cancelButton);
 
         initModality(Modality.APPLICATION_MODAL);
         setDraggable(true);
         setOwnerNode(owner);
     }
-    
+
     abstract Pane content();
 
 }
