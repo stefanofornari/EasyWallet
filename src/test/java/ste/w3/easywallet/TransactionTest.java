@@ -23,6 +23,8 @@ package ste.w3.easywallet;
 import java.time.Instant;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
+import static ste.w3.easywallet.TestingConstants.GLM;
+import static ste.w3.easywallet.TestingConstants.STORJ;
 
 /**
  *
@@ -35,18 +37,21 @@ public class TransactionTest {
     @Test
     public void constructor_and_getter() {
         Transaction t = new Transaction();
+        then(t.coin).isNull();
         then(t.amount).isNull();
         then(t.from).isNull();
         then(t.hash).isNull();
         then(t.when).isNull();
 
-        t = new Transaction(TEST_DATE_1, "11.11", "from1", "hash1");
+        t = new Transaction(TEST_DATE_1, STORJ, "11.11", "from1", "hash1");
+        then(t.coin.symbol).isEqualTo(STORJ.symbol); then(t.coinSymbol()).isEqualTo(t.coin.symbol);
         then(t.amount).isEqualTo("11.11"); then(t.amount()).isEqualTo(t.amount);
         then(t.from).isEqualTo("from1"); then(t.from()).isEqualTo(t.from);
         then(t.hash).isEqualTo("hash1"); then(t.hash()).isEqualTo(t.hash);
         then(t.when).isEqualTo(TEST_DATE_1); then(t.when()).isEqualTo(t.when);
 
-        t = new Transaction(TEST_DATE_2, "22.22", "from2", "hash2");
+        t = new Transaction(TEST_DATE_2, GLM, "22.22", "from2", "hash2");
+        then(t.coin.symbol).isEqualTo(GLM.symbol); then(t.coinSymbol()).isEqualTo(t.coin.symbol);
         then(t.amount).isEqualTo("22.22"); then(t.amount()).isEqualTo(t.amount);
         then(t.from).isEqualTo("from2"); then(t.from()).isEqualTo(t.from);
         then(t.hash).isEqualTo("hash2"); then(t.hash()).isEqualTo(t.hash);
@@ -55,8 +60,8 @@ public class TransactionTest {
 
     @Test
     public void get_when_in_zulu() {
-        then(new Transaction(TEST_DATE_1, "11.11", "from1", "hash1").whenZ()).isEqualTo(TEST_DATE_1.toString());
-        then(new Transaction(TEST_DATE_2, "11.11", "from1", "hash1").whenZ()).isEqualTo(TEST_DATE_2.toString());
+        then(new Transaction(TEST_DATE_1, STORJ, "11.11", "from1", "hash1").whenZ()).isEqualTo(TEST_DATE_1.toString());
+        then(new Transaction(TEST_DATE_2, GLM, "11.11", "from1", "hash1").whenZ()).isEqualTo(TEST_DATE_2.toString());
     }
 
 }

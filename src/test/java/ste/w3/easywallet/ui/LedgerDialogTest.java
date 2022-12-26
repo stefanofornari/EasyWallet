@@ -57,21 +57,18 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
 
     @Test
     public void ledger_dialog_widgets_and_controller() {
-        LedgerController controller = (LedgerController)dialog.controller;
+        final String[] TITLES = { "when", "coin", "amount", "from"};
 
-        //
-        // The OK button is disabled until there is a valid address
-        //
+        LedgerController controller = (LedgerController)dialog.controller;
 
         Then.then(lookup(TITLE)).hasWidgets();
         Then.then(lookup(LABEL_BUTTON_CLOSE)).hasWidgets();
         Then.then(lookup(".mfx-paginated-table-view")).hasOneWidget();
 
         then(controller).isNotNull().isInstanceOf(LedgerController.class);
-        then(controller.transactions.getTableColumns()).hasSize(3);
+        then(controller.transactions.getTableColumns()).hasSize(TITLES.length);
         then(lookup(LABEL_BUTTON_CLOSE).queryAs(MFXButton.class).getStyleClass()).contains("primary-button");
 
-        final String[] TITLES = { "when", "amount", "from"};
         for (int i=0; i<TITLES.length; ++i) {
             MFXTableColumn column = (MFXTableColumn)controller.transactions.getTableColumns().get(i);
             Then.then(column).hasText(TITLES[i]);

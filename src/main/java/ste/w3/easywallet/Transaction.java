@@ -27,16 +27,18 @@ import java.time.Instant;
  */
 public class Transaction {
 
-    public String hash, from, amount;
-    public Instant when;
+    public final String hash, from, amount;
+    public final Coin coin;
+    public final Instant when;
     //public Amount amount;
 
     public Transaction() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
-    public Transaction(Instant when, String amount, String from, String hash) {
+    public Transaction(Instant when, Coin coin, String amount, String from, String hash) {
         this.when = when;
+        this.coin = coin;
         this.amount = amount;
         this.from = from;
         this.hash = hash;
@@ -44,6 +46,10 @@ public class Transaction {
 
     public Instant when() {
         return when;
+    }
+
+    public String coinSymbol() {
+        return coin.symbol;
     }
 
     public String amount() {

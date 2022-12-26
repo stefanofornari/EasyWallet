@@ -46,7 +46,6 @@ public class Coin {
             throw new IllegalArgumentException("symbol can not be blank");
         } else {
             this.symbol = symbol;
-
         }
 
         if (StringUtils.isBlank(name)) {

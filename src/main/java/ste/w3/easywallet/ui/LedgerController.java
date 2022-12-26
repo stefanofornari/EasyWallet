@@ -31,8 +31,8 @@ import java.util.Comparator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Transaction;
-import ste.w3.easywallet.Wallet;
 
 /**
  *
@@ -59,16 +59,19 @@ public class LedgerController extends EasyWalletDialogController<Void> {
 
     private void setupTable() {
         MFXTableColumn<Transaction> whenColumn = new MFXTableColumn<>("when", false, Comparator.comparing(Transaction::when));
+        MFXTableColumn<Transaction> coinColumn = new MFXTableColumn<>("coin", false, Comparator.comparing(Transaction::coinSymbol));
         MFXTableColumn<Transaction> amountColumn = new MFXTableColumn<>("amount", false, Comparator.comparing(Transaction::amount));
         MFXTableColumn<Transaction> fromColumn = new MFXTableColumn<>("from", false, Comparator.comparing(Transaction::from));
 
         whenColumn.setRowCellFactory(transaction -> new MFXTableRowCell<>(Transaction::when));
+        coinColumn.setRowCellFactory(transaction -> new MFXTableRowCell<>(Transaction::coinSymbol));
         amountColumn.setRowCellFactory(transaction -> new MFXTableRowCell<>(Transaction::amount));
         fromColumn.setRowCellFactory(transaction -> new MFXTableRowCell<>(Transaction::from));
 
-        transactions.getTableColumns().addAll(whenColumn, amountColumn, fromColumn);
+        transactions.getTableColumns().addAll(whenColumn, coinColumn, amountColumn, fromColumn);
         transactions.getFilters().addAll(
                         new StringFilter<>("when", Transaction::whenZ),
+                        new StringFilter<>("coin", Transaction::coinSymbol),
                         new StringFilter<>("amount", Transaction::amount),
                         new StringFilter<>("from", Transaction::from)
                         //new EnumFilter<>("State", Device::getState, Device.State.class)
@@ -76,10 +79,19 @@ public class LedgerController extends EasyWalletDialogController<Void> {
 
         ObservableList<Transaction> data = FXCollections.observableArrayList();
 
+        //
+        // TODO: access the preferences object
+        //
+        Coin[] coins = new Coin[] {
+            new Coin("STORJ", "STORJ", 8),
+            new Coin("GLM", "GLM", 12)
+        };
+
         for (int i=1; i<=50; ++i) {
             data.add(
                 new Transaction(
                     Instant.parse(String.format("2022-11-10T10:%02d:00Z", i)),
+                    coins[i%2],
                     String.format("%1$02d.%1$02d", i),
                     String.format("12345678901234567890123456789012345678%02d",i),
                     String.format("hahs%02d",i)

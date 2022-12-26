@@ -21,7 +21,6 @@
 package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import java.util.Map;
 import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.Wallet;
@@ -32,7 +31,6 @@ import ste.w3.easywallet.Wallet;
 public class LedgerDialog extends EasyWalletDialog implements Labels {
     public LedgerDialog(final Pane owner, final Wallet wallet) {
         super(owner, String.format(LABEL_LEDGER_DIALOG_TITLE, wallet.address));
-        setMinWidth(800); setMinHeight(600);
 
         controller.cancelButton.setText(LABEL_BUTTON_CLOSE);
         controller.cancelButton.getStyleClass().add("primary-button");
