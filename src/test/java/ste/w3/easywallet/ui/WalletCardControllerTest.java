@@ -17,21 +17,25 @@ package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.effects.ripple.MFXCircleRippleGenerator;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import static org.assertj.core.api.BDDAssertions.then;
+import org.junit.Before;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Amount;
+import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Labels;
+import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
 
@@ -46,8 +50,25 @@ implements Labels, TestingConstants, TestingUtils {
 
     private WalletCardController controller = null;
 
+    @Before
+    public void before() throws Exception {
+        Context ctx = new InitialContext();
+
+        //synchronized (ctx) {
+        try {
+            ctx.destroySubcontext("root");
+        } catch (Exception x) {}
+
+        Preferences preferences = new Preferences();
+        preferences.coins = new Coin[] {ETH, STORJ};
+
+        ctx = ctx.createSubcontext("root");
+        ctx.bind("preferences", preferences);
+    //}
+    }
+
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws Exception {
         Pane card = new EasyWalletFXMLLoader().loadCardPane(new Wallet[0], WALLET);
         controller = (WalletCardController)card.getUserData();
 

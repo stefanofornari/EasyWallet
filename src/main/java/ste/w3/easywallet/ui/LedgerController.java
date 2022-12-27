@@ -31,7 +31,9 @@ import java.util.Comparator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import ste.w3.easywallet.Coin;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Transaction;
 
 /**
@@ -79,19 +81,21 @@ public class LedgerController extends EasyWalletDialogController<Void> {
 
         ObservableList<Transaction> data = FXCollections.observableArrayList();
 
+        Preferences preferences = null;
+        try {
+            preferences = (Preferences)new InitialContext().lookup("root/preferences");
+        } catch (NamingException x) {
+            x.printStackTrace();
+        }
+
         //
         // TODO: access the preferences object
         //
-        Coin[] coins = new Coin[] {
-            new Coin("STORJ", "STORJ", 8),
-            new Coin("GLM", "GLM", 12)
-        };
-
         for (int i=1; i<=50; ++i) {
             data.add(
                 new Transaction(
                     Instant.parse(String.format("2022-11-10T10:%02d:00Z", i)),
-                    coins[i%2],
+                    preferences.coins[i%2],
                     String.format("%1$02d.%1$02d", i),
                     String.format("12345678901234567890123456789012345678%02d",i),
                     String.format("hahs%02d",i)

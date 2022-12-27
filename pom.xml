@@ -122,6 +122,12 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>com.github.h-thurow</groupId>
+            <artifactId>simple-jndi</artifactId>
+            <version>0.23.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.5</version>
@@ -178,6 +184,10 @@
                         <prism.text>t2k</prism.text>
                         <java.awt.headless>true</java.awt.headless>
                     </systemPropertyVariables>
+                    <parallel>classes</parallel>
+                    <threadCount>1</threadCount>
+                    <forkCount>3</forkCount>
+                    <reuseRoks>false</reuseRoks>
                 </configuration>
             </plugin>
         </plugins>
@@ -229,11 +239,11 @@
                         <version>3.0.0-M7</version>
                         <!-- disable headless testing -->
                         <configuration>
-                    <systemPropertyVariables>
-                        <testfx.headless>false</testfx.headless>
-                        <java.awt.headless>false</java.awt.headless>
-                    </systemPropertyVariables>
-                </configuration>
+                            <systemPropertyVariables>
+                                <testfx.headless>false</testfx.headless>
+                                <java.awt.headless>false</java.awt.headless>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

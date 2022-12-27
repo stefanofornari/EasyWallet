@@ -18,13 +18,14 @@ package ste.w3.easywallet.ui;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Rule;
@@ -229,6 +230,14 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
         Then.then(lookup(".error")).hasNoWidgets();
     }
 
+    @Test
+    public void bind_preferences() throws Exception {
+        InitialContext ctx = new InitialContext();
+
+        Preferences p = (Preferences)ctx.lookup(main.hashCode() + "/preferences");
+        then(p).isNotNull().isSameAs(main.getPreferences());
+    }
+
     // --------------------------------------------------------- private methods
 
     private File getPreferencesFile() throws IOException {
@@ -284,6 +293,14 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
             return null;
         }
 
+        @Override
+        //
+        // With this we make sure multiple instances do not interefeer each
+        // other. The root can then be retrieved with the following code:
+        //
+        protected Context getJNDIRoot() throws NamingException {
+            return new InitialContext().createSubcontext(String.valueOf(this.hashCode()));
+        }
     }
 
 }

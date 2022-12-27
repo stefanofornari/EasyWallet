@@ -7,6 +7,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.commons.io.FileUtils;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
@@ -30,7 +33,8 @@ public class EasyWalletMain extends Application {
         PreferencesManager pm = new PreferencesManager();
         try {
             preferences = pm.fromJSON(FileUtils.readFileToString(configFile, "UTF-8"));
-        } catch (IOException x) {
+            getJNDIRoot().bind("preferences", preferences);
+        } catch (IOException | NamingException x) {
             x.printStackTrace();
         }
 
@@ -107,6 +111,10 @@ public class EasyWalletMain extends Application {
         return new File(
             FileUtils.getUserDirectory(), ".config/ste.w3.easywallet/preferences.json"
         );
+    }
+
+    protected Context getJNDIRoot() throws NamingException {
+        return new InitialContext().createSubcontext("root");
     }
 
     // --------------------------------------------------------- private method
