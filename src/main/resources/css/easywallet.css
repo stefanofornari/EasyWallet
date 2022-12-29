@@ -52,7 +52,7 @@
     -fx-border-width: 2 0 2 0;
     -fx-border-color: -ew-error-color;
     -fx-margin: 3;
-    }
+}
 
 .error .label, .error .button {
     -fx-text-fill: -ew-error-color;
@@ -103,7 +103,9 @@
 /** MFXTableView **/
 
 .mfx-table-view {
-   -fx-border-width: 0px;
+    -fx-border-width: 0px;
+    -fx-min-height: 450px;
+    -fx-min-width: 700px;
 }
 
 .mfx-table-view .columns-container {
@@ -117,13 +119,9 @@
     -fx-font-weight: bold;
 }
 
-.mfx-pagination .mfx-page:selected {
-    -fx-background-color: -ew-primary-color;
-}
-
 .mfx-table-view .default-footer .mfx-icon-wrapper .mfx-ripple-generator {
-	-mfx-ripple-radius: 18;
-        -mfx-ripple-color: -ew-primary-color;
+    -mfx-ripple-radius: 18;
+    -mfx-ripple-color: -ew-primary-color;
 }
 
 .mfx-filter-dialog {

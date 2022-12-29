@@ -20,13 +20,13 @@
  */
 package ste.w3.easywallet.ui.table;
 
-import io.github.palexdev.materialfx.controls.MFXPaginatedTableView;
+import io.github.palexdev.materialfx.controls.MFXTableView;
 import javafx.scene.control.Skin;
 
 /**
  *
  */
-public class EasyWalletTableView<T> extends MFXPaginatedTableView<T> {
+public class EasyWalletTableView<T> extends MFXTableView<T> {
 
     @Override
     protected Skin<?> createDefaultSkin() {

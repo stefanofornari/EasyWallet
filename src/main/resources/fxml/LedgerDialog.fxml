@@ -3,12 +3,13 @@
 <?import ste.w3.easywallet.ui.table.EasyWalletTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.VBox?>
+<?import io.github.palexdev.materialfx.controls.MFXTableView?>
 
 <VBox id="addressText" alignment="CENTER" spacing="5.0" styleClass="content" stylesheets="@/css/easywallet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.LedgerController">
     <padding>
-        <Insets bottom="15.0" />
+        <Insets bottom="25.0" />
     </padding>
     <children>
-        <EasyWalletTableView fx:id="transactions" rowsPerPage="10" />
+        <EasyWalletTableView fx:id="transactions"/>
     </children>
 </VBox>
