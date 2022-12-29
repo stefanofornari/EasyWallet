@@ -20,12 +20,11 @@
  */
 package ste.w3.easywallet.ui;
 
-import io.github.palexdev.materialfx.controls.MFXPaginatedTableView;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.materialfx.utils.others.observables.When;
 import java.time.Instant;
 import java.util.Comparator;
 import javafx.collections.FXCollections;
@@ -43,7 +42,7 @@ import ste.w3.easywallet.ui.filter.BigDecimalFilter;
 public class LedgerController extends EasyWalletDialogController<Void> {
 
     @FXML
-    protected MFXPaginatedTableView transactions;
+    protected MFXTableView transactions;
 
     public LedgerController(final MFXGenericDialog dialog) {
         super(dialog);
@@ -51,13 +50,8 @@ public class LedgerController extends EasyWalletDialogController<Void> {
 
     @FXML
     public void initialize() {
-        setupTable();
-
         transactions.autosizeColumnsOnInitialization();
-
-	When.onChanged(transactions.currentPageProperty())
-            .then((oldValue, newValue) -> transactions.autosizeColumns())
-            .listen();
+        setupTable();
     }
 
     private void setupTable() {
@@ -77,7 +71,6 @@ public class LedgerController extends EasyWalletDialogController<Void> {
                         new StringFilter<>("coin", Transaction::coinSymbol),
                         new BigDecimalFilter<>("amount", Transaction::amount),
                         new StringFilter<>("from", Transaction::from)
-                        //new EnumFilter<>("State", Device::getState, Device.State.class)
         );
 
         ObservableList<Transaction> data = FXCollections.observableArrayList();
