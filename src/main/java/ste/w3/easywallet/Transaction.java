@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
@@ -27,7 +28,8 @@ import java.time.Instant;
  */
 public class Transaction {
 
-    public final String hash, from, amount;
+    public final String hash, from;
+    public final BigDecimal amount;
     public final Coin coin;
     public final Instant when;
     //public Amount amount;
@@ -39,7 +41,7 @@ public class Transaction {
     public Transaction(Instant when, Coin coin, String amount, String from, String hash) {
         this.when = when;
         this.coin = coin;
-        this.amount = amount;
+        this.amount = new BigDecimal(amount);
         this.from = from;
         this.hash = hash;
     }
@@ -52,7 +54,7 @@ public class Transaction {
         return coin.symbol;
     }
 
-    public String amount() {
+    public BigDecimal amount() {
         return amount;
     }
 

@@ -35,6 +35,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Transaction;
+import ste.w3.easywallet.ui.filter.BigDecimalFilter;
 
 /**
  *
@@ -74,7 +75,7 @@ public class LedgerController extends EasyWalletDialogController<Void> {
         transactions.getFilters().addAll(
                         new StringFilter<>("when", Transaction::whenZ),
                         new StringFilter<>("coin", Transaction::coinSymbol),
-                        new StringFilter<>("amount", Transaction::amount),
+                        new BigDecimalFilter<>("amount", Transaction::amount),
                         new StringFilter<>("from", Transaction::from)
                         //new EnumFilter<>("State", Device::getState, Device.State.class)
         );
@@ -88,9 +89,6 @@ public class LedgerController extends EasyWalletDialogController<Void> {
             x.printStackTrace();
         }
 
-        //
-        // TODO: access the preferences object
-        //
         for (int i=1; i<=50; ++i) {
             data.add(
                 new Transaction(
