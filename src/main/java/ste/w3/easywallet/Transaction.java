@@ -41,7 +41,7 @@ public class Transaction {
     public Transaction(Instant when, Coin coin, String amount, String from, String hash) {
         this.when = when;
         this.coin = coin;
-        this.amount = new BigDecimal(amount);
+        this.amount = (amount != null) ? new BigDecimal(amount) : null;
         this.from = from;
         this.hash = hash;
     }

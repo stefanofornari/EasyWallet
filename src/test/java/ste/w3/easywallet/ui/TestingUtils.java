@@ -24,7 +24,11 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import ste.w3.easywallet.Preferences;
 
 /**
  *
@@ -49,11 +53,24 @@ public interface TestingUtils {
     default public void showInStageLater(Stage stage, Pane pane) {
         Platform.runLater(() -> {
             showInStage(stage, pane);
-        }); waitForFxEvents();
+        });
+        waitForFxEvents();
     }
 
     default public <T> T getController(Pane pane) {
-    return (T)pane.getUserData();
-}
+        return (T) pane.getUserData();
+    }
+
+    default Preferences bindPreferences() throws NamingException {
+        Preferences preferences = new Preferences();
+
+        Context ctx = new InitialContext();
+        try {
+            ctx.destroySubcontext("root");
+        } catch (Exception x) {}
+        ctx.createSubcontext("root").bind("preferences", preferences);
+
+        return preferences;
+    }
 
 }
