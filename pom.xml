@@ -149,6 +149,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>ste.w3.easywallet.ui.EasyWalletMain</mainClass>
+                    <!--mainClass>ste.w3.easywallet.ui.table.TableMain</mainClass-->
                 </configuration>
             </plugin>
             <plugin>

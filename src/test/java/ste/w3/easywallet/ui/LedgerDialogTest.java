@@ -31,7 +31,9 @@ import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Labels;
+import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.TestingConstants;
 import static ste.w3.easywallet.TestingConstants.ADDRESS3;
 import ste.w3.easywallet.Wallet;
@@ -51,6 +53,9 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
         Pane mainWindow = new BorderPane();
         showInStage(stage, mainWindow);
 
+        Preferences preferences = bindPreferences();
+        preferences.coins = new Coin[] { STORJ, GLM };
+
         dialog = new LedgerDialog(mainWindow, WALLET);
         dialog.show();
     }
@@ -63,7 +68,7 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
 
         Then.then(lookup(TITLE)).hasWidgets();
         Then.then(lookup(LABEL_BUTTON_CLOSE)).hasWidgets();
-        Then.then(lookup(".mfx-paginated-table-view")).hasOneWidget();
+        Then.then(lookup(".mfx-table-view")).hasOneWidget();
 
         then(controller).isNotNull().isInstanceOf(LedgerController.class);
         then(controller.transactions.getTableColumns()).hasSize(TITLES.length);

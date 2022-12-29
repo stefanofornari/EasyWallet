@@ -24,8 +24,6 @@ import io.github.palexdev.materialfx.collections.TransformableListWrapper;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXFilterPane;
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
-import io.github.palexdev.materialfx.controls.MFXPaginatedTableView;
-import io.github.palexdev.materialfx.controls.MFXPagination;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableColumn.MFXTableColumnEvent;
 import io.github.palexdev.materialfx.controls.MFXTableRow;
@@ -34,7 +32,6 @@ import io.github.palexdev.materialfx.dialogs.MFXDialogs;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.SortState;
-import io.github.palexdev.materialfx.utils.AnimationUtils.PauseBuilder;
 import io.github.palexdev.materialfx.utils.NodeUtils;
 import io.github.palexdev.virtualizedfx.flow.simple.SimpleVirtualFlow;
 import java.util.Map;
@@ -42,11 +39,9 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.SkinBase;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -70,13 +65,12 @@ public class EasyWalletTableViewSkin<T> extends SkinBase<MFXTableView<T>> {
     private final MFXStageDialog filterDialog;
     private MFXTableColumn<T> sortedColumn;
 
-    private final MFXPagination pagination;
     private boolean init = false;
 
     //================================================================================
     // Constructors
     //================================================================================
-    public EasyWalletTableViewSkin(MFXPaginatedTableView<T> tableView, SimpleVirtualFlow<T, MFXTableRow<T>> rowsFlow) {
+    public EasyWalletTableViewSkin(MFXTableView<T> tableView, SimpleVirtualFlow<T, MFXTableRow<T>> rowsFlow) {
         super(tableView);
         this.rowsFlow = rowsFlow;
 
@@ -134,18 +128,6 @@ public class EasyWalletTableViewSkin<T> extends SkinBase<MFXTableView<T>> {
 
         getChildren().setAll(container);
 
-        rowsFlow.setMinHeight(Region.USE_PREF_SIZE);
-        rowsFlow.setMaxHeight(Region.USE_PREF_SIZE);
-
-        pagination = new MFXPagination();
-        pagination.pagesToShowProperty().bind(tableView.pagesToShowProperty());
-        pagination.maxPageProperty().bind(tableView.maxPageProperty());
-        pagination.setCurrentPage(tableView.getCurrentPage());
-        tableView.currentPageProperty().bindBidirectional(pagination.currentPageProperty());
-
-        container.getChildren().remove(footer);
-        container.getChildren().add(buildFooter());
-
         addListeners();
     }
 
@@ -165,7 +147,7 @@ public class EasyWalletTableViewSkin<T> extends SkinBase<MFXTableView<T>> {
      */
     @SuppressWarnings("unchecked")
     private void addListeners() {
-        MFXPaginatedTableView<T> tableView = (MFXPaginatedTableView<T>) getSkinnable();
+        MFXTableView<T> tableView = (MFXTableView<T>) getSkinnable();
 
         tableView.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> tableView.requestFocus());
         tableView.addEventFilter(MFXTableColumnEvent.SORTING_EVENT, event -> {
@@ -205,21 +187,11 @@ public class EasyWalletTableViewSkin<T> extends SkinBase<MFXTableView<T>> {
             }
         });
 
+        //
+        // TODO: to be removed?
+        //
         tableView.virtualFlowInitializedProperty().addListener((observable, oldValue, newValue) -> {
             if (!init && newValue) {
-                rowsFlow.prefHeightProperty().bind(Bindings.createDoubleBinding(
-                        () -> tableView.getRowsPerPage() * rowsFlow.getCellHeight(),
-                        tableView.rowsPerPageProperty()
-                ));
-
-                int current = tableView.getCurrentPage();
-                if (current != 1) {
-                    PauseBuilder.build()
-                            .setDuration(20)
-                            .setOnFinished(event -> tableView.goToPage(current))
-                            .getAnimation().play();
-                }
-
                 init = true;
             }
         });
@@ -263,10 +235,6 @@ public class EasyWalletTableViewSkin<T> extends SkinBase<MFXTableView<T>> {
         StackPane footer = new StackPane(container);
         footer.getStyleClass().add("default-footer");
 
-        if (pagination != null) {
-            footer.getChildren().add(pagination);
-            StackPane.setAlignment(pagination, Pos.CENTER);
-        }
         return footer;
     }
 
@@ -275,7 +243,7 @@ public class EasyWalletTableViewSkin<T> extends SkinBase<MFXTableView<T>> {
     //================================================================================
     @Override
     protected double computeMinWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
-        double footerWidth = leftInset + footer.prefWidth(-1) + pagination.prefWidth(-1) * 2 + 10 + rightInset;
+        double footerWidth = leftInset + footer.prefWidth(-1) + 10 + rightInset;
         return Math.max(footerWidth, super.computeMinWidth(height, topInset, rightInset, bottomInset, leftInset));
     }
 
