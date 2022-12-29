@@ -54,7 +54,7 @@ implements Labels, TestingConstants, TestingUtils {
     public void before() throws Exception {
         Context ctx = new InitialContext();
 
-        //synchronized (ctx) {
+
         try {
             ctx.destroySubcontext("root");
         } catch (Exception x) {}
@@ -64,7 +64,6 @@ implements Labels, TestingConstants, TestingUtils {
 
         ctx = ctx.createSubcontext("root");
         ctx.bind("preferences", preferences);
-    //}
     }
 
     @Override
