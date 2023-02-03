@@ -36,7 +36,7 @@ cd "$home"
 #
 # Default configuration (use conf/serverone.conf to customize)
 #
-JAVA_OPTS="--module-path  lib --add-modules=javafx.controls,javafx.fxml"
+JAVA_OPTS="--module-path lib --add-modules=javafx.controls,javafx.fxml"
 #JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044"
 
 #

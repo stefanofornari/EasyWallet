@@ -15,12 +15,10 @@
  */
 package ste.w3.easywallet.ui;
 
+import ste.w3.easywallet.TestingUtils;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -33,124 +31,22 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.service.query.NodeQuery;
-import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.EasyWalletException;
-import ste.w3.easywallet.Labels;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
-import static ste.w3.easywallet.Labels.LABEL_BUTTON_OK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.TestingServer;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
-import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
-import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
 import ste.xtest.reflect.PrivateAccess;
 
 /**
  *
  */
-public class EasyWalletMainTest extends ApplicationTest implements TestingConstants, TestingUtils {
+public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingConstants, TestingUtils {
 
-    public static TestingServer server = null;
-
-    private EasyWalletMain main;
-    private Preferences preferences;
-    private Stage stage;
-    private EasyWalletMainController controller;
-
-    private static final String CONFIG_FILE = ".config/ste.w3.easywallet/preferences.json";
-
-    @Rule
-    public TemporaryFolder HOME = new TemporaryFolder();
-
-    @Override
-    public void start(Stage stage) {
-        this.stage = stage;
-
-        server = new TestingServer();
-
-        try {
-            preparePreferences();
-        } catch (IOException x) {
-            x.printStackTrace();
-        }
-
-        main = new EasyWalletMainWithPreferences(); main.start(stage);
-
-        controller = getController(lookup("#main").queryAs(Pane.class));
-    }
-
-    @Test
-    public void window_title_icon_and_size() throws Exception {
-        Pane root = lookup(".root").queryAs(Pane.class);
-        then(stage.getTitle()).isEqualTo("EasyWallet v0.1");
-        then(root.getScene().getWidth()).isGreaterThanOrEqualTo(400);
-        then(root.getScene().getHeight()).isGreaterThanOrEqualTo(600);
-        then(stage.getIcons()).isNotEmpty();
-    }
-
-
-    @Test
-    public void launch_with_wallets_shows_wallets_in_wallet_pane() throws Exception {
-        NodeQuery q = lookup(".wallet_card");
-        VBox[] cards = q.queryAll().toArray(new VBox[0]);
-
-        then(cards).hasSize(1);
-        Then.then(lookup("0x" + preferences.wallets[0].address)).hasWidgets();
-    }
-
-    @Test
-    public void show_added_wallet_in_wallet_pane_and_save_prefs() throws Exception {
-        clickOn('#' + KEY_ADD_WALLET);
-        lookup(".mfx-text-field").queryAs(TextField.class).setText(TestingConstants.WALLET1);
-        clickOn(LABEL_BUTTON_OK);
-
-        waitForFxEvents();
-
-        Then.then(lookup("0x" + TestingConstants.WALLET1)).hasWidgets();
-        then(getPreferencesFile()).content().contains(
-            String.format("{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}", TestingConstants.WALLET1)
-        );
-    }
-
-    @Test
-    public void show_added_wallet_by_key_in_wallet_pane_and_save_prefs() throws Exception {
-        clickOn('#' + KEY_ADD_WALLET) ; clickOn(Labels.LABEL_RADIO_PRIVATE_KEY);
-        lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY1);
-        clickOn(LABEL_BUTTON_OK);
-
-        waitForFxEvents();
-
-        Then.then(lookup("0x" + ADDRESS1)).hasWidgets();
-        then(getPreferencesFile()).content().contains(
-            String.format("{\"address\":\"%s\",\"privateKey\":\"%s\",\"mnemonicPhrase\":\"\",\"balances\":{}}", ADDRESS1, PRIVATE_KEY1)
-        );
-    }
-
-    @Test
-    public void remove_deleted_wallet_and_save_prefs() throws Exception {
-        final String WALLET = main.getPreferences().wallets[0].address;
-        clickOn("mfx-delete");
-        waitForFxEvents();
-        Then.then(lookup("0x" + WALLET)).hasNoWidgets();
-        then(getPreferencesFile()).content().doesNotContain(WALLET);
-    }
-
-    @Test
-    public void pressing_refresh_udates_balances_in_ui_and_preferences() throws Exception {
-        server.addBalanceRequest(ETH, "0x" + preferences.wallets[0].address, new BigDecimal("47.34269121"));
-        server.addBalanceRequest(STORJ, "0x" + preferences.wallets[0].address, new BigDecimal("534.09876543"));
-
-        clickOn('#' + KEY_REFRESH);
-        waitForFxEvents();
-
-        Then.then(lookup("ETH 47.34269121 - STORJ 534.09876543")).hasWidgets();
-        then(main.getConfigFile()).content().contains("{\"ETH\":47.34269121,\"STORJ\":534.09876543}");
-    }
 
     @Test
     public void save_preferences() throws Exception {
@@ -236,71 +132,6 @@ public class EasyWalletMainTest extends ApplicationTest implements TestingConsta
 
         Preferences p = (Preferences)ctx.lookup(main.hashCode() + "/preferences");
         then(p).isNotNull().isSameAs(main.getPreferences());
-    }
-
-    // --------------------------------------------------------- private methods
-
-    private File getPreferencesFile() throws IOException {
-        return new File(HOME.getRoot(), CONFIG_FILE);
-    }
-
-    private void preparePreferences() throws IOException {
-        File preferencesFile = getPreferencesFile();
-
-        preferencesFile.getParentFile().mkdirs();
-
-        //
-        // Create some randomness to make sure the content is correctly read
-        //
-        RandomStringGenerator randomStringGenerator =
-            new RandomStringGenerator.Builder()
-                    .selectFrom("0123456789abcdef".toCharArray())
-                    .build();
-        preferences = new Preferences();
-        preferences.endpoint = server.ethereum.url("v3/" + randomStringGenerator.generate(20)).toString();
-        preferences.appkey = randomStringGenerator.generate(12);
-        preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
-        preferences.coins = new Coin[] {ETH, STORJ};
-
-        PreferencesManager pm = new PreferencesManager();
-
-        FileUtils.writeStringToFile(preferencesFile, pm.toJSON(preferences), "UTF-8");
-    }
-
-    private void withConnectionException() throws Exception {
-        PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com/key") {
-            @Override
-            public WalletManager balance(Wallet wallet, Coin... coins) throws EasyWalletException {
-                throw new EasyWalletException("network not available");
-            }
-
-        });
-    }
-
-
-    // ------------------------------------------- EasyWalletMainWithPreferences
-
-    private class EasyWalletMainWithPreferences extends EasyWalletMain {
-
-        @Override
-        protected File getConfigFile() {
-            try {
-                return getPreferencesFile();
-            } catch (IOException x) {
-                x.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        //
-        // With this we make sure multiple instances do not interefeer each
-        // other. The root can then be retrieved with the following code:
-        //
-        protected Context getJNDIRoot() throws NamingException {
-            return new InitialContext().createSubcontext(String.valueOf(this.hashCode()));
-        }
     }
 
 }

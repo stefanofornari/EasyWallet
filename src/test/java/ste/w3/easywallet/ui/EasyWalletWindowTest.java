@@ -15,6 +15,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import ste.w3.easywallet.TestingUtils;
 import java.io.IOException;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;

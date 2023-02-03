@@ -20,38 +20,45 @@
  */
 package ste.w3.easywallet;
 
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.util.Date;
 
 /**
  * TODO: use better types than strings
  */
+@DatabaseTable(tableName = "transactions")
 public class Transaction {
-
-    public final String hash, from;
+    @DatabaseField(id = true, width = 64)
+    public final String hash;
+    @DatabaseField(canBeNull = false, width=40)
+    public final String from;
+    @DatabaseField(canBeNull = false, width=40)
+    public final String to;
+    @DatabaseField(canBeNull = false, dataType = DataType.BIG_DECIMAL, columnDefinition="numeric(27,18)" )
     public final BigDecimal amount;
-    public final Coin coin;
-    public final Instant when;
-    //public Amount amount;
+    @DatabaseField(canBeNull = false)
+    public final Date when;
+    @DatabaseField(width=12)
+    public final String coin;
 
     public Transaction() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
-    public Transaction(Instant when, Coin coin, String amount, String from, String hash) {
+    public Transaction(Date when, Coin coin, BigDecimal amount, String from, String to, String hash) {
         this.when = when;
-        this.coin = coin;
-        this.amount = (amount != null) ? new BigDecimal(amount) : null;
+        this.coin = (coin != null) ? coin.symbol : null;
+        this.amount = amount;
         this.from = from;
+        this.to = to;
         this.hash = hash;
     }
 
-    public Instant when() {
+    public Date when() {
         return when;
-    }
-
-    public String coinSymbol() {
-        return coin.symbol;
     }
 
     public BigDecimal amount() {
@@ -68,6 +75,10 @@ public class Transaction {
 
     public String whenZ() {
         return when.toString();
+    }
+
+    public String coin() {
+        return coin;
     }
 
 }

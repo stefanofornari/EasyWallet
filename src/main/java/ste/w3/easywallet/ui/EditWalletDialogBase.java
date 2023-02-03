@@ -20,8 +20,6 @@
  */
 package ste.w3.easywallet.ui;
 
-import static io.github.palexdev.materialfx.builders.base.ControlBuilder.control;
-import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import java.util.Map;
 import java.util.function.Function;
@@ -29,7 +27,7 @@ import javafx.scene.layout.Pane;
 import ste.w3.easywallet.Wallet;
 
 /**
- *
+ * TODO: add shortcut to get the controller
  */
 public abstract class EditWalletDialogBase extends EasyWalletDialog {
 
