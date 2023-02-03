@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="walletCard" minWidth="500.0" style="-fx-background-color: white;" styleClass="wallet_card" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.WalletCardController">
+<VBox fx:id="walletCard" minWidth="500.0" style="-fx-background-color: white;" styleClass="wallet_card" stylesheets="@../css/EasyWallet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.WalletCardController">
     <children>
         <VBox prefHeight="40.0" styleClass="secondary-color">
             <children>

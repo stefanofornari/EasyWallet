@@ -23,7 +23,6 @@ package ste.w3.easywallet.ui;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.Wallet;
 

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="addressText" styleClass="content" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.AddWalletController">
+<VBox id="addressText" styleClass="content" stylesheets="@../css/EasyWallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.AddWalletController">
    <children>
       <FlowPane hgap="20.0">
          <children>

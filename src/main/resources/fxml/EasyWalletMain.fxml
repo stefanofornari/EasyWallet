@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="main" fx:id="easyWalletMain" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.EasyWalletMainController">
+<BorderPane id="main" fx:id="easyWalletMain" stylesheets="@../css/EasyWallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.EasyWalletMainController">
     <bottom>
         <GridPane alignment="BOTTOM_CENTER" maxHeight="-Infinity" BorderPane.alignment="CENTER">
             <columnConstraints>

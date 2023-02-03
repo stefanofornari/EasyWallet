@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="addressText" spacing="5.0" styleClass="content" stylesheets="@../css/easywallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.EditWalletController">
+<VBox id="addressText" spacing="5.0" styleClass="content" stylesheets="@../css/EasyWallet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ste.w3.easywallet.ui.EditWalletController">
    <children>
       <MFXTextField fx:id="keyText" accessibleText="Insert the 20 hex bytes public address eg: 00000000219ab540356cBB839Cbe05303d7705Fa" floatingText="Insert the 64 chracter private key" prefColumnCount="40" promptText="008a2b2d41febc2bef749ecec009b86e5fa18753439b28789658eb7b411397abb6" textLimit="64">
          <font>
