@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import ste.w3.easywallet.TestingUtils;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import java.util.function.Consumer;
 import java.util.function.Function;

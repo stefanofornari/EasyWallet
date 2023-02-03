@@ -28,6 +28,19 @@ import javafx.util.Callback;
 import ste.w3.easywallet.Wallet;
 
 /**
+ * TODO: make FMXLLoader with the following semantic:
+ *
+ * FMXLLoader l = new FMXLLoader(resource);
+ * l.load(...);
+ * c = l.controller() -> the controller created with the factory by regular FXMLLoader
+ *
+ * c = new Controller();
+ * l.controller = c;
+ * l.load(); -> use the provided controller
+ *
+ * maybe also:
+ * c = new Controller();
+ * l.load(c); -> use the provided controller
  *
  */
 public class EasyWalletFXMLLoader {
@@ -95,7 +108,8 @@ public class EasyWalletFXMLLoader {
                 public Object call(Class<?> p) {
                     return new LedgerController(dialog);
                 }
-            });
+            }
+        );
     }
 
     public Pane loadPane(String resource, Callback<Class<?>, Object> controllerFactory) {

@@ -65,7 +65,7 @@ public abstract class EasyWalletDialog extends MFXStageDialog implements Labels 
 	dialog.setOnMinimize(event -> setIconified(true));
 	dialog.setOnClose(event -> close());
         dialog.getStylesheets().add(
-          EasyWalletMain.class.getResource("/css/easywallet.css").toExternalForm()
+            EasyWalletMain.class.getResource("/css/EasyWallet.css").toExternalForm()
         );
         dialog.setStyle(
             "-fx-border-color: -ew-primary-color;"

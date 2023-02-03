@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import ste.w3.easywallet.TestingUtils;
 import java.io.IOException;
 import java.util.concurrent.CancellationException;
 import javafx.application.Platform;

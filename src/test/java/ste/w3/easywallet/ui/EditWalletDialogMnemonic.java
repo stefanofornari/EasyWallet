@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import ste.w3.easywallet.TestingUtils;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;

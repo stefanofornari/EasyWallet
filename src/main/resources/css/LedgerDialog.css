@@ -1,0 +1,143 @@
+/*
+ * Copyright (C) 2022 Parisi Alessandro
+ * This file is part of VirtualizedFX (https://github.com/palexdev/VirtualizedFX).
+ *
+ * VirtualizedFX is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * VirtualizedFX is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with VirtualizedFX.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import "/css/colors.css";
+
+/*--------------------------------------------------*/
+/* Root
+/*--------------------------------------------------*/
+#ledgerDialogPane {
+	-fx-background-color: white;
+}
+
+/*--------------------------------------------------*/
+/* Content
+/*--------------------------------------------------*/
+
+.column-sort-icon:hover {
+    -fx-background-color: -ew-neutral-gray-lighter;
+}
+
+.column-sort-icon .mfx-font-icon {
+    -mfx-size: 18;
+}
+
+.virtual-grid,
+.virtual-flow {
+    -fx-border-color: -ew-neutral-gray-light;
+    -fx-border-radius: 5;
+
+    -fx-clip-border-radius: 10;
+}
+
+.virtual-flow .cell {
+    -fx-padding: 0 15 0 5;
+}
+
+.virtual-flow .cell:hover {
+    -fx-background-color: -ew-neutral-gray-light;
+}
+
+/*
+.virtual-flow .cell .mfx-font-icon {
+    -mfx-color: -green;
+}
+*/
+
+.virtual-grid .altCell .label {
+    -fx-font-size: 11;
+}
+
+/* TODO improve this */
+.virtual-scroll-pane .mfx-scroll-bar:vertical {
+    -fx-padding: 0;
+    -fx-pref-width: 5;
+    -fx-min-width: 5;
+    -fx-max-width: 5;
+}
+
+.virtual-scroll-pane .mfx-scroll-bar:horizontal {
+    -fx-padding: 0;
+    -fx-pref-height: 5;
+    -fx-min-height: 5;
+    -fx-max-height: 5;
+}
+
+/*--------------------------------------------------*/
+/* Settings
+/*--------------------------------------------------*/
+.mfx-titled-pane {
+    -fx-border-color: -ew-neutral-gray-light;
+    -fx-border-radius: 0;
+}
+
+
+.virtual-scroll-pane {
+    -fx-clip-border-radius: 10;
+    -fx-background-radius: 5;
+    -fx-layout-mode: compact;
+    -fx-autohide-bars: true;
+}
+
+.virtual-scroll-pane .mfx-scroll-bar:vertical {
+    -fx-padding: 0;
+    -fx-pref-width: 5;
+    -fx-min-width: 5;
+    -fx-max-width: 5;
+}
+
+.virtual-scroll-pane .mfx-scroll-bar:horizontal {
+    -fx-padding: 0;
+    -fx-pref-height: 5;
+    -fx-min-height: 5;
+    -fx-max-height: 5;
+}
+
+.virtual-table {
+    -fx-border-color: -ew-neutral-gray-light;
+    -fx-border-radius: 5;
+}
+
+.virtual-table .table-column {
+    -fx-padding: 0 10 0 10;
+    -fx-border-color: transparent transparent -ew-neutral-gray-dark transparent;
+    -fx-font-family: "Open Sans SemiBold";
+    -fx-text-fill: -ew-neutral-gray-dark;
+    -fx-enable-overlay: false;
+}
+
+.virtual-table .table-column .overlay {
+    visibility: hidden;
+}
+
+.vtable-cell .table-column .text {
+    -fx-font-smoothing-type: lcd;
+}
+
+.virtual-table .table-row:hover {
+    -fx-background-color: -ew-neutral-gray-light;
+}
+
+.virtual-table .table-row:selected {
+    -fx-background-color: -ew-neutral-gray-light;
+}
+
+.virtual-table .table-row .vtable-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 0 10 0 10;
+}

@@ -20,7 +20,9 @@
  */
 package ste.w3.easywallet;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import static ste.w3.easywallet.TestingConstants.GLM;
@@ -31,8 +33,8 @@ import static ste.w3.easywallet.TestingConstants.STORJ;
  */
 public class TransactionTest {
 
-    private final Instant TEST_DATE_1 = Instant.parse("2022-10-29T22:10:29Z");
-    private final Instant TEST_DATE_2 = Instant.parse("2070-08-13T09:09:19Z");
+    private final Date TEST_DATE_1 = new Date(Instant.parse("2022-10-29T22:10:29Z").getEpochSecond()*1000);
+    private final Date TEST_DATE_2 = new Date(Instant.parse("2070-08-13T09:09:19Z").getEpochSecond()*1000);
 
     @Test
     public void constructor_and_getter() {
@@ -43,15 +45,15 @@ public class TransactionTest {
         then(t.hash).isNull();
         then(t.when).isNull();
 
-        t = new Transaction(TEST_DATE_1, STORJ, "11.11", "from1", "hash1");
-        then(t.coin.symbol).isEqualTo(STORJ.symbol); then(t.coinSymbol()).isEqualTo(t.coin.symbol);
+        t = new Transaction(TEST_DATE_1, STORJ, new BigDecimal("11.11"), "from1", "to1", "hash1");
+        then(t.coin).isEqualTo(STORJ.symbol); then(t.coin()).isEqualTo(t.coin);
         then(t.amount).isEqualTo("11.11"); then(t.amount()).isEqualTo(t.amount);
         then(t.from).isEqualTo("from1"); then(t.from()).isEqualTo(t.from);
         then(t.hash).isEqualTo("hash1"); then(t.hash()).isEqualTo(t.hash);
         then(t.when).isEqualTo(TEST_DATE_1); then(t.when()).isEqualTo(t.when);
 
-        t = new Transaction(TEST_DATE_2, GLM, "22.22", "from2", "hash2");
-        then(t.coin.symbol).isEqualTo(GLM.symbol); then(t.coinSymbol()).isEqualTo(t.coin.symbol);
+        t = new Transaction(TEST_DATE_2, GLM, new BigDecimal("22.22"), "from2", "to2", "hash2");
+        then(t.coin).isEqualTo(GLM.symbol); then(t.coin()).isEqualTo(t.coin);
         then(t.amount).isEqualTo("22.22"); then(t.amount()).isEqualTo(t.amount);
         then(t.from).isEqualTo("from2"); then(t.from()).isEqualTo(t.from);
         then(t.hash).isEqualTo("hash2"); then(t.hash()).isEqualTo(t.hash);
@@ -60,8 +62,8 @@ public class TransactionTest {
 
     @Test
     public void get_when_in_zulu() {
-        then(new Transaction(TEST_DATE_1, STORJ, "11.11", "from1", "hash1").whenZ()).isEqualTo(TEST_DATE_1.toString());
-        then(new Transaction(TEST_DATE_2, GLM, "11.11", "from1", "hash1").whenZ()).isEqualTo(TEST_DATE_2.toString());
+        then(new Transaction(TEST_DATE_1, STORJ, new BigDecimal("11.11"), "from1", "to1", "hash1").whenZ()).isEqualTo(TEST_DATE_1.toString());
+        then(new Transaction(TEST_DATE_2, GLM, new BigDecimal("11.11"), "from1", "to1", "hash1").whenZ()).isEqualTo(TEST_DATE_2.toString());
     }
 
 }

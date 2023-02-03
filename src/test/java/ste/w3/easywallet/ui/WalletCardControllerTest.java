@@ -15,6 +15,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import ste.w3.easywallet.TestingUtils;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.effects.ripple.MFXCircleRippleGenerator;
 import java.math.BigDecimal;
@@ -145,9 +146,12 @@ implements Labels, TestingConstants, TestingUtils {
     }
 
     @Test
-    public void show_ledger_dialog_when() {
+    public void show_ledger_dialog_when() throws Exception {
+        givenDatabase();
+
         clickOn("#ledgerButton");
         Then.then(lookup(String.format(LABEL_LEDGER_DIALOG_TITLE, WALLET1))).hasWidgets();
+        Then.then(lookup(".table-row")).hasNWidgets(16);
     }
 
 }
