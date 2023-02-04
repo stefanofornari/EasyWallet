@@ -34,7 +34,7 @@ import ste.w3.easywallet.WalletManager;
 /**
  *
  */
-public class AddWalletController extends EditWalletControllerBase {
+public class AddWalletController extends OkCancelControllerBase {
 
     @FXML
     private MFXTextField text;

@@ -16,40 +16,22 @@
 package ste.w3.easywallet.ui;
 
 import ste.w3.easywallet.TestingUtils;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.text.RandomStringGenerator;
 import static org.assertj.core.api.BDDAssertions.then;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.testfx.assertions.api.Then;
-import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
-import ste.w3.easywallet.Coin;
-import ste.w3.easywallet.EasyWalletException;
 import ste.w3.easywallet.Labels;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import static ste.w3.easywallet.Labels.LABEL_BUTTON_OK;
-import ste.w3.easywallet.Preferences;
-import ste.w3.easywallet.PreferencesManager;
+import static ste.w3.easywallet.Labels.LABEL_DELETE_WALLET_CONFIRMATION;
 import ste.w3.easywallet.TestingConstants;
-import ste.w3.easywallet.TestingServer;
-import ste.w3.easywallet.Wallet;
-import ste.w3.easywallet.WalletManager;
 import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
 import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
-import ste.xtest.reflect.PrivateAccess;
 
 /**
  *
@@ -91,6 +73,18 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
     }
 
     @Test
+    public void confirmation_dialog_on_delete_wallet() {
+        clickOn("mfx-delete");
+        Then.then(lookup("Are you sure?")).hasWidgets();
+        Then.then(lookup(String.format(LABEL_DELETE_WALLET_CONFIRMATION, preferences.wallets[0].address))).hasWidgets();
+
+        clickOn("NO");
+        Then.then(lookup(".wallet_card")).hasOneWidget();
+        clickOn("mfx-delete"); clickOn("YES");
+        Then.then(lookup(".wallet_card")).hasNoWidgets();
+    }
+
+    @Test
     public void show_added_wallet_by_key_in_wallet_pane_and_save_prefs() throws Exception {
         clickOn('#' + KEY_ADD_WALLET) ; clickOn(Labels.LABEL_RADIO_PRIVATE_KEY);
         lookup(".mfx-text-field").queryAs(TextField.class).setText(PRIVATE_KEY1);
@@ -107,7 +101,7 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
     @Test
     public void remove_deleted_wallet_and_save_prefs() throws Exception {
         final String WALLET = main.getPreferences().wallets[0].address;
-        clickOn("mfx-delete");
+        clickOn("mfx-delete"); clickOn("YES");
         waitForFxEvents();
         Then.then(lookup("0x" + WALLET)).hasNoWidgets();
         then(getPreferencesFile()).content().doesNotContain(WALLET);

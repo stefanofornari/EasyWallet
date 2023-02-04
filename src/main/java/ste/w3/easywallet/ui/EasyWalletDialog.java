@@ -88,6 +88,6 @@ public abstract class EasyWalletDialog extends MFXStageDialog implements Labels 
         setOwnerNode(owner);
     }
 
-    abstract Pane content();
+    abstract protected Pane content();
 
 }

@@ -49,4 +49,6 @@ public interface Labels {
     public final String ERR_NETWORK = "I am unable to retrieve the information from the provider, check that your internet connection is working and the endpoint is correct";
 
     public final String LABEL_LEDGER_DIALOG_TITLE = "0x%s's incoming token transfers";
+
+    public final String LABEL_DELETE_WALLET_CONFIRMATION = "Are you sure to remove wallet 0x%s? This removes the wallet and all its data from EasyWallet.";
 }

@@ -28,6 +28,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import static ste.w3.easywallet.Labels.LABEL_DELETE_WALLET_CONFIRMATION;
 import ste.w3.easywallet.Wallet;
 
 /**
@@ -97,7 +98,12 @@ public class WalletCardController {
     @FXML
     public void deleteWallet() {
         if (onDelete != null) {
-            onDelete.apply(wallet.address);
+            ConfirmationDialog dialog =
+                new ConfirmationDialog((Pane)walletCard.getScene().getRoot(), "Are you sure?", String.format(LABEL_DELETE_WALLET_CONFIRMATION, wallet.address));
+            dialog.onOk = (t) -> {
+                onDelete.apply(wallet.address); return null;
+            };
+            dialog.showAndWait();
         }
     }
 

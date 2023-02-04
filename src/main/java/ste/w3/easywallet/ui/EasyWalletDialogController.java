@@ -42,7 +42,4 @@ public abstract class  EasyWalletDialogController<R> implements Labels {
     protected R onOk() {
         return null;
     };
-
-
-
 }

@@ -40,7 +40,7 @@ import ste.w3.easywallet.WalletManager;
 /**
  *
  */
-public class EditWalletController extends EditWalletControllerBase {
+public class EditWalletController extends OkCancelControllerBase {
 
     @FXML
     protected MFXButton searchButton;
