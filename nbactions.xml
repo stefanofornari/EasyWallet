@@ -1,4 +1,4 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 <actions>
     <action>
         <actionName>run</actionName>
@@ -6,6 +6,10 @@
             <goal>clean</goal>
             <goal>javafx:run</goal>
         </goals>
+        <properties>
+                <javafx.mainClass>${packageClassName}</javafx.mainClass>
+                
+            </properties>
     </action>
     <action>
         <actionName>jlink</actionName>
@@ -32,4 +36,23 @@
             <skipTests>true</skipTests>
         </properties>
     </action>
+    <action>
+            <actionName>run.single.main</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>javafx:run</goal>
+                
+            </goals>
+            <properties>
+                <javafx.mainClass>${packageClassName}</javafx.mainClass>
+                
+                
+                
+                
+                
+                
+            </properties>
+        </action>
 </actions>

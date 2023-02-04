@@ -104,6 +104,11 @@ public class WalletCardController {
     @FXML
     public void showLedger() {
         LedgerDialog dialog = new LedgerDialog((Pane)walletCard.getScene().getRoot(), wallet);
+
+        LedgerController controller = (LedgerController)dialog.controller;
+        controller.source.page.clear();
+        controller.fetch();
+
         dialog.showAndWait();
     }
 

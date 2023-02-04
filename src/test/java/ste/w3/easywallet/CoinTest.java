@@ -30,7 +30,7 @@ import static ste.xtest.Constants.NEGATIVES_1_25_389_4567;
 /**
  *
  */
-public class CointTest {
+public class CoinTest {
 
     @Test
     public void constructor_ok() {
@@ -45,6 +45,12 @@ public class CointTest {
         then(c.symbol).isEqualTo("STORJ");
         then(c.name).isEqualTo("StorjToken");
         then(c.decimals).isEqualTo(8);
+
+        c = new Coin("MYCOIN", 10);
+        then(c.contract).isNull();
+        then(c.symbol).isEqualTo("MYCOIN");
+        then(c.name).isEqualTo("MYCOIN");
+        then(c.decimals).isEqualTo(10);
     }
 
     @Test

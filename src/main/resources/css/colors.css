@@ -10,10 +10,11 @@
     -ew-text-color: black;
     -ew-error-color: #ef6e6b;
     -ew-primary-bg-color: white;
-    -ew-neutral-dark-gray: black;
-    -ew-neutral-light-gray: #f0f0f0;
+    -ew-neutral-gray-dark: black;
+    -ew-neutral-gray-light: #d6d6d6;
+    -ew-neutral-gray-lighter: #f0f0f0;
     -mfx-main: -ew-primary-color;
     -mfx-main-light: -ew-primary-color-light;
     -mfx-main-lighter: -ew-primary-color-lighter;
-    -mfx-gray: -ew-neutral-dark-gray
+    -mfx-gray: -ew-neutral-gray-dark;
 }

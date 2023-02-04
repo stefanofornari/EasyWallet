@@ -2,7 +2,7 @@
  * EasyWallet
  * ----------
  *
- * Copyright (C) 2022 Stefano Fornari. Licensed under the
+ * Copyright (C) 2023 Stefano Fornari. Licensed under the
  * EUPL-1.2 or later (see LICENSE).
  *
  * All Rights Reserved.  No use, copying or distribution of this
@@ -18,19 +18,13 @@
  * DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
  * THIS SOFTWARE OR ITS DERIVATIVES.
  */
-package ste.w3.easywallet.ui.table;
-
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import javafx.scene.control.Skin;
+package ste.w3.easywallet;
 
 /**
  *
  */
-public class EasyWalletTableView<T> extends MFXTableView<T> {
-
-    @Override
-    protected Skin<?> createDefaultSkin() {
-        return new EasyWalletTableViewSkin<>(this, rowsFlow);
+public class ManagerException extends Exception {
+    public ManagerException(final String msg, final Throwable cause) {
+        super(msg, cause);
     }
-
 }

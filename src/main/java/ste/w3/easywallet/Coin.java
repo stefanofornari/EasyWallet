@@ -23,7 +23,7 @@ package ste.w3.easywallet;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
+ * TODO: turn it into record
  */
 public class Coin {
     public final String contract, symbol, name;
@@ -77,6 +77,13 @@ public class Coin {
      */
     public Coin(final String symbol, final String name, final int decimals) {
         this(symbol, name, null, decimals);
+    }
+
+    /**
+     * Same as this(symbol, symbol, null, decimals)
+     */
+    public Coin(final String symbol, final int decimals) {
+        this(symbol, symbol, null, decimals);
     }
 }
 

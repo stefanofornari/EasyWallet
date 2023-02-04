@@ -15,76 +15,72 @@
  */
 package ste.w3.easywallet.ui;
 
+import ste.w3.easywallet.TestingUtils;
 import java.io.File;
 import java.io.IOException;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
+import ste.w3.easywallet.Coin;
+import ste.w3.easywallet.EasyWalletException;
+import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
+import ste.w3.easywallet.TestingConstants;
+import ste.w3.easywallet.TestingServer;
 import ste.w3.easywallet.Wallet;
-import static ste.w3.easywallet.ui.Constants.CONFIG_FILE;
+import ste.w3.easywallet.WalletManager;
+import ste.xtest.reflect.PrivateAccess;
 
 /**
  *
  */
-public class EasyWalletMainPreferencesTest extends ApplicationTest {
+public class BaseEasyWalletMain extends ApplicationTest implements TestingConstants, TestingUtils {
 
-    private EasyWalletMain main;
-    private Preferences preferences;
-    private Stage stage;
+    public static TestingServer server = null;
+
+    protected EasyWalletMain main;
+    protected Preferences preferences;
+    protected Stage stage;
+    protected EasyWalletMainController controller;
+
+    protected static final String CONFIG_FILE = ".config/ste.w3.easywallet/preferences.json";
 
     @Rule
     public TemporaryFolder HOME = new TemporaryFolder();
 
-
     @Override
-    //
-    // TODO: remove throws Exception when fixed error handling
-    //
     public void start(Stage stage) throws Exception {
         this.stage = stage;
+
+        server = new TestingServer();
+
         try {
-            prepareConfiguration();
+            preparePreferences();
         } catch (IOException x) {
             x.printStackTrace();
         }
 
-        main = new EasyWalletMainWithPreferences();
+        main = new EasyWalletMainWithPreferences(); main.start(stage);
 
-        main.start(stage);
+        controller = getController(lookup("#main").queryAs(Pane.class));
     }
 
-    @Test
-    public void preferences_file_default() {
-        then(new EasyWalletMain().configFile).isEqualTo(
-            new File(FileUtils.getUserDirectory(), CONFIG_FILE)
-        );
-    }
-
-    @Test
-    public void read_configuration_at_startup() {
-        Preferences preferences = main.getPreferences();
-        then(preferences).isNotNull();
-        then(preferences.endpoint).isEqualTo(preferences.endpoint);
-        then(preferences.appkey).isEqualTo(preferences.appkey);
-        then(preferences.wallets).hasSize(1);
-        then(preferences.wallets[0].address).isEqualTo(preferences.wallets[0].address);
-    }
-
-    // --------------------------------------------------------- private methods
-
-    private File getPreferencesFile() throws IOException {
+    protected File getPreferencesFile() throws IOException {
         return new File(HOME.getRoot(), CONFIG_FILE);
     }
 
-    private void prepareConfiguration() throws IOException {
+    protected void preparePreferences() throws IOException {
         File preferencesFile = getPreferencesFile();
 
         preferencesFile.getParentFile().mkdirs();
@@ -94,22 +90,33 @@ public class EasyWalletMainPreferencesTest extends ApplicationTest {
         //
         RandomStringGenerator randomStringGenerator =
             new RandomStringGenerator.Builder()
-                    .withinRange('0', 'f')
-                    .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
+                    .selectFrom("0123456789abcdef".toCharArray())
                     .build();
         preferences = new Preferences();
-        preferences.endpoint = randomStringGenerator.generate(20);
+        preferences.endpoint = server.ethereum.url("v3/" + randomStringGenerator.generate(20)).toString();
         preferences.appkey = randomStringGenerator.generate(12);
         preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
+        preferences.coins = new Coin[] {ETH, STORJ};
 
         PreferencesManager pm = new PreferencesManager();
 
         FileUtils.writeStringToFile(preferencesFile, pm.toJSON(preferences), "UTF-8");
     }
 
+    protected void withConnectionException() throws Exception {
+        PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com/key") {
+            @Override
+            public WalletManager balance(Wallet wallet, Coin... coins) throws EasyWalletException {
+                throw new EasyWalletException("network not available");
+            }
+
+        });
+    }
+
+
     // ------------------------------------------- EasyWalletMainWithPreferences
 
-    private class EasyWalletMainWithPreferences extends EasyWalletMain {
+    protected class EasyWalletMainWithPreferences extends EasyWalletMain {
 
         @Override
         protected File getConfigFile() {
@@ -122,6 +129,14 @@ public class EasyWalletMainPreferencesTest extends ApplicationTest {
             return null;
         }
 
+        @Override
+        //
+        // With this we make sure multiple instances do not interefeer each
+        // other. The root can then be retrieved with the following code:
+        //
+        protected Context getJNDIRoot() throws NamingException {
+            return new InitialContext().createSubcontext(String.valueOf(this.hashCode()));
+        }
     }
 
 }
