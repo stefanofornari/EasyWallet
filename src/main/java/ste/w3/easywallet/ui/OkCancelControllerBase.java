@@ -21,29 +21,32 @@
 package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import java.util.Map;
-import java.util.function.Function;
-import javafx.scene.layout.Pane;
+import java.util.HashSet;
+import java.util.Set;
+import ste.w3.easywallet.Labels;
 import ste.w3.easywallet.Wallet;
 
 /**
- * TODO: add shortcut to get the controller
+ *
  */
-public abstract class EditWalletDialogBase extends EasyWalletDialog {
+public class  OkCancelControllerBase extends EasyWalletDialogController<Wallet> implements Labels {
 
-    public Function<Wallet, Void> onOk;
+    protected final Set<String> invalidAddresses = new HashSet();
 
-    public EditWalletDialogBase(final Pane owner, final String title) {
-        super(owner, title);
-
-        MFXGenericDialog dialog = (MFXGenericDialog)getContent();
-        dialog.addActions(
-            Map.entry(controller.okButton, e -> {
-                if (onOk != null) {
-                    onOk.apply(((EditWalletControllerBase)controller).onOk());
-                }
-                close();
-            })
-        );
+    public OkCancelControllerBase(final MFXGenericDialog dialog) {
+        super(dialog);
     }
+
+    public void setInvalidWallets(Wallet[] wallets) {
+        if (wallets != null) {
+            for (Wallet w: wallets) {
+                invalidAddresses.add(w.address);
+            }
+        }
+    }
+
+    protected Wallet onOk() {
+        return null;
+    }
+
 }
