@@ -22,28 +22,39 @@ package ste.w3.easywallet;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 import java.util.List;
+import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import static okio.Okio.source;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
  */
 public class TransactionsManager {
-    public final ConnectionSource source;
     public final Dao<Transaction, String> transactions;
 
     public TransactionsManager() throws ManagerException {
+        ConnectionSource db = null;
         try {
-            source = (ConnectionSource)new InitialContext().lookup("root/db");
-            transactions = DaoManager.createDao(source, Transaction.class);
-            TableUtils.createTableIfNotExists(source, Transaction.class); // TODO: move in a better central place
-        } catch (NamingException|SQLException x) {
+            Preferences preferences = (Preferences)new InitialContext().lookup("root/preferences");
+            if (StringUtils.isBlank(preferences.db)) {
+                throw new ConfigurationException("db connection string is missing");
+            }
+            db = new JdbcConnectionSource(preferences.db);
+            transactions = DaoManager.createDao(db, Transaction.class);
+            TableUtils.createTableIfNotExists(db, Transaction.class); // TODO: move in a better central place
+        } catch (Exception x) {
             throw new ManagerException("error trying to access transactions data", x);
+        } finally {
+            if (db != null) {
+                try { db.close(); } catch (Exception c) {}
+            }
         }
     }
 

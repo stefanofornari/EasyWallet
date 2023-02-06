@@ -95,48 +95,6 @@ public interface TestingUtils {
         return preferences;
     }
 
-    default ConnectionSource bindDatabase() throws NamingException, SQLException {
-        Context ctx = new InitialContext();
-
-        if (!ctx.list("").hasMore()) {
-            ctx.createSubcontext("root");
-        }
-
-        ConnectionSource db = new JdbcConnectionSource(JDBC_CONNECTION_STRING);
-
-        ctx.rebind("root/db", db);
-
-        return db;
-    }
-
-    //
-    // TODO: merge with givenDatabase()
-    //
-    default ConnectionSource withDB() throws Exception {
-        try (ConnectionSource source = (ConnectionSource)new InitialContext().lookup("root/db")) {
-            Dao<Transaction, String> transactionDao = transactionsDao(source);
-
-            TableUtils.createTable(source, Transaction.class);
-
-            Coin[] coins = new Coin[] { ETH, STORJ, GLM };
-
-            for (int i=1; i<=50; ++i) {
-                transactionDao.create(
-                    new Transaction(
-                        new Date(Instant.parse(String.format("2022-11-10T10:%02d:00.00Z", i)).getEpochSecond()*1000),
-                        coins[i%3],
-                        new BigDecimal(String.format("%1$02d.%1$02d", i)),
-                        String.format("12345678901234567890123456789012345678%02d",i),
-                        String.format("%02d12345678901234567890123456789012345678",i),
-                        String.format("hahs%02d",i)
-                    )
-                );
-            }
-
-            return source;
-        }
-    }
-
     default public Dao<Transaction, String> transactionsDao(ConnectionSource source)
     throws SQLException {
         return DaoManager.createDao(source, Transaction.class);

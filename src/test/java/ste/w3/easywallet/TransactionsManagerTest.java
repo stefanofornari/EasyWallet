@@ -27,8 +27,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.naming.ConfigurationException;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.db.api.BDDAssertions.then;
@@ -44,22 +43,29 @@ import static ste.w3.easywallet.TestingConstants.STORJ;
  */
 public class TransactionsManagerTest implements TestingUtils {
 
+    private final Preferences preferences;
+
+    public TransactionsManagerTest() throws Exception {
+        preferences = bindPreferences();
+    }
+
     @Before
     public void before() throws Exception {
-        ConnectionSource s = bindDatabase();
-        TableUtils.dropTable(s, Transaction.class, true);
+        preferences.db = JDBC_CONNECTION_STRING;
+        try (ConnectionSource db = new JdbcConnectionSource(preferences.db)) {
+            TableUtils.dropTable(db, Transaction.class, true);
+        }
     }
 
     @Test
     public void initialization_ok() throws Exception {
         TransactionsManager tm = new TransactionsManager();
-        then(tm.source).isNotNull().isInstanceOf(JdbcConnectionSource.class);
         then(tm.transactions).isNotNull();
     }
 
     @Test
     public void initialization_with_errors_throws_ManagerException() throws Exception {
-        new InitialContext().destroySubcontext("root");
+        preferences.db = null;
 
         try {
             TransactionsManager tm = new TransactionsManager();
@@ -67,7 +73,7 @@ public class TransactionsManagerTest implements TestingUtils {
         } catch (ManagerException x) {
             then(x)
                 .hasMessage("error trying to access transactions data")
-                .hasCauseInstanceOf(NamingException.class);
+                .hasCauseInstanceOf(ConfigurationException.class);
         }
 
     }

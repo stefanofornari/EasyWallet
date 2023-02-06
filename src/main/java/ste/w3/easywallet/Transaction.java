@@ -27,7 +27,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * TODO: use better types than strings
+ *
  */
 @DatabaseTable(tableName = "transactions")
 public class Transaction {
