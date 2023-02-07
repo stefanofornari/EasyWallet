@@ -53,7 +53,7 @@ public interface TestingUtils {
     final List<Transaction> transactions = new ArrayList<>();
 
 
-    public static final String JDBC_DRIVER_CLASS = "org.hsqldb.jdbc.JDBCDriver";
+    //public static final String JDBC_DRIVER_CLASS = "org.hsqldb.jdbc.JDBCDriver";
     public static final String JDBC_CONNECTION_STRING = "jdbc:hsqldb:mem:testdb";
 
 
@@ -117,7 +117,7 @@ public interface TestingUtils {
                     new BigDecimal(String.format("%1$02d.%1$02d", r.nextInt(100))),
                     String.format("12345678901234567890123456789012345678%02d", r.nextInt(100)),
                     String.format("%02d12345678901234567890123456789012345678", r.nextInt(100)),
-                    String.format("hahs%09d-%02d", i, r.nextInt(80))
+                    String.format("hash%09d-%02d", i, r.nextInt(80))
                 );
                 transactions.add(t);
                 transactionDao.create(t);

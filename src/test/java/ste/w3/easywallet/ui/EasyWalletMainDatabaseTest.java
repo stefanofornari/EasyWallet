@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Stefano Fornari.
+ * Copyright (C) 2023 Stefano Fornari.
  * All Rights Reserved.  No use, copying or distribution of this
  * work may be made except in accordance with a valid license
  * agreement from Stefano Fornari.  This notice must be
@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.testfx.framework.junit.ApplicationTest;
+import org.web3j.tx.TransactionManager;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.Wallet;
@@ -34,10 +35,11 @@ import static ste.w3.easywallet.ui.Constants.CONFIG_FILE;
 /**
  *
  */
-public class EasyWalletMainPreferencesTest extends ApplicationTest {
+public class EasyWalletMainDatabaseTest extends ApplicationTest {
 
     private EasyWalletMain main;
     private Preferences preferences;
+    private TransactionManager transactions;
     private Stage stage;
 
     @Rule
@@ -70,13 +72,12 @@ public class EasyWalletMainPreferencesTest extends ApplicationTest {
 
     @Test
     public void read_configuration_at_startup() {
-        Preferences p = main.getPreferences();
-        then(p).isNotNull();
-        then(p.endpoint).isEqualTo(preferences.endpoint);
-        then(p.appkey).isEqualTo(preferences.appkey);
-//        then(p.wallets).hasSize(1);
-        then(p.wallets[0].address).isEqualTo(preferences.wallets[0].address);
-        then(p.db).isEqualTo(preferences.db);
+        Preferences preferences = main.getPreferences();
+        then(preferences).isNotNull();
+        then(preferences.endpoint).isEqualTo(preferences.endpoint);
+        then(preferences.appkey).isEqualTo(preferences.appkey);
+        then(preferences.wallets).hasSize(1);
+        then(preferences.wallets[0].address).isEqualTo(preferences.wallets[0].address);
     }
 
     // --------------------------------------------------------- private methods
@@ -102,7 +103,6 @@ public class EasyWalletMainPreferencesTest extends ApplicationTest {
         preferences.endpoint = randomStringGenerator.generate(20);
         preferences.appkey = randomStringGenerator.generate(12);
         preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
-        preferences.db = String.format("jdbc:adb:%s", randomStringGenerator.generate(8));
 
         PreferencesManager pm = new PreferencesManager();
 

@@ -16,31 +16,15 @@
 package ste.w3.easywallet.ui;
 
 import ste.w3.easywallet.TestingUtils;
-import java.io.File;
-import java.io.IOException;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.text.RandomStringGenerator;
 import static org.assertj.core.api.BDDAssertions.then;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.testfx.assertions.api.Then;
-import org.testfx.framework.junit.ApplicationTest;
-import ste.w3.easywallet.Coin;
-import ste.w3.easywallet.EasyWalletException;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import ste.w3.easywallet.Preferences;
-import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.TestingConstants;
-import ste.w3.easywallet.TestingServer;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
-import ste.xtest.reflect.PrivateAccess;
 
 /**
  *
@@ -66,7 +50,7 @@ public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingCon
         Preferences p = main.getPreferences();
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(String.format(
-            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"0x14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}]}",
+            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"0x14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"\"}",
             p.endpoint, p.appkey, p.wallets[0].address
         ));
 
@@ -79,7 +63,7 @@ public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingCon
 
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(
-            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"0x14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}]}"
+            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"0x14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"\"}"
         );
     }
 

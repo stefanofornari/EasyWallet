@@ -15,7 +15,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.ledger.LedgerSource;
 import ste.w3.easywallet.ledger.Order;
-import ste.w3.easywallet.ledger.TableSourceSorting;
+import ste.w3.easywallet.data.TableSourceSorting;
 
 /**
  *

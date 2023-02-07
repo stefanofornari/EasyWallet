@@ -41,6 +41,7 @@ import org.web3j.contracts.eip20.generated.ERC20;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.EthBlock.Block;
 import org.web3j.protocol.http.HttpService;
@@ -185,6 +186,24 @@ public class ERC20Test {
                 + new BigDecimal(balance1).divide(BigDecimal.TEN.pow(decimal.intValue())) + " (" + balance1 + ")");
     }
 
+    /*
+    w3.ethBlockNumber()
+    ===================
+    --> POST https://polygon-mainnet.infura.io/v3/4b79bcf3bf97423a85c330117cd0749a
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 84
+
+    {"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["0x21e62ab",true],"id":0}
+
+    <-- 200 https://polygon-mainnet.infura.io/v3/4b79bcf3bf97423a85c330117cd0749a (4297ms)
+    date: Sun, 05 Feb 2023 17:06:19 GMT
+    content-type: application/json
+    vary: Origin
+    vary: Accept-Encoding
+
+    [see src/test/examples/block-35545771.json]
+    */
+
     @Test
     public void get_transactions() throws Exception {
         /*
@@ -193,6 +212,9 @@ public class ERC20Test {
         Web3j w3 = Web3j.build(new HttpService(preferences.url()));
         //BigInteger blockNumber = w3.ethBlockNumber().send().getBlockNumber();
         BigInteger blockNumber = BigInteger.valueOf(35545771);
+
+        System.out.println(w3.ethBlockNumber().send().getBlockNumber());
+        System.out.println(w3.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false).send().getBlock().getNumber());
 
         int i=1;
         do {

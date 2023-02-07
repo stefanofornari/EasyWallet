@@ -1,18 +1,15 @@
 package ste.w3.easywallet.ledger;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.ConnectionSource;
+import ste.w3.easywallet.data.TableSourceSorting;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ste.w3.easywallet.Transaction;
+import ste.w3.easywallet.TransactionsManager;
 
 /**
  *
- * TODO: SQL connection handling
+ * TODO: return only transactions of a given wallet
  *
  *
  */
@@ -36,16 +33,11 @@ public class LedgerSource {
     }
 
     public void fetch() {
-        try (ConnectionSource db = new JdbcConnectionSource("jdbc:hsqldb:mem:testdb")) {
-            Dao<Transaction, String> dao = DaoManager.createDao(db, Transaction.class);
+        try {
+            TransactionsManager transactionManager = new TransactionsManager();
 
-            QueryBuilder qb = dao.queryBuilder().offset(startFrom).limit(pageSize);
-            if (sorting != null) {
-                qb.orderBy(sorting.column(), sorting.order() == Order.ASCENDING);
-            }
-            List rows = qb.query();
+            List rows = transactionManager.get(sorting, startFrom, pageSize);
             page.addAll(rows);
-
             startFrom += rows.size();
         } catch (Exception x) {
              // TODO: error handling

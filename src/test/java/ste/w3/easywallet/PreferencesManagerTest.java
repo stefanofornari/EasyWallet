@@ -29,7 +29,7 @@ public class PreferencesManagerTest {
 
     @Test
     public void serialize_empty_preferences() {
-        then(new PreferencesManager().toJSON(new Preferences())).isEqualTo("{\"endpoint\":\"\",\"appkey\":\"\",\"wallets\":[],\"coins\":[]}");
+        then(new PreferencesManager().toJSON(new Preferences())).isEqualTo("{\"endpoint\":\"\",\"appkey\":\"\",\"wallets\":[],\"coins\":[],\"db\":\"\"}");
     }
 
     @Test
@@ -38,10 +38,10 @@ public class PreferencesManagerTest {
         Preferences p = new Preferences();
 
         p.endpoint = "this is the endpoint";
-        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"this is the endpoint\",\"appkey\":\"\",\"wallets\":[],\"coins\":[]}");
+        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"this is the endpoint\",\"appkey\":\"\",\"wallets\":[],\"coins\":[],\"db\":\"\"}");
 
         p.appkey = "this is the appkey";
-        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"this is the endpoint\",\"appkey\":\"this is the appkey\",\"wallets\":[],\"coins\":[]}");
+        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"this is the endpoint\",\"appkey\":\"this is the appkey\",\"wallets\":[],\"coins\":[],\"db\":\"\"}");
     }
 
     @Test
@@ -56,12 +56,12 @@ public class PreferencesManagerTest {
           new Wallet("wallet1")
         };
         p.wallets[0].privateKey = "privatekey1";
-        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"endpoint\",\"appkey\":\"appkey\",\"wallets\":[{\"address\":\"wallet1\",\"privateKey\":\"privatekey1\",\"mnemonicPhrase\":\"\",\"balances\":{}}],\"coins\":[]}");
+        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"endpoint\",\"appkey\":\"appkey\",\"wallets\":[{\"address\":\"wallet1\",\"privateKey\":\"privatekey1\",\"mnemonicPhrase\":\"\",\"balances\":{}}],\"coins\":[],\"db\":\"\"}");
 
         p.wallets = new Wallet[] { p.wallets[0], new Wallet("wallet2") };
         p.wallets[1].privateKey = "privatekey2";
         p.wallets[1].mnemonicPhrase = "mnemonic2";
-        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"endpoint\",\"appkey\":\"appkey\",\"wallets\":[{\"address\":\"wallet1\",\"privateKey\":\"privatekey1\",\"mnemonicPhrase\":\"\",\"balances\":{}},{\"address\":\"wallet2\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[]}");
+        then(pm.toJSON(p)).isEqualTo("{\"endpoint\":\"endpoint\",\"appkey\":\"appkey\",\"wallets\":[{\"address\":\"wallet1\",\"privateKey\":\"privatekey1\",\"mnemonicPhrase\":\"\",\"balances\":{}},{\"address\":\"wallet2\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[],\"db\":\"\"}");
     }
 
     @Test

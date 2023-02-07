@@ -4,6 +4,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
+import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.TestingUtils;
 
 /**
@@ -13,6 +14,8 @@ public class LedgerSourceTest implements TestingUtils {
 
     @Before
     public void before() throws Exception {
+        Preferences p = bindPreferences();
+        p.db = JDBC_CONNECTION_STRING;
         givenDatabase(100);
     }
 
@@ -55,6 +58,4 @@ public class LedgerSourceTest implements TestingUtils {
         s.fetch();
         then(s.page).hasSize(100);
     }
-
-
 }

@@ -39,7 +39,7 @@ import ste.w3.easywallet.Transaction;
 
 import ste.w3.easywallet.ledger.LedgerSource;
 import ste.w3.easywallet.ledger.Order;
-import ste.w3.easywallet.ledger.TableSourceSorting;
+import ste.w3.easywallet.data.TableSourceSorting;
 
 @SuppressWarnings("unchecked")
 public class LedgerController extends EasyWalletDialogController implements Initializable {

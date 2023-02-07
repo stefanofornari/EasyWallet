@@ -25,8 +25,11 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import javax.naming.ConfigurationException;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -37,6 +40,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static ste.w3.easywallet.TestingConstants.GLM;
 import static ste.w3.easywallet.TestingConstants.STORJ;
+import ste.w3.easywallet.data.TableSourceSorting;
+import ste.w3.easywallet.ledger.Order;
 
 /**
  *
@@ -79,16 +84,61 @@ public class TransactionsManagerTest implements TestingUtils {
     }
 
     @Test
-    public void allTransactions_returns_all_transactions() throws Exception {
+    public void getAll_returns_all_transactions() throws Exception {
         TransactionsManager tm = new TransactionsManager();
 
-        then(tm.allTransactions()).isEmpty();
+        then(tm.getAll()).isEmpty();
         tm.add(
             new Transaction(
                 new Date(), STORJ, new BigDecimal("123.456"), "fromaddress", "toaddress", "newtransactionhash"
             )
         );
-        then(tm.allTransactions()).hasSize(1).element(0).hasFieldOrPropertyWithValue("hash", "newtransactionhash");
+        then(tm.getAll()).hasSize(1).element(0).hasFieldOrPropertyWithValue("hash", "newtransactionhash");
+    }
+
+    @Test
+    public void get_returns_selected_transactions() throws Exception {
+        givenDatabase();
+
+        TransactionsManager tm = new TransactionsManager();
+
+        then(tm.get(null, 0, Integer.MAX_VALUE)).hasSize(37);
+
+        then(tm.get(null, 0, 0)).isEmpty();
+
+        List<Transaction> rows = tm.get(null, 0, 10);
+        then(rows).hasSize(10);
+        then(rows.get(0).hash).startsWith("hash000000001-");
+        then(rows.get(9).hash).startsWith("hash000000010-");
+
+        rows = tm.get(null, 10, 5l);
+        then(rows).hasSize(5);
+        then(rows.get(0).hash).startsWith("hash000000011-");
+        then(rows.get(4).hash).startsWith("hash000000015-");
+
+        for(TableSourceSorting s: new TableSourceSorting[] { new TableSourceSorting("hash", Order.NONE), null}) {
+            rows = tm.get(s, 0, Integer.MAX_VALUE);
+            int i = 0;
+            for (Transaction t: tm.getAll()) {
+                then(t.hash).isEqualTo(rows.get(i++).hash);
+            }
+        }
+
+        //
+        // NOTE: no nulls involved
+        //
+        then(
+            tm.get(new TableSourceSorting("when", Order.ASCENDING), 0, Integer.MAX_VALUE)
+        ).isSortedAccordingTo((t1, t2) -> t1.when.compareTo(t2.when));
+        then(
+            tm.get(new TableSourceSorting("when", Order.DESCENDING), 0, Integer.MAX_VALUE)
+        ).isSortedAccordingTo((t1, t2) -> t2.when.compareTo(t1.when));
+        then(
+            tm.get(new TableSourceSorting("hash", Order.ASCENDING), 0, Integer.MAX_VALUE)
+        ).isSortedAccordingTo((t1, t2) -> t1.hash.compareTo(t2.hash));
+        then(
+            tm.get(new TableSourceSorting("hash", Order.DESCENDING), 0, Integer.MAX_VALUE)
+        ).isSortedAccordingTo((t1, t2) -> t2.hash.compareTo(t1.hash));
     }
 
     @Test

@@ -55,13 +55,13 @@ implements Labels, TestingConstants, TestingUtils {
     public void before() throws Exception {
         Context ctx = new InitialContext();
 
-
         try {
             ctx.destroySubcontext("root");
         } catch (Exception x) {}
 
         Preferences preferences = new Preferences();
         preferences.coins = new Coin[] {ETH, STORJ};
+        preferences.db = JDBC_CONNECTION_STRING;
 
         ctx = ctx.createSubcontext("root");
         ctx.bind("preferences", preferences);
@@ -105,7 +105,7 @@ implements Labels, TestingConstants, TestingUtils {
             }
         };
 
-        clickOn("mfx-delete");
+        clickOn("mfx-delete"); clickOn("YES");
 
         then(TEST[0]).isTrue();
     }

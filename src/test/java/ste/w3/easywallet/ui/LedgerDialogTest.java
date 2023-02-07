@@ -19,7 +19,6 @@ import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Labels;
@@ -46,13 +45,14 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
 
     @Override
     public void start(Stage stage) throws Exception {
+        Preferences preferences = bindPreferences();
+        preferences.coins = new Coin[] { STORJ, GLM };
+        preferences.db = JDBC_CONNECTION_STRING;
+        
         givenDatabase();
 
         Pane mainWindow = new BorderPane();
         showInStage(stage, mainWindow);
-
-        Preferences preferences = bindPreferences();
-        preferences.coins = new Coin[] { STORJ, GLM };
 
         dialog = new LedgerDialog(mainWindow, WALLET);
 

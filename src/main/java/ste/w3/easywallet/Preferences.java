@@ -24,10 +24,11 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 public class Preferences {
-    public String   endpoint   = "";
-    public String   appkey     = "";
-    public Wallet[] wallets    = {};
-    public Coin[]   coins      = {};
+    public String   endpoint = "";
+    public String   appkey   = "";
+    public Wallet[] wallets  = {};
+    public Coin[]   coins    = {};
+    public String   db       = "";
 
     public String url() {
         return StringUtils.removeEnd(endpoint, "/") +
