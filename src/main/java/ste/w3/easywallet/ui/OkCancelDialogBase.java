@@ -33,8 +33,8 @@ public abstract class OkCancelDialogBase extends EasyWalletDialog {
 
     public Function<Wallet, Void> onOk;
 
-    public OkCancelDialogBase(final Pane owner, final String title) {
-        super(owner, title);
+    public OkCancelDialogBase(final Pane owner, final Wallet wallet, final String title) {
+        super(owner, wallet, title);
 
         MFXGenericDialog dialog = (MFXGenericDialog)getContent();
         dialog.addActions(

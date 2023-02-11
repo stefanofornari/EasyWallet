@@ -1,11 +1,13 @@
 package ste.w3.easywallet.ledger;
 
+import ste.w3.easywallet.data.Order;
 import ste.w3.easywallet.data.TableSourceSorting;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.TransactionsManager;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
@@ -15,12 +17,17 @@ import ste.w3.easywallet.TransactionsManager;
  */
 public class LedgerSource {
     final public ObservableList<Transaction> page = FXCollections.observableArrayList();
+    final public Wallet wallet;
 
     private static final long DEFAULT_PAGE_SIZE = 1000;
 
     protected TableSourceSorting sorting = null;
     protected long startFrom = 0;
     protected long pageSize = DEFAULT_PAGE_SIZE;
+
+    public LedgerSource(final Wallet wallet) {
+        this.wallet = wallet;
+    }
 
     public void sortBy(final TableSourceSorting s) {
         sorting = (s.order() == Order.NONE)? null : s;
@@ -36,7 +43,7 @@ public class LedgerSource {
         try {
             TransactionsManager transactionManager = new TransactionsManager();
 
-            List rows = transactionManager.get(sorting, startFrom, pageSize);
+            List rows = transactionManager.get(wallet, sorting, startFrom, pageSize);
             page.addAll(rows);
             startFrom += rows.size();
         } catch (Exception x) {

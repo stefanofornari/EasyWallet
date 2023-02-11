@@ -26,6 +26,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import ste.w3.easywallet.Wallet;
+import ste.w3.easywallet.ledger.LedgerSource;
 
 /**
  * TODO: make FMXLLoader with the following semantic:
@@ -98,6 +99,7 @@ public class EasyWalletFXMLLoader {
     }
 
     public Pane loadLedgerDialogContent(
+        final Wallet wallet,
         final MFXGenericDialog dialog
     ) {
         return loadPane(
@@ -106,7 +108,7 @@ public class EasyWalletFXMLLoader {
                 /* controllerFactory */
                 @Override
                 public Object call(Class<?> p) {
-                    return new LedgerController(dialog);
+                    return new LedgerController(dialog, new LedgerSource(wallet));
                 }
             }
         );

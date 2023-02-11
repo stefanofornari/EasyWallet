@@ -14,7 +14,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import static ste.w3.easywallet.TestingConstants.ADDRESS3;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.ledger.LedgerSource;
-import ste.w3.easywallet.ledger.Order;
+import ste.w3.easywallet.data.Order;
 
 /**
  *
@@ -28,7 +28,7 @@ public class LedgerControllerTest extends ApplicationTest implements TestingUtil
 
     @Override
     public void start(Stage stage) throws Exception {
-        givenDatabase();
+        givenDatabase(WALLET);
 
         Pane mainWindow = new BorderPane();
         showInStageLater(stage, mainWindow);
@@ -109,7 +109,7 @@ public class LedgerControllerTest extends ApplicationTest implements TestingUtil
         //
         // custom
         //
-        LedgerSource s = new LedgerSource();
+        LedgerSource s = new LedgerSource(WALLET);
         LedgerController c = new LedgerController((MFXGenericDialog)dialog.getContent(), s);
         then(c.source).isSameAs(s);
         then(c.source()).isSameAs(s);

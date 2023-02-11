@@ -99,7 +99,7 @@ public class WalletCardController {
     public void deleteWallet() {
         if (onDelete != null) {
             ConfirmationDialog dialog =
-                new ConfirmationDialog((Pane)walletCard.getScene().getRoot(), "Are you sure?", String.format(LABEL_DELETE_WALLET_CONFIRMATION, wallet.address));
+                new ConfirmationDialog((Pane)walletCard.getScene().getRoot(), wallet, "Are you sure?", String.format(LABEL_DELETE_WALLET_CONFIRMATION, wallet.address));
             dialog.onOk = (t) -> {
                 onDelete.apply(wallet.address); return null;
             };

@@ -38,7 +38,7 @@ import javafx.scene.Cursor;
 import ste.w3.easywallet.Transaction;
 
 import ste.w3.easywallet.ledger.LedgerSource;
-import ste.w3.easywallet.ledger.Order;
+import ste.w3.easywallet.data.Order;
 import ste.w3.easywallet.data.TableSourceSorting;
 
 @SuppressWarnings("unchecked")
@@ -58,10 +58,6 @@ public class LedgerController extends EasyWalletDialogController implements Init
     public LedgerController(final MFXGenericDialog dialog, final LedgerSource source) {
         super(dialog);
         this.source = source;
-    }
-
-    public LedgerController(final MFXGenericDialog dialog) {
-        this(dialog, new LedgerSource());
     }
 
     @Override

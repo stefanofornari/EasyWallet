@@ -13,8 +13,10 @@ import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import static ste.w3.easywallet.TestingConstants.WALLET1;
+import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.ledger.LedgerSource;
-import ste.w3.easywallet.ledger.Order;
+import ste.w3.easywallet.data.Order;
 import ste.w3.easywallet.data.TableSourceSorting;
 
 /**
@@ -90,7 +92,7 @@ public class TransactionLedgerTestAsync extends ApplicationTest implements Testi
         private CountDownLatch latch = null;
 
         public LatchedLedgerSource() {
-            super();
+            super(new Wallet(WALLET1));
         }
 
         public void hold() {

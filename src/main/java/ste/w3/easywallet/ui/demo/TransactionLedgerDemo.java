@@ -51,7 +51,7 @@ public class TransactionLedgerDemo extends Application {
         ctx.bind("root/preferences", preferences);
         preferences.coins = new Coin[] { new Coin("STORJ", 8), new Coin("GLM", 12) };
 
-        Pane main = (Pane)new EasyWalletFXMLLoader().loadLedgerDialogContent(null);
+        Pane main = (Pane)new EasyWalletFXMLLoader().loadLedgerDialogContent(new Wallet("01d34567890123456789012345678901234567890"), null);
 
         Scene scene = new Scene(main);
         stage.setScene(scene);
@@ -88,7 +88,7 @@ public class TransactionLedgerDemo extends Application {
                         coins[i%3],
                         new BigDecimal(String.format("%1$02d.%1$02d", i)),
                         String.format("12345678901234567890123456789012345678%02d",i),
-                        String.format("%02d34567890123456789012345678901234567890",i),
+                        String.format("%02d34567890123456789012345678901234567890",i%2),
                         String.format("hahs%02d",i)
                     )
                 );

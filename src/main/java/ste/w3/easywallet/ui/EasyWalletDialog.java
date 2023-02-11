@@ -27,14 +27,16 @@ import java.util.Map;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import ste.w3.easywallet.Labels;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
 public abstract class EasyWalletDialog extends MFXStageDialog implements Labels {
     public final EasyWalletDialogController controller;
+    public final Wallet wallet;
 
-    public EasyWalletDialog(final Pane owner, final String title) {
+    public EasyWalletDialog(final Pane owner, final Wallet wallet, final String title) {
         super(
             MFXGenericDialogBuilder.build()
                 .setHeaderText(title)
@@ -43,6 +45,7 @@ public abstract class EasyWalletDialog extends MFXStageDialog implements Labels 
                 .setShowMinimize(false)
                 .get()
         );
+        this.wallet = wallet;
 
         setScrimOwner(true);
         setScrimStrength(0.30);

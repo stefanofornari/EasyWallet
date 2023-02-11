@@ -39,8 +39,6 @@ import javafx.stage.Stage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import org.junit.Rule;
-import org.junit.contrib.java.lang.system.ProvideSystemProperty;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import static ste.w3.easywallet.TestingConstants.ETH;
 import static ste.w3.easywallet.TestingConstants.GLM;
@@ -100,7 +98,7 @@ public interface TestingUtils {
         return DaoManager.createDao(source, Transaction.class);
     }
 
-    default void givenDatabase(final int howMany) throws Exception {
+    default void givenDatabase(final Wallet wallet, final int howMany) throws Exception {
         transactions.clear();
         try (ConnectionSource db = new JdbcConnectionSource(JDBC_CONNECTION_STRING)) {
             Dao<Transaction, String> transactionDao = DaoManager.createDao(db, Transaction.class);
@@ -116,13 +114,27 @@ public interface TestingUtils {
                     coins[i%3],
                     new BigDecimal(String.format("%1$02d.%1$02d", r.nextInt(100))),
                     String.format("12345678901234567890123456789012345678%02d", r.nextInt(100)),
-                    String.format("%02d12345678901234567890123456789012345678", r.nextInt(100)),
+                    //
+                    // If wallet is given, use its address as destination (to)
+                    // any other row
+                    //
+                    ((wallet != null) && (i%2 == 0)) ?
+                        wallet.address :
+                        String.format("%02d12345678901234567890123456789012345678", r.nextInt(100)),
                     String.format("hash%09d-%02d", i, r.nextInt(80))
                 );
                 transactions.add(t);
                 transactionDao.create(t);
             }
         }
+    }
+
+    default void givenDatabase(final Wallet wallet) throws Exception {
+        givenDatabase(wallet, 63);  // just a odd number to test with 10-20 items
+    }
+
+    default void givenDatabase(final int howMany) throws Exception {
+        givenDatabase(null, howMany);
     }
 
     default void givenDatabase() throws Exception {

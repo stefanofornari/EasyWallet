@@ -33,7 +33,7 @@ import java.util.List;
 import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
 import org.apache.commons.lang.StringUtils;
-import ste.w3.easywallet.ledger.Order;
+import ste.w3.easywallet.data.Order;
 
 /**
  *
@@ -61,6 +61,7 @@ public class TransactionsManager {
     /**
      * Returns a subset of (or all) rows sorted (or not) by the sorting argument.
      *
+     * @param wallet the target wallet of the transactions to retrieve or null to retrieve all
      * @param sorting name of the column and sorting direction in a TableSourceSorting
      * @param startFrom position of the first row to return (0 based)
      * @param howMany number of rows to return or null for all; use a value big enough
@@ -71,7 +72,7 @@ public class TransactionsManager {
      *
      * @throws ManagerException
      */
-    public List<Transaction> get(TableSourceSorting sorting, long startFrom, long howMany)
+    public List<Transaction> get(Wallet wallet, TableSourceSorting sorting, long startFrom, long howMany)
     throws ManagerException {
         //
         // See https://github.com/j256/ormlite-core/issues/281
@@ -85,6 +86,9 @@ public class TransactionsManager {
             // specified as well
             //
             QueryBuilder qb = transactions.queryBuilder().offset(startFrom).limit(howMany);
+            if (wallet != null) {
+                qb.where().eq("to", wallet.address);
+            }
             if ((sorting != null) && (sorting.order() != Order.NONE)) {
                 qb.orderBy(sorting.column(), sorting.order() == Order.ASCENDING);
             }
@@ -94,6 +98,12 @@ public class TransactionsManager {
             throw new ManagerException("error retrieving transactions data", x);
         }
     }
+
+    public List<Transaction> get(TableSourceSorting sorting, long startFrom, long howMany)
+    throws ManagerException {
+        return get(null, sorting, startFrom, howMany);
+    }
+
 
     public void add(Transaction t) throws SQLException {
         transactions.create(t);

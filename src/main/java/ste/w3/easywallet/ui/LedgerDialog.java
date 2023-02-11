@@ -30,7 +30,7 @@ import ste.w3.easywallet.Wallet;
  */
 public class LedgerDialog extends EasyWalletDialog implements Labels {
     public LedgerDialog(final Pane owner, final Wallet wallet) {
-        super(owner, String.format(LABEL_LEDGER_DIALOG_TITLE, wallet.address));
+        super(owner, wallet, String.format(LABEL_LEDGER_DIALOG_TITLE, wallet.address));
 
         controller.cancelButton.setText(LABEL_BUTTON_CLOSE);
         controller.cancelButton.getStyleClass().add("primary-button");
@@ -40,6 +40,6 @@ public class LedgerDialog extends EasyWalletDialog implements Labels {
     }
 
     protected Pane content() {
-        return new EasyWalletFXMLLoader().loadLedgerDialogContent((MFXGenericDialog)getContent());
+        return new EasyWalletFXMLLoader().loadLedgerDialogContent(wallet, (MFXGenericDialog)getContent());
     }
 }

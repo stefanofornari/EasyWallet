@@ -146,8 +146,8 @@ implements Labels, TestingConstants, TestingUtils {
     }
 
     @Test
-    public void show_ledger_dialog_when() throws Exception {
-        givenDatabase();
+    public void show_ledger_dialog() throws Exception {
+        givenDatabase(WALLET);
 
         clickOn("#ledgerButton");
         Then.then(lookup(String.format(LABEL_LEDGER_DIALOG_TITLE, WALLET1))).hasWidgets();

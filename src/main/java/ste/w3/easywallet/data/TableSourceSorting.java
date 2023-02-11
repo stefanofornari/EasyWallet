@@ -1,7 +1,5 @@
 package ste.w3.easywallet.data;
 
-import ste.w3.easywallet.ledger.Order;
-
 /**
  *
  */

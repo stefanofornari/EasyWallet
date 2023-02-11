@@ -48,8 +48,8 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
         Preferences preferences = bindPreferences();
         preferences.coins = new Coin[] { STORJ, GLM };
         preferences.db = JDBC_CONNECTION_STRING;
-        
-        givenDatabase();
+
+        givenDatabase(WALLET);
 
         Pane mainWindow = new BorderPane();
         showInStage(stage, mainWindow);
@@ -146,8 +146,9 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
         final ObservableList<Transaction> items = table.getItems();
 
         then(items).hasSize(10);
+        List<Transaction> walletTransactions = walletTransactions();
         for (int i=0; i<10; ++i) {
-            then(items.get(i).hash).isEqualTo(transactions.get(i).hash);
+            then(items.get(i).hash).isEqualTo(walletTransactions.get(i).hash);
         }
     }
 
@@ -186,52 +187,29 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
     public void update_items_when_sorting_changes() {
         final ObservableList<Transaction> items = controller.table().getItems();
 
-        final List<Transaction> sortedTransactions = new ArrayList<>();
-        sortedTransactions.addAll(transactions);
-
-        //
-        // Sort by hash descending
-        //
-        Collections.sort(
-            sortedTransactions,
-            (t1, t2) -> t2.hash.compareTo(t1.hash)
-        );
-
         MFXIconWrapper sortingIcon =
             lookup(".table-column").lookup("hash").lookup(".column-sort-icon")
             .queryAs(MFXIconWrapper.class);
 
         clickOn(sortingIcon);  waitForFxEvents();
 
-        for (int i=0; i<PAGE_SIZE; ++i) {
-            then(items.get(i).hash).isEqualTo(sortedTransactions.get(i).hash);
-        }
-
-        //
-        // Sort by when descending
-        //
-        Collections.sort(
-            sortedTransactions,
-            (t1, t2) -> {
-                return t2.when.compareTo(t1.when);
-            }
-        );
+        then(items).isSortedAccordingTo((t1, t2) -> t2.hash.compareTo(t1.hash));
 
         sortingIcon =
             lookup(".table-column").lookup("when").lookup(".column-sort-icon")
             .queryAs(MFXIconWrapper.class);
         clickOn(sortingIcon); waitForFxEvents();
 
-        for (int i=0; i<PAGE_SIZE; ++i) {
-            then(items.get(i).when).isEqualTo(sortedTransactions.get(i).when);
-        }
+        then(items).isSortedAccordingTo((t1, t2) -> t2.when.compareTo(t1.when));
 
         //
         // unsort
         //
         clickOn(sortingIcon); clickOn(sortingIcon); waitForFxEvents();
+
+        List<Transaction> walletTransactions = walletTransactions();
         for (int i=0; i<PAGE_SIZE; ++i) {
-            then(items.get(i).hash).isEqualTo(transactions.get(i).hash);
+            then(items.get(i).hash).isEqualTo(walletTransactions.get(i).hash);
         }
     }
 
@@ -242,8 +220,9 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
 
         table.scrollToLastRow(); moveTo(table); scroll(VerticalDirection.UP);
 
+        List<Transaction> walletTransactions = walletTransactions();
         for (int i=0; i<20; ++i) {
-            then(items.get(i).hash).isEqualTo(transactions.get(i).hash);
+            then(items.get(i).hash).isEqualTo(walletTransactions.get(i).hash);
         }
 
         then(table.getLastRowsRange().getMax()).isEqualTo(15);
@@ -260,5 +239,9 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
     }
 
     // --------------------------------------------------------- private methods
+
+    private List<Transaction> walletTransactions() {
+        return transactions.stream().filter((t) -> ADDRESS3.equalsIgnoreCase(t.to)).toList();
+    }
 
 }

@@ -41,7 +41,7 @@ import org.junit.Test;
 import static ste.w3.easywallet.TestingConstants.GLM;
 import static ste.w3.easywallet.TestingConstants.STORJ;
 import ste.w3.easywallet.data.TableSourceSorting;
-import ste.w3.easywallet.ledger.Order;
+import ste.w3.easywallet.data.Order;
 
 /**
  *

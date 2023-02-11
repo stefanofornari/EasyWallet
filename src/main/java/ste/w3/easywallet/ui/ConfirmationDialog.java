@@ -26,13 +26,14 @@ import javafx.scene.control.Labeled;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
+import ste.w3.easywallet.Wallet;
 
 /**
  *
  */
 public class ConfirmationDialog extends OkCancelDialogBase {
-    public ConfirmationDialog(Pane owner, String title, String text) {
-        super(owner, title);
+    public ConfirmationDialog(Pane owner, Wallet wallet, String title, String text) {
+        super(owner, wallet, title);
 
         controller.okButton.setDisable(false); controller.okButton.setText("YES");
         controller.okButton.setDisable(false); controller.cancelButton.setText("NO");
