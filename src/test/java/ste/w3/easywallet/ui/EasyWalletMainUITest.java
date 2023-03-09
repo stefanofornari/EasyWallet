@@ -108,15 +108,16 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
     }
 
     @Test
-    public void pressing_refresh_udates_balances_in_ui_and_preferences() throws Exception {
-        server.addBalanceRequest(ETH, "0x" + preferences.wallets[0].address, new BigDecimal("47.34269121"));
-        server.addBalanceRequest(STORJ, "0x" + preferences.wallets[0].address, new BigDecimal("534.09876543"));
+    public void pressing_refresh_udates_data_in_ui_preferences_db() throws Exception {
+        server.addBalanceRequest(preferences.wallets[0].address, new BigDecimal("47.34269121"));
+        server.addBalanceRequest(STORJ, preferences.wallets[0].address, new BigDecimal("534.09876543"));
+        //server.addTransactionsRequest(preferences.wallets[0].address);
 
         clickOn('#' + KEY_REFRESH);
         waitForFxEvents();
 
-        Then.then(lookup("ETH 47.34269121 - STORJ 534.09876543")).hasWidgets();
-        then(main.getConfigFile()).content().contains("{\"ETH\":47.34269121,\"STORJ\":534.09876543}");
+        Then.then(lookup("ETH 0.004734269121 - STORJ 534.09876543")).hasWidgets();
+        then(main.getConfigFile()).content().contains("{\"ETH\":0.004734269121,\"STORJ\":534.09876543}");
     }
 
     @Test

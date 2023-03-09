@@ -25,15 +25,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.text.RandomStringGenerator;
-import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.EasyWalletException;
-import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.TestingConstants;
@@ -63,7 +59,7 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
     public void start(Stage stage) throws Exception {
         this.stage = stage;
 
-        server = new TestingServer();
+        server = new TestingServer(); server.ethereum.start();
 
         try {
             preparePreferences();
@@ -75,6 +71,12 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
 
         controller = getController(lookup("#main").queryAs(Pane.class));
     }
+
+    @Override
+    public void stop() {
+        server.ethereum.stop();
+    }
+
 
     protected File getPreferencesFile() throws IOException {
         return new File(HOME.getRoot(), CONFIG_FILE);

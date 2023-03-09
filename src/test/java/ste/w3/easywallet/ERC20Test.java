@@ -31,8 +31,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.*;
@@ -44,8 +42,11 @@ import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.EthBlock.Block;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.utils.Convert;
+import org.web3j.utils.Convert.Unit;
 import static ste.w3.easywallet.ui.Constants.CONFIG_FILE;
 
 /**
@@ -134,7 +135,7 @@ public class ERC20Test {
     Content-Type: application/json; charset=utf-8
     Content-Length: 252
     [main] DEBUG org.web3j.protocol.http.HttpService -
-    {"jsonrpc":"2.0","method":"eth_call","params":[{"from":"0x3f17f1962b36e491b30a40b2405849e597ba5fb5","to":"0xd72357dAcA2cF11A5F155b9FF7880E595A3F5792","data":"0x70a082310000000000000000000000003eae5d25aa262a8821357f8b03545d9a6eb1d9f2"},"latest"],"id":3}
+    {"jsonrpc":"2.0","method":"eth_call","params":[{"from":"0x3f17f1962b36e491b30a40b2405849e597ba5fb5","to":"0xd72357dAcA2cF11A5F155b9FF7880E595A3F5792","data":"0x70a08231000000000000000000000000da9dfa130df4de4673b89022ee50ff26f6ea73cf"},"latest"],"id":3}
     --> END POST (252-byte body)
     <-- 200 https://polygon-mainnet.infura.io/v3/$APPKEY (121ms)
     date: Sun, 23 Oct 2022 09:14:31 GMT
@@ -148,14 +149,13 @@ public class ERC20Test {
 
      */
     @Test
-    public void get_balance() throws Exception {
-        final Logger LOG = LoggerFactory.getLogger("ste.easywallet");
+    public void get_token_balance() throws Exception {
         final String WALLET = "0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf";
 
         Web3j w3 = Web3j.build(new HttpService(preferences.url()));
 
         //
-        // Create and use fake credentuials (no credentials are needed to get
+        // Create and use fake credentials (no credentials are needed to get
         // tokens balance
         //
         String pk = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -169,14 +169,13 @@ public class ERC20Test {
         String contractAddress3 = "0x0B220b82F3eA3B7F6d9A1D8ab58930C064A2b5Bf";  // GLM polygon
         ERC20 token = ERC20.load(contractAddress1, w3, credentials, new DefaultGasProvider());
 
-        LOG.debug("SYMBOL");
+        System.out.append("SYMBOL");
         String symbol = token.symbol().send();
-        LOG.debug("NAME");
+        System.out.append("NAME");
         String name = token.name().send();
-        LOG.debug("DECIMALS");
+        System.out.append("DECIMAL");
         BigInteger decimal = token.decimals().send();
-
-        LOG.debug("BALANCE");
+        System.out.append("BALANCE");
         BigInteger balance1 = token.balanceOf(WALLET).send();
 
         System.out.println("symbol: " + symbol);
@@ -187,15 +186,60 @@ public class ERC20Test {
     }
 
     /*
+
+    ethGetBalance().send
+    ====================
+
+    --> POST https://polygon-mainnet.infura.io/v3/$APPKEY
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 115
+
+    {"jsonrpc":"2.0","method":"eth_getBalance","params":["0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf","latest"],"id":0}
+    --> END POST (115-byte body)
+    <-- 200 https://polygon-mainnet.infura.io/v3/$APPKEY (988ms)
+    date: Mon, 06 Mar 2023 07:13:41 GMT
+    content-type: application/json
+    content-length: 51
+    vary: Origin
+    vary: Accept-Encoding
+
+    {"jsonrpc":"2.0","id":0,"result":"0x3f18c57bf4400"}
+    <-- END HTTP (51-byte body)
+
+    balance: 0.00111001
+
+    */
+
+    @Test
+    public void get_balance() throws Exception {
+        final String WALLET = "0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf";
+
+        Web3j w3 = Web3j.build(new HttpService(preferences.url()));
+
+        //
+        // Create and use fake credentials (no credentials are needed to get
+        // tokens balance
+        //
+        String pk = "0x0000000000000000000000000000000000000000000000000000000000000000";
+        Credentials credentials = Credentials.create(pk);
+
+        EthGetBalance eth = w3.ethGetBalance(
+            WALLET, DefaultBlockParameterName.LATEST
+        ).send();
+
+        System.out.println("balance: " + Convert.fromWei(eth.getBalance().toString(), Unit.ETHER));
+    }
+
+    /*
     w3.ethBlockNumber()
     ===================
-    --> POST https://polygon-mainnet.infura.io/v3/4b79bcf3bf97423a85c330117cd0749a
+    --> POST https://polygon-mainnet.infura.io/v3/$APPKEY
     Content-Type: application/json; charset=utf-8
     Content-Length: 84
 
     {"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["0x21e62ab",true],"id":0}
 
-    <-- 200 https://polygon-mainnet.infura.io/v3/4b79bcf3bf97423a85c330117cd0749a (4297ms)
+    <-- 200 https://polygon-mainnet.infura.io/v3/$APPKEY (4297ms)
     date: Sun, 05 Feb 2023 17:06:19 GMT
     content-type: application/json
     vary: Origin

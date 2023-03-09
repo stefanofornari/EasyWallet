@@ -128,7 +128,6 @@ public class EditWalletDialogTest extends ApplicationTest implements Labels, Tes
 
         dialog.onOk = new Function<>() {
             public Void apply(Wallet w) {
-                System.out.println(w.address);
                 wrapper[0] = w; return null;
             }
         };

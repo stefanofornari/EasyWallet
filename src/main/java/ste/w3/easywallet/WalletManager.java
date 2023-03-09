@@ -62,7 +62,7 @@ public class WalletManager {
                     throw new EasyWalletException(x, "Error '%s' retrieving balance for %s, check your configuration", x.getMessage(), c.symbol);
                 }
             } else {
-                ERC20 token = ERC20.load(c.contract, web3, credentials, new DefaultGasProvider());
+                ERC20 token = ERC20.load("0x" + c.contract, web3, credentials, new DefaultGasProvider());
                 try {
                     wallet.balance(new Amount(
                         c,

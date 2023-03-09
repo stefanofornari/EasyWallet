@@ -20,86 +20,163 @@
  */
 package ste.w3.easywallet;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
+import java.net.SocketException;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import static org.assertj.core.api.BDDAssertions.entry;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import static ste.w3.easywallet.TestingConstants.ADDRESS1;
+import static ste.w3.easywallet.TestingServer.BALANCE_REQUEST_FORMAT;
+import static ste.w3.easywallet.TestingServer.TOKEN_BALANCE_REQUEST_FORMAT;
+
 
 /**
  *
  */
 public class TestingServerTest implements TestingConstants {
+    TestingServer server = new TestingServer();
 
-    @Test
-    public void add_balance() {
-        TestingServer server = new TestingServer();
+    @Before
+    public void before() {
+        server.ethereum.start();
+    }
 
-        //
-        // default values
-        //
-        then(server.TEST_BALANCE).containsExactly(
-                entry(ex(ADDRESS1), "0x7baa706cf4a4220055045"),
-                entry(ex(ADDRESS2), "0x1bf7395fc44bec91e8000")
-        );
-
-        server.addBalance(ex(ADDRESS3), "0x00");
-        then(server.TEST_BALANCE).containsExactly(
-                entry(ex(ADDRESS1), "0x7baa706cf4a4220055045"),
-                entry(ex(ADDRESS2), "0x1bf7395fc44bec91e8000"),
-                entry(ex(ADDRESS3), "0x00")
-        );
-
-        server.addBalance(ex(ADDRESS4), "0x0011");
-        then(server.TEST_BALANCE).containsExactly(
-                entry(ex(ADDRESS1), "0x7baa706cf4a4220055045"),
-                entry(ex(ADDRESS2), "0x1bf7395fc44bec91e8000"),
-                entry(ex(ADDRESS3), "0x00"),
-                entry(ex(ADDRESS4), "0x0011")
-        );
+    @After
+    public void after() {
+        server.ethereum.stop();
     }
 
     @Test
-    public void add_balance_fails_if_arguments_are_not_hex() {
-        TestingServer server = new TestingServer();
-        try {
-            server.addBalance(WALLET1, "0x00");
-            fail("missing argument validation");
-        } catch (IllegalArgumentException x) {
-            then(x).hasMessage("address must start with '0x'");
-        }
-        try {
-            server.addBalance(ex(ADDRESS1), "0");
-            fail("missing argument validation");
-        } catch (IllegalArgumentException x) {
-            then(x).hasMessage("balance must start with '0x'");
-        }
+    public void server_initialization() {
+        then(server.ethereum).isNotNull();
     }
 
     @Test
-    public void add_balance_request_enqueues_a_request() throws Exception {
+    public void add_token_balance_request_mocks_a_request() throws Exception {
         final String TEST1 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x000000000000000000000000000000000000000000000000000000011a2f36c1\"}";
         final String TEST2 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x0000000000000000000000000000000000000000000000005a850fa96456afd7\"}";
-        TestingServer server = new TestingServer();
-        server.addBalanceRequest(STORJ, "0x" + ADDRESS1, new BigDecimal("47.34269121"));
-        server.addBalanceRequest(GLM, "0x" + ADDRESS1, new BigDecimal("6.522636855523323863"));
-        server.ethereum.start();
 
+        server.addBalanceRequest(STORJ, ADDRESS1, new BigDecimal("47.34269121"));
+        server.addBalanceRequest(GLM, ADDRESS1, new BigDecimal("6.522636855523323863"));
+
+        OkHttpClient http = new OkHttpClient();
+
+        Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
+            RequestBody.create(String.format(
+                TOKEN_BALANCE_REQUEST_FORMAT, STORJ.contract, ADDRESS1),
+                MediaType.parse("application/json")
+            )
+        ).build();
+        Response response = http.newCall(request).execute();
+
+        then(response.body().string()).isEqualTo(TEST1);
+
+        request = new Request.Builder().url(server.ethereum.url("fake")).post(
+            RequestBody.create(String.format(
+                TOKEN_BALANCE_REQUEST_FORMAT, GLM.contract, ADDRESS1),
+                MediaType.parse("application/json")
+            )
+        ).build();
+        response = http.newCall(request).execute();
+        then(response.body().string()).isEqualTo(TEST2);
+    }
+
+    @Test
+    public void add_balance_request_mockes_a_requests() throws Exception {
+        final String TEST1 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x000019d82cd840\"}";
+        final String TEST2 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x02513af93e8b40\"}";
+
+        server.addBalanceRequest(ADDRESS1, new BigDecimal("0.00111001"));
+        server.addBalanceRequest(ADDRESS2, new BigDecimal("6.52263685"));
+
+        OkHttpClient http = new OkHttpClient();
+
+        Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
+            RequestBody.create(String.format(
+                BALANCE_REQUEST_FORMAT, ADDRESS1),
+                MediaType.parse("application/json")
+            )
+        ).build();
+        Response response = http.newCall(request).execute();
+
+        then(response.body().string()).isEqualTo(TEST1);
+
+        request = new Request.Builder().url(server.ethereum.url("fake")).post(
+            RequestBody.create(String.format(
+                BALANCE_REQUEST_FORMAT, ADDRESS2, GLM.contract),
+                MediaType.parse("application/json")
+            )
+        ).build();
+        response = http.newCall(request).execute();
+        then(response.body().string()).isEqualTo(TEST2);
+    }
+
+    @Test
+    public void add_error_response() throws Exception {
+        final int CODE1 = 401, CODE2 = 500;
+        final String MSG1 = "and error", MSG2 = "another error";
+
+        OkHttpClient http = new OkHttpClient();
+
+        Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
+            RequestBody.create(String.format(
+                BALANCE_REQUEST_FORMAT, ADDRESS1),
+                MediaType.parse("application/json")
+            )
+        ).build();
+
+        server.addError(CODE1, MSG1);
+        Response response = http.newCall(request).execute();
+
+        then(response.code()).isEqualTo(CODE1);
+        then(response.body().string()).isEqualTo(MSG1);
+
+        server.addError(CODE2, MSG2);
+        response = http.newCall(request).execute();
+
+        then(response.code()).isEqualTo(CODE2);
+        then(response.body().string()).isEqualTo(MSG2);
+    }
+
+    @Test
+    public void reset_clears_mocked_requests() {
+        server.addBalanceRequest(WALLET1, new BigDecimal(0));
+        then(server.ethereum.getStubMappings()).hasSize(1);
+        server.addError(400, "error");
+        then(server.ethereum.getStubMappings()).hasSize(2);
+        server.reset();
+        then(server.ethereum.getStubMappings()).hasSize(0);
+    }
+
+    @Test
+    public void simultae_connection_failure() {
+        server.addFailure();
+
+        OkHttpClient http = new OkHttpClient();
+
+        Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
+            RequestBody.create(String.format(
+                BALANCE_REQUEST_FORMAT, ADDRESS1),
+                MediaType.parse("application/json")
+            )
+        ).build();
         try {
-            URL url = new URL(server.ethereum.url("something").toString());
-            then(url.openConnection().getInputStream()).hasContent(TEST1);
-            then(url.openConnection().getInputStream()).hasContent(TEST2);
-        } finally {
-            server.ethereum.shutdown();
+            http.newCall(request).execute();
+            fail("no connection error detected");
+        } catch (IOException x) {
+            then(x).isInstanceOf(SocketException.class);
         }
     }
 
     // --------------------------------------------------------- private methods
-
-    private String ex(final String s) {
-        return "0x" + s;
-    }
 
 }

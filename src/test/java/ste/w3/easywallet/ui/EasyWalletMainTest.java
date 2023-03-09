@@ -50,7 +50,7 @@ public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingCon
         Preferences p = main.getPreferences();
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(String.format(
-            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"0x14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"\"}",
+            "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"\"}",
             p.endpoint, p.appkey, p.wallets[0].address
         ));
 
@@ -63,7 +63,7 @@ public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingCon
 
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(
-            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"0x14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"\"}"
+            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"\"}"
         );
     }
 

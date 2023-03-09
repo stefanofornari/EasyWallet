@@ -20,97 +20,128 @@
  */
 package ste.w3.easywallet;
 
-import com.google.gson.Gson;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import com.github.tomakehurst.wiremock.http.Fault;
 
 /**
  *
- * @author ste
  */
 public class TestingServer implements TestingConstants {
 
-    public final MockWebServer ethereum;
+    //
+    // NOTE: placeholders in JSON are treated by WireMock accordingly to
+    // Jsonunit (https://github.com/lukas-krecan/JsonUnit)
+    //
 
-    public final Map<String, String> TEST_BALANCE = new HashMap<>();
+    static public final String TOKEN_BALANCE_REQUEST_FORMAT =
+        "{\"jsonrpc\":\"2.0\",\"method\":\"eth_call\",\"params\":[{\"from\":\"0x3f17f1962b36e491b30a40b2405849e597ba5fb5\",\"to\":\"0x%s\",\"data\":\"0x70a08231000000000000000000000000%s\"},\"latest\"],\"id\":\"${json-unit.ignore}\"}";
+    static public final String TOKEN_BALANCE_RESPONSE_FORMAT =
+        "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x%064x\"}";
 
-    public TestingServer() {
-        TEST_BALANCE.put("0x" + ADDRESS1, "0x7baa706cf4a4220055045");
-        TEST_BALANCE.put("0x" + ADDRESS2, "0x1bf7395fc44bec91e8000");
-        ethereum = new MockWebServer();
-        //ethereum.setDispatcher(dispatcher());
+    static public final String BALANCE_REQUEST_FORMAT =
+        "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0x%s\",\"latest\"],\"id\":\"${json-unit.ignore}\"}";
+    static public final String BALANCE_RESPONSE_FORMAT =
+        "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x%014x\"}";
+
+    public final WireMockServer ethereum = new WireMockServer(wireMockConfig().dynamicPort());
+
+    public void addBalanceRequest(String address, BigDecimal balance) {
+        BigDecimal bigBalance = balance.movePointRight(14);
+
+        String requestBody = String.format(
+            BALANCE_REQUEST_FORMAT, address
+        );
+        String responseBody = String.format(BALANCE_RESPONSE_FORMAT, bigBalance.toBigInteger());
+
+        ethereum.stubFor(
+                    any(anyUrl())
+                    .withRequestBody(equalToJson(requestBody))
+                    .willReturn(
+                        aResponse()
+                            .withHeader("content-type", "application/json")
+                            .withHeader("content-length", String.valueOf(responseBody.length()))
+                            .withBody(responseBody)
+                    )
+                );
     }
 
-    /**
-     * Add a balance entry to <code>TEST_BALANCE</code>
-     *
-     * @param address prefixed by 0x
-     * @param balance as hex (prefixed by 0x)
-     */
-    public void addBalance(String address, String balance) {
-        if (!address.startsWith("0x")) {
-            throw new IllegalArgumentException("address must start with '0x'");
-        }
-        if (!balance.startsWith("0x")) {
-            throw new IllegalArgumentException("balance must start with '0x'");
-        }
-        TEST_BALANCE.put(address, balance);
-    }
     /*
-    08:44:03.386 [main] DEBUG org.web3j.protocol.http.HttpService - vary: Origin
-08:44:03.388 [main] DEBUG org.web3j.protocol.http.HttpService -
-08:44:03.388 [main] DEBUG org.web3j.protocol.http.HttpService - {"jsonrpc":"2.0","id":3,"result":"0x0000000000000000000000000000000000000000000000005a850fa96456afd7"}
-08:44:03.388 [main] DEBUG org.web3j.protocol.http.HttpService - <-- END HTTP (102-byte body)
-symbol: GLM
-name: Golem Network Token (PoS)
-decimal: 18
-balance (0x3eAE5d25Aa262a8821357f8b03545d9a6eB1D9F2)=6.522636855523323863 (6522636855523323863)
-    */
+    {"jsonrpc":"2.0","id":3,"result":"0x0000000000000000000000000000000000000000000000005a850fa96456afd7"}
+    symbol: GLM
+    name: Golem Network Token (PoS)
+    decimal: 18
+    balance (0x3eAE5d25Aa262a8821357f8b03545d9a6eB1D9F2)=6.522636855523323863 (6522636855523323863)
+     */
 
     public void addBalanceRequest(Coin coin, String address, BigDecimal balance) {
         BigDecimal bigBalance = balance.movePointRight(coin.decimals);
 
-        String body = String.format("{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x%064x\"}", bigBalance.toBigInteger());
+        String requestBody = String.format(
+            TOKEN_BALANCE_REQUEST_FORMAT, coin.contract, address
+        );
+        String responseBody = String.format(TOKEN_BALANCE_RESPONSE_FORMAT, bigBalance.toBigInteger());
 
-        MockResponse r = new MockResponse().setBody(body)
-            .setHeader("content-type", "application/json")
-            .setHeader("content-length", String.valueOf(body.length()));
-
-        ethereum.enqueue(r);
-    }
-
-    // --------------------------------------------------------- private methods
-
-    private Dispatcher dispatcher() {
-        return new Dispatcher() {
-            @Override
-            public MockResponse dispatch(RecordedRequest r) throws InterruptedException {
-                Gson g = new Gson();
-
-                String content = r.getBody().readUtf8();
-
-                System.out.println(">>>");
-                System.out.println(r.getRequestUrl());
-                System.out.println(content);
-                System.out.println("<<<");
-
-                HashMap body = g.fromJson(content, HashMap.class);
-                String address = (String)((List)body.get("params")).get(0);
-
-                return new MockResponse().setHeader("content-type", "application/json")
-                    .setBody(String.format(
-                        "{\"jsonrpc\":\"2.0\",\"id\":0,\"result\":\"%s\"}", TEST_BALANCE.get(address)
+        ethereum.stubFor(
+                    any(anyUrl())
+                    .withRequestBody(equalToJson(requestBody))
+                    .willReturn(
+                        aResponse()
+                            .withHeader("content-type", "application/json")
+                            .withHeader("content-length", String.valueOf(responseBody.length()))
+                            .withBody(responseBody)
                     )
                 );
-            }
-
-        };
     }
 
+/*
+    public void addTransactionsRequest(String address) {
+        String body = String.format("{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x%064x\"}");
+
+        ethereum.stubFor(
+                    any(anyUrl())
+                    .withRequestBody(containing(address))
+                    .willReturn(
+                        aResponse()
+                            .withHeader("content-type", "application/json")
+                            .withHeader("content-length", String.valueOf(body.length()))
+                            .withBody(body)
+                    )
+                );
+    }
+*/
+
+    public void addError(int code, String message) {
+        ethereum.stubFor(
+                    any(anyUrl())
+                    .willReturn(
+                        aResponse()
+                            .withStatus(code)
+                            .withHeader("content-type", "plain/text")
+                            .withHeader("content-length", String.valueOf(message.length()))
+                            .withBody(message)
+                    )
+                );
+    }
+
+    public void addFailure() {
+        ethereum.stubFor(
+                    any(anyUrl())
+                    .willReturn(
+                        aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)
+                    )
+                );
+
+    }
+
+    public void reset() {
+        ethereum.resetAll();
+    }
 }
