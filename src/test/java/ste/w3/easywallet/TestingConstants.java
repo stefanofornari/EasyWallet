@@ -84,4 +84,5 @@ public interface TestingConstants {
     public final Coin ETH = new Coin("ETH", "Ether", 18);
     public final Coin STORJ = new Coin("STORJ", "StorjToken", "14F2c84A58e065C846c5fDDdadE0d3548F97A517", 8);
     public final Coin GLM = new Coin("GLM", "Golem Network Token", "55110C24859411822932a5263C6E44318cc3E682", 18);
+    public final Coin[] COINS = new Coin[] {STORJ, GLM};
 }
