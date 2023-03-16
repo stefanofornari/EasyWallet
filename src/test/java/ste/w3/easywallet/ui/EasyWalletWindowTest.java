@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
 import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
@@ -43,7 +44,7 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
 
     @Test
     public void initial_state() throws Exception {
-        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
+        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMainWithEmptyPreferences()));
 
         Button b = lookup('#' + KEY_ADD_WALLET).queryButton();
         then(b.getStyleClass().toArray()).contains("primary-button");
@@ -58,14 +59,14 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
 
     @Test
     public void no_wallet_no_card() throws Exception {
-        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
+        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMainWithEmptyPreferences()));
         Then.then(lookup(".wallet_card")).hasNoWidgets();
         Then.then(lookup('#' + KEY_REFRESH).queryButton()).isDisabled();
     }
 
     @Test
     public void configured_wallets_have_a_card_each() throws Exception {
-        EasyWalletMain main = new EasyWalletMain();
+        EasyWalletMain main = new EasyWalletMainWithEmptyPreferences();
         main.getPreferences().wallets = new Wallet[] {
             new Wallet(ADDRESS1), new Wallet(ADDRESS2), new Wallet(ADDRESS3)
         };
@@ -78,12 +79,21 @@ public class EasyWalletWindowTest extends ApplicationTest implements TestingCons
 
     @Test
     public void show_add_wallet_dialog() throws Exception {
-        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMain()));
+        showInStageLater(stage, new EasyWalletFXMLLoader().loadMainWindow(new EasyWalletMainWithEmptyPreferences()));
         Then.then(lookup(".mfx-dialog")).hasNoWidgets();
         clickOn("#" + KEY_ADD_WALLET); waitForFxEvents();
         Then.then(lookup(".mfx-dialog")).hasOneWidget();
     }
 
-    // --------------------------------------------------------- private methods
+    // -------------------------------------- EasyWalletMainWithEmptyPreferences
+
+    private class EasyWalletMainWithEmptyPreferences extends EasyWalletMain {
+        private final Preferences p = new Preferences();
+
+        @Override
+        public Preferences getPreferences() {
+            return p;
+        }
+    }
 
 }

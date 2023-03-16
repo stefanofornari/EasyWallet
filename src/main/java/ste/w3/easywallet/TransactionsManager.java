@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import ste.w3.easywallet.data.Order;
 
 /**
@@ -121,6 +121,7 @@ public class TransactionsManager {
             }
             db = new JdbcConnectionSource(preferences.db);
         } catch (Exception x) {
+            x.printStackTrace();
             throw new ConfigurationException("db connection string is missing");
         }
 

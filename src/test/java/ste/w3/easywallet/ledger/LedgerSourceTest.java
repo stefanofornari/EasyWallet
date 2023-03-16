@@ -20,9 +20,10 @@ public class LedgerSourceTest implements TestingUtils, TestingConstants {
 
     @Before
     public void before() throws Exception {
-        Preferences p = bindPreferences();
-        p.db = JDBC_CONNECTION_STRING;
+        Preferences p = givenEmptyPreferences();
         givenDatabase(WALLET, 100);
+
+        p.db = JDBC_CONNECTION_STRING;
     }
 
     @Test

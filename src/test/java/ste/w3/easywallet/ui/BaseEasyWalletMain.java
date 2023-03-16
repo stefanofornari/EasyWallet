@@ -99,6 +99,7 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
         preferences.appkey = randomStringGenerator.generate(12);
         preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
         preferences.coins = new Coin[] {ETH, STORJ};
+        preferences.db = JDBC_CONNECTION_STRING;
 
         PreferencesManager pm = new PreferencesManager();
 
@@ -106,13 +107,15 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
     }
 
     protected void withConnectionException() throws Exception {
+        server.addFailure();
+        /*
         PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com/key") {
             @Override
             public WalletManager balance(Wallet wallet, Coin... coins) throws EasyWalletException {
                 throw new EasyWalletException("network not available");
             }
-
         });
+        */
     }
 
 
@@ -131,14 +134,16 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
             return null;
         }
 
-        @Override
+        /*@Override
         //
         // With this we make sure multiple instances do not interefeer each
         // other. The root can then be retrieved with the following code:
         //
+
         protected Context getJNDIRoot() throws NamingException {
             return new InitialContext().createSubcontext(String.valueOf(this.hashCode()));
         }
+        */
     }
 
 }

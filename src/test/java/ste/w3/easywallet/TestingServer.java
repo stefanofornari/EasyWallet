@@ -21,8 +21,6 @@
 package ste.w3.easywallet;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -30,6 +28,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import com.github.tomakehurst.wiremock.http.Fault;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -50,6 +51,26 @@ public class TestingServer implements TestingConstants {
         "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0x%s\",\"latest\"],\"id\":\"${json-unit.ignore}\"}";
     static public final String BALANCE_RESPONSE_FORMAT =
         "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x%014x\"}";
+    static public final String LATEST_TRANSACTIONS_REQUEST =
+        "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\",true],\"id\":\"${json-unit.ignore}\"}";
+
+    static public final String TRANSACTION_BODY_FORMAT = "{\n" +
+            "\"blockHash\": \"0x941bdb675ea97b27414681303b158b7226d72ad8e6ea17d7345f03c5e2eb9842\",\n" +
+            "\"blockNumber\": \"0x21e62ab\",\n" +
+            "\"from\": \"0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3\",\n" +
+            "\"gas\": \"0x186a0\",\n" +
+            "\"gasPrice\": \"0x94133c250\",\n" +
+            "\"hash\": \"0x%s\",\n" +                    // <--- HASH
+            "\"input\": \"0xa9059cbb%s%s\",\n" +         // <--- INPUT: <prefix><contract><amount>
+            "\"nonce\": \"0xe68a\",\n" +
+            "\"r\": \"0x6cd99eba87bb7104ede6e43238b390de6808a38af253b5aad5fc9424017549be\",\n" +
+            "\"s\": \"0x55486f168b2776478a8c3a63105b94e74f841f9ae567e501801d35aa13452c13\",\n" +
+            "\"to\": \"0x%s\",\n" +                      // <--- destination wallet
+            "\"transactionIndex\": \"0x38\",\n" +
+            "\"type\": \"0x0\",\n" +
+            "\"v\": \"0x135\",\n" +
+            "\"value\": \"0x0\"\n" +
+        "}";
 
     public final WireMockServer ethereum = new WireMockServer(wireMockConfig().dynamicPort());
 
@@ -101,22 +122,19 @@ public class TestingServer implements TestingConstants {
                 );
     }
 
-/*
-    public void addTransactionsRequest(String address) {
-        String body = String.format("{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x%064x\"}");
-
+    public void addIncomingTransactionsRequest(Transaction[] transactions, Coin[] coins) {
+        String responseBody = buildTransactionsResponse(transactions, coins);
         ethereum.stubFor(
                     any(anyUrl())
-                    .withRequestBody(containing(address))
+                    .withRequestBody(equalToJson(LATEST_TRANSACTIONS_REQUEST))
                     .willReturn(
                         aResponse()
                             .withHeader("content-type", "application/json")
-                            .withHeader("content-length", String.valueOf(body.length()))
-                            .withBody(body)
+                            .withHeader("content-length", String.valueOf(responseBody.length()))
+                            .withBody(responseBody)
                     )
                 );
     }
-*/
 
     public void addError(int code, String message) {
         ethereum.stubFor(
@@ -144,4 +162,65 @@ public class TestingServer implements TestingConstants {
     public void reset() {
         ethereum.resetAll();
     }
+
+    // -------------------------------------------------------------------------
+
+    private String buildTransactionsBody(Transaction[] transactions, Coin[] coins) {
+        Map<String, String> coinMap = new HashMap<>();
+        if (coins != null) {
+            for (Coin c: coins) {
+                coinMap.put(c.symbol, c.contract.toLowerCase());
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (Transaction t: transactions) {
+            if (!sb.isEmpty()) {
+                sb.append(',');
+            }
+            sb.append(String.format(
+                TRANSACTION_BODY_FORMAT,
+                t.hash(),
+                StringUtils.leftPad(coinMap.get(t.coin), 64, '0'),
+                StringUtils.leftPad(String.valueOf(t.amount), 64, '0'),
+                t.to
+            ));
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildTransactionsResponse(Transaction[] transactions, Coin[] coins) {
+        final String RESPONSE_FORMAT = "{\n" +
+            "\"jsonrpc\": \"2.0\",\n" +
+            "\"id\": 0,\n" +
+            "\"result\": {\n" +
+                "\"baseFeePerGas\": \"0x224cf532e\",\n" +
+                "\"difficulty\": \"0x18\",\n" +
+                "\"extraData\": \"0xd682021083626f7288676f312e31382e33856c696e7578000000000000000000a0533f454d1aca9a4db4cfd3dd382d77b0454e4c3f22bc282c0dc89b50d3be6b2e78f825009abc42f419a2278951ef43233a2fad023a87a1cb17ad4dbd76014600\",\n" +
+                "\"gasLimit\": \"0x1c0d510\",\n" +
+                "\"gasUsed\": \"0xce0434\",\n" +
+                "\"hash\": \"0x941bdb675ea97b27414681303b158b7226d72ad8e6ea17d7345f03c5e2eb9842\",\n" +
+                "\"logsBloom\": \"0x9ca1194892b6c80018c12670a19cb143951f017008a37c44d10324723906294c40061068309b915b86290092c57341410026a1000c266c91213b0014213620103d5c94015b9241ac28745129232e22f9844a1c6e0145140479430cb41c2d22414e8a229923890c90b800ec0905a63e0c09a46d9546184a0da120c010f4c8048348110140660cda8201d8094625aa25d040432d900224d02c4051606446ab0a7062045da355826b0d7724880c55bb208452250eb13b39886c016152b30c7428450305122e22041444660718a41eb9345275e13210908cb6140cbb83080500f242209f65c891c00c0a4f3528d7a0080c0b9098804901e954155c80288a09302a24\",\n" +
+                "\"miner\": \"0x0000000000000000000000000000000000000000\",\n" +
+                "\"mixHash\": \"0x0000000000000000000000000000000000000000000000000000000000000000\",\n" +
+                "\"nonce\": \"0x0000000000000000\",\n" +
+                "\"number\": \"0x21e62ab\",\n" +
+                "\"parentHash\": \"0x82b4c8559714da01ead67df90db8b4e6d30ce6534531ff14597364fb3e251ecf\",\n" +
+                "\"receiptsRoot\": \"0x52495649f13ac872f304d403f637e07b89e866c8aa1c17707ca7bd665c0cd780\",\n" +
+                "\"sha3Uncles\": \"0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347\",\n" +
+                "\"size\": \"0xa907\",\n" +
+                "\"stateRoot\": \"0xc78b6a144993354f9e8eca88893da55bca829bde828dfbdcb2ba458614c9625f\",\n" +
+                "\"timestamp\": \"0x63709c13\",\n" +
+                "\"totalDifficulty\": \"0x20f4571e\",\n" +
+                "\"transactions\": [%s],\n" +
+                "\"transactionsRoot\": \"0xe252bc5c255ffc81992fbcbfc81fafc456a1bff80890ad2f7fcb8af2df8e9486\",\n" +
+                "\"uncles\": []\n" +
+            "}\n" +
+        "}";
+
+        return String.format(RESPONSE_FORMAT, buildTransactionsBody(transactions, coins));
+    }
+
 }

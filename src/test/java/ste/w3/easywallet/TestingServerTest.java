@@ -20,15 +20,18 @@
  */
 package ste.w3.easywallet;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.SocketException;
+import java.time.Instant;
+import java.util.Date;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import static org.assertj.core.api.BDDAssertions.entry;
+import org.apache.commons.io.FileUtils;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.After;
@@ -36,6 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static ste.w3.easywallet.TestingConstants.ADDRESS1;
 import static ste.w3.easywallet.TestingServer.BALANCE_REQUEST_FORMAT;
+import static ste.w3.easywallet.TestingServer.LATEST_TRANSACTIONS_REQUEST;
 import static ste.w3.easywallet.TestingServer.TOKEN_BALANCE_REQUEST_FORMAT;
 
 
@@ -43,7 +47,8 @@ import static ste.w3.easywallet.TestingServer.TOKEN_BALANCE_REQUEST_FORMAT;
  *
  */
 public class TestingServerTest implements TestingConstants {
-    TestingServer server = new TestingServer();
+    private TestingServer server = new TestingServer();
+    private OkHttpClient http = new OkHttpClient();
 
     @Before
     public void before() {
@@ -68,8 +73,6 @@ public class TestingServerTest implements TestingConstants {
         server.addBalanceRequest(STORJ, ADDRESS1, new BigDecimal("47.34269121"));
         server.addBalanceRequest(GLM, ADDRESS1, new BigDecimal("6.522636855523323863"));
 
-        OkHttpClient http = new OkHttpClient();
-
         Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
             RequestBody.create(String.format(
                 TOKEN_BALANCE_REQUEST_FORMAT, STORJ.contract, ADDRESS1),
@@ -91,14 +94,12 @@ public class TestingServerTest implements TestingConstants {
     }
 
     @Test
-    public void add_balance_request_mockes_a_requests() throws Exception {
+    public void add_balance_request_mocks_a_request() throws Exception {
         final String TEST1 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x000019d82cd840\"}";
         final String TEST2 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x02513af93e8b40\"}";
 
         server.addBalanceRequest(ADDRESS1, new BigDecimal("0.00111001"));
         server.addBalanceRequest(ADDRESS2, new BigDecimal("6.52263685"));
-
-        OkHttpClient http = new OkHttpClient();
 
         Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
             RequestBody.create(String.format(
@@ -121,11 +122,36 @@ public class TestingServerTest implements TestingConstants {
     }
 
     @Test
+    public void add_transactions_request_mocks_a_request() throws Exception {
+        final Instant NOW = Instant.now();
+        final Transaction[] TRANSACTIONS1 = new Transaction[] {
+            new Transaction(new Date(NOW.toEpochMilli()), STORJ, BigDecimal.ONE, null, WALLET1, "hash1"),
+            new Transaction(new Date(NOW.toEpochMilli()+3600*1000), GLM, BigDecimal.TWO, null, WALLET1, "hash2"),
+            new Transaction(new Date(NOW.toEpochMilli()+2*3600*1000), GLM, BigDecimal.TEN, null, WALLET2, "hash3")
+        };
+        final Transaction[] TRANSACTIONS2 = new Transaction[] {
+            new Transaction(new Date(NOW.toEpochMilli()), GLM, BigDecimal.valueOf(10.343526), null, WALLET2, "hash4"),
+        };
+
+        server.addIncomingTransactionsRequest(TRANSACTIONS2, COINS);
+
+        Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
+            RequestBody.create(
+                LATEST_TRANSACTIONS_REQUEST,
+                MediaType.parse("application/json")
+            )
+        ).build();
+
+        Response response = http.newCall(request).execute();
+        then(response.body().string()).isEqualTo(
+            givenTransactionsBody("transactions-2.json")
+        );
+    }
+
+    @Test
     public void add_error_response() throws Exception {
         final int CODE1 = 401, CODE2 = 500;
         final String MSG1 = "and error", MSG2 = "another error";
-
-        OkHttpClient http = new OkHttpClient();
 
         Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
             RequestBody.create(String.format(
@@ -161,8 +187,6 @@ public class TestingServerTest implements TestingConstants {
     public void simultae_connection_failure() {
         server.addFailure();
 
-        OkHttpClient http = new OkHttpClient();
-
         Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
             RequestBody.create(String.format(
                 BALANCE_REQUEST_FORMAT, ADDRESS1),
@@ -179,4 +203,8 @@ public class TestingServerTest implements TestingConstants {
 
     // --------------------------------------------------------- private methods
 
+    private String givenTransactionsBody(final String set)
+    throws IOException {
+        return FileUtils.readFileToString(new File("src/test/examples/" + set), "UTF-8");
+    }
 }

@@ -12,7 +12,7 @@ import org.junit.Test;
  */
 public class WalletManagerTest implements TestingConstants {
 
-    public static TestingServer server = null;
+    public TestingServer server = null;
 
     private static final String TEST_APP_KEY_1 = "THSISANAPPKEY";
     private static final String TEST_APP_KEY_2 = "THISISANOTHERAPPKEY";

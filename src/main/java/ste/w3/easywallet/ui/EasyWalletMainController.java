@@ -136,8 +136,19 @@ public class EasyWalletMainController {
                     //
                     x.printStackTrace();
                 }
-
             }
+        });
+        Platform.runLater(() -> {
+            try {
+                main.ledgerManager().refresh();
+            } catch (EasyWalletException x) {
+                showError(x.getMessage());
+                //
+                // TODO: do something different here, maybe log?
+                //
+                x.printStackTrace();
+            }
+
         });
     }
 
