@@ -27,22 +27,22 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- *
+ * TODO: remove coin
  */
 @DatabaseTable(tableName = "transactions")
 public class Transaction {
     @DatabaseField(id = true, width = 64)
-    public final String hash;
+    public String hash;
     @DatabaseField(canBeNull = false, width=40)
-    public final String from;
+    public String from;
     @DatabaseField(canBeNull = false, width=40)
-    public final String to;
+    public String to;
     @DatabaseField(canBeNull = false, dataType = DataType.BIG_DECIMAL, columnDefinition="numeric(27,18)" )
-    public final BigDecimal amount;
+    public BigDecimal amount;
     @DatabaseField(canBeNull = false)
-    public final Date when;
+    public Date when;
     @DatabaseField(width=12)
-    public final String coin;
+    public String coin;
 
     public Transaction() {
         this(null, null, null, null, null, null);
@@ -80,5 +80,4 @@ public class Transaction {
     public String coin() {
         return coin;
     }
-
 }
