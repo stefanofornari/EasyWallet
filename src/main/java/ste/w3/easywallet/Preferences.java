@@ -17,7 +17,8 @@
  */
 package ste.w3.easywallet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  *
