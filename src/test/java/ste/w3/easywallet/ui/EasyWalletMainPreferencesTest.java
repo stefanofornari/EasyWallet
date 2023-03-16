@@ -99,7 +99,7 @@ public class EasyWalletMainPreferencesTest extends ApplicationTest {
                     .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
                     .build();
         preferences = new Preferences();
-        preferences.endpoint = randomStringGenerator.generate(20);
+        preferences.endpoint = "http://an.endpoint.com/"+randomStringGenerator.generate(20);
         preferences.appkey = randomStringGenerator.generate(12);
         preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
         preferences.db = String.format("jdbc:adb:%s", randomStringGenerator.generate(8));
