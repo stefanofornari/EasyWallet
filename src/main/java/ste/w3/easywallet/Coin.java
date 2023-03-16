@@ -20,10 +20,13 @@
  */
 package ste.w3.easywallet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+
+
 
 /**
  * TODO: turn it into record
+ * TODO: use coin as its own symbol only
  */
 public class Coin {
     public final String contract, symbol, name;
