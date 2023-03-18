@@ -20,8 +20,6 @@
  */
 package ste.w3.easywallet;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.web3j.abi.TypeDecoder;
 import org.web3j.abi.datatypes.Address;
@@ -36,36 +34,36 @@ import static ste.w3.easywallet.Utils.unex;
  */
 public class ABIUtils {
 
-    public void transactionInputDecode(
-        final String input, final Transaction t, final Coin[] coins
-    ) {
+    public static final byte[] INCOMING_COIN = { (byte)0xa9, (byte)0x05, (byte)0x9c, (byte)0xbb };
+
+    public void tranferInputDecode(String input, final Transaction t) {
+        input = unex(input);
+
         if (StringUtils.isBlank(input)) {
             throw new IllegalArgumentException("input can not be null or empty");
         }
-        if (input.length() != 138) {
+        if (input.length() != 136) {
             throw new IllegalArgumentException(
-                String.format("input shall be of size 138 (it was %d)", input.length()));
+                String.format("input without 0x shall be of size 136 (it was %d)", input.length()));
         }
         if (t == null) {
             throw new IllegalArgumentException("transaction can not be null");
         }
 
-        Bytes4 something = TypeDecoder.decode(input.substring(2, 10), Bytes4.class); // I do not know what this is
-
-        Map<String, String> coinMap = new HashMap<>();
-        if (coins != null) {
-            for (Coin c: coins) {
-                if (c.contract != null) {
-                    coinMap.put(c.contract.toLowerCase(), c.symbol);
-                }
+        byte[] method = TypeDecoder.decode(input.substring(0, 8), Bytes4.class).getValue();
+        for (int i=0; i<INCOMING_COIN.length; ++i) {
+            if (method[i] != INCOMING_COIN[i]) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "not incoming coin transaction (0x%02x%02x%02x%02x)",
+                        method[0], method[1], method[2], method[3]
+                    )
+                );
             }
         }
 
-        t.coin = coinMap.getOrDefault(
-            unex(TypeDecoder.decode(input.substring(10, 74), Address.class).getValue()),
-            "UNKNOWN"
-        );
-        Uint256 amount = TypeDecoder.decode(input.substring(74), Uint256.class);
+        t.to = unex(TypeDecoder.decode(input.substring(8, 72), Address.class).getValue());
+        Uint256 amount = TypeDecoder.decode(input.substring(72), Uint256.class);
         t.amount = Convert.fromWei(amount.getValue().toString(), Unit.ETHER);
     }
 }

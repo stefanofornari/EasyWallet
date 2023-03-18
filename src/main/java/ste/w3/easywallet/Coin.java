@@ -29,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
  * TODO: use coin as its own symbol only
  */
 public class Coin {
+    public static final Coin COIN_UNKOWN = new Coin("UNKNOWN", 1);
+
     public final String contract, symbol, name;
     public final int decimals;
 

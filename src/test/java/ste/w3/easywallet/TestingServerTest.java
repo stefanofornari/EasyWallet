@@ -40,6 +40,7 @@ import org.junit.Test;
 import static ste.w3.easywallet.TestingConstants.ADDRESS1;
 import static ste.w3.easywallet.TestingServer.BALANCE_REQUEST_FORMAT;
 import static ste.w3.easywallet.TestingServer.LATEST_TRANSACTIONS_REQUEST;
+import static ste.w3.easywallet.TestingServer.LATEST_TRANSACTION_RESPONSE_FORMAT;
 import static ste.w3.easywallet.TestingServer.TOKEN_BALANCE_REQUEST_FORMAT;
 
 
@@ -122,18 +123,44 @@ public class TestingServerTest implements TestingConstants {
     }
 
     @Test
-    public void add_transactions_request_mocks_a_request() throws Exception {
+    public void add_transfers_request_mocks_a_request() throws Exception {
         final Instant NOW = Instant.now();
         final Transaction[] TRANSACTIONS1 = new Transaction[] {
             new Transaction(new Date(NOW.toEpochMilli()), STORJ, BigDecimal.ONE, null, WALLET1, "hash1"),
             new Transaction(new Date(NOW.toEpochMilli()+3600*1000), GLM, BigDecimal.TWO, null, WALLET1, "hash2"),
-            new Transaction(new Date(NOW.toEpochMilli()+2*3600*1000), GLM, BigDecimal.TEN, null, WALLET2, "hash3")
+            new Transaction(new Date(NOW.toEpochMilli()+2*3600*1000), GLM, BigDecimal.TEN, null, WALLET2, "hash3"),
+            new Transaction(new Date(NOW.toEpochMilli()+3*3600*1000), null, BigDecimal.TEN, null, WALLET1, "hash4"),
         };
         final Transaction[] TRANSACTIONS2 = new Transaction[] {
-            new Transaction(new Date(NOW.toEpochMilli()), GLM, BigDecimal.valueOf(10.343526), null, WALLET2, "hash4"),
+            new Transaction(new Date(NOW.toEpochMilli()), GLM, BigDecimal.valueOf(10343526), null, WALLET2, "hash4"),
         };
 
-        server.addIncomingTransactionsRequest(TRANSACTIONS2, COINS);
+        server.addTransfersRequest(TRANSACTIONS1, COINS);
+
+        final Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
+            RequestBody.create(
+                LATEST_TRANSACTIONS_REQUEST,
+                MediaType.parse("application/json")
+            )
+        ).build();
+
+        Response response = http.newCall(request).execute();
+        then(response.body().string()).isEqualTo(
+            givenTransactionsBody("transactions-1.json")
+        );
+
+        server.addTransfersRequest(TRANSACTIONS2, COINS);
+
+        response = http.newCall(request).execute();
+        then(response.body().string()).isEqualTo(
+            givenTransactionsBody("transactions-2.json")
+        );
+    }
+
+    @Test
+    public void add_transactions_body_request_mocks_a_request() throws Exception {
+        final String TRANSACTIONS = FileUtils.readFileToString(new File("src/test/examples/transactions-body-1.json"), "UTF-8");
+        server.addTransfersRequest(TRANSACTIONS);
 
         Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
             RequestBody.create(
@@ -144,7 +171,7 @@ public class TestingServerTest implements TestingConstants {
 
         Response response = http.newCall(request).execute();
         then(response.body().string()).isEqualTo(
-            givenTransactionsBody("transactions-2.json")
+            String.format(LATEST_TRANSACTION_RESPONSE_FORMAT, TRANSACTIONS)
         );
     }
 

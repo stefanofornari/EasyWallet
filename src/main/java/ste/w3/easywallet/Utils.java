@@ -43,7 +43,7 @@ public class Utils {
 
     public static String unex(final String s) {
         if (s == null) {
-            throw new IllegalArgumentException("s can not be null");
+            return null;
         }
 
         return (s.startsWith("0x")) ? s.substring(2) : s;

@@ -121,7 +121,7 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
 
         server.addBalanceRequest(preferences.wallets[0].address, new BigDecimal("47.34269121"));
         server.addBalanceRequest(STORJ, preferences.wallets[0].address, new BigDecimal("534.09876543"));
-        server.addIncomingTransactionsRequest(TRANSACTIONS, new Coin[] {STORJ});
+        server.addTransfersRequest(TRANSACTIONS, new Coin[] {STORJ});
 
         clickOn('#' + KEY_REFRESH); waitForFxEvents();
 

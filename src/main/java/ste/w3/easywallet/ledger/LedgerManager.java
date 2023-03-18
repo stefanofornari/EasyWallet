@@ -22,8 +22,9 @@ package ste.w3.easywallet.ledger;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
 import org.web3j.protocol.Web3j;
@@ -33,6 +34,7 @@ import org.web3j.protocol.core.methods.response.EthBlock.Block;
 import org.web3j.protocol.http.HttpService;
 import ste.w3.easywallet.ABIUtils;
 import ste.w3.easywallet.Coin;
+import static ste.w3.easywallet.Coin.COIN_UNKOWN;
 import ste.w3.easywallet.EasyWalletException;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Transaction;
@@ -65,7 +67,15 @@ public class LedgerManager {
         final ABIUtils ABI = new ABIUtils();
 
         try {
-            final Coin[] COINS = coins();
+            final Map<String, Coin> coinMap = new HashMap<>();
+            if (coins() != null) {
+                for (Coin c: coins()) {
+                    if (c.contract != null) {
+                        coinMap.put(c.contract.toLowerCase(), c);
+                    }
+                }
+            }
+
             final TransactionsManager TM = new TransactionsManager();
 
             Block block = web3.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, true).send().getBlock();
@@ -78,19 +88,19 @@ public class LedgerManager {
 
                 Transaction transaction = new Transaction(
                     when,
-                    null,
+                    (t.getTo() != null) ? coinMap.getOrDefault(unex(t.getTo().toLowerCase()), COIN_UNKOWN) : COIN_UNKOWN,
                     null,
                     unex(t.getFrom()),
-                    unex(t.getTo()),
+                    null,
                     unex(t.getHash())
                 );
 
                 try {
-                    ABI.transactionInputDecode(t.getInput(), transaction, COINS);
+                    ABI.tranferInputDecode(t.getInput(), transaction);
                     TM.add(transaction);
                 } catch (IllegalArgumentException x) {
                     //
-                    // TODO: Ignoring for now; this happens when the transaction is of
+                    // Ignoring for now; this happens when the transaction is of
                     // different type than incoming token
                 }
             }

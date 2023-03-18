@@ -23,8 +23,6 @@ package ste.w3.easywallet;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
-import static ste.xtest.Constants.BLANKS;
-import wiremock.org.checkerframework.checker.units.qual.s;
 
 /**
  *
@@ -49,13 +47,7 @@ public class UtilsTest {
 
     @Test
     public void unex_removes_0x_if_present() {
-        try {
-            Utils.unex(null);
-            fail("missing sanity check");
-        } catch (IllegalArgumentException x) {
-            then(x).hasMessage("s can not be null");
-        }
-
+        then(Utils.unex(null)).isNull();
         then(Utils.unex("")).isEqualTo("");
         then(Utils.unex("0x")).isEqualTo("");
         then(Utils.unex("123abc")).isEqualTo("123abc");

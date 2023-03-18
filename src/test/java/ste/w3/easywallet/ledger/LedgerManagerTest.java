@@ -20,17 +20,21 @@
  */
 package ste.w3.easywallet.ledger;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Preferences;
 import static ste.w3.easywallet.TestingConstants.COINS;
 import static ste.w3.easywallet.TestingConstants.GLM;
@@ -57,7 +61,9 @@ public class LedgerManagerTest implements TestingUtils {
     private static final Transaction[] TRANSACTIONS1 = new Transaction[] {
         new Transaction(new Date(NOW.toEpochMilli()), STORJ, BigDecimal.ONE, null, WALLET1, "hash1"),
         new Transaction(new Date(NOW.toEpochMilli()+3600*1000), GLM, BigDecimal.TWO, null, WALLET1, "hash2"),
-        new Transaction(new Date(NOW.toEpochMilli()+2*3600*1000), GLM, BigDecimal.TEN, null, WALLET2, "hash3")
+        new Transaction(new Date(NOW.toEpochMilli()+2*3600*1000), GLM, BigDecimal.TEN, null, WALLET2, "hash3"),
+        new Transaction(new Date(NOW.toEpochMilli()+3*3600*1000), null, BigDecimal.TEN, null, WALLET1, "hash4"),
+        new Transaction(new Date(NOW.toEpochMilli()+4*3600*1000), new Coin("FAKE", "FAKE", "68c929e7b8fb06c58494a369f6f088fff28f7c77", 10), BigDecimal.TEN, null, WALLET1, "hash5")
     };
 
     private static final Wallet W1 = new Wallet(WALLET1);
@@ -103,13 +109,27 @@ public class LedgerManagerTest implements TestingUtils {
         final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
         final LedgerSource LS = new LedgerSource(W1);
 
-        givenABlock();
+        givenIncomingCoinTransactionsBlock();
+
+        LM.refresh(); LS.fetch();
+
+        then(LS.page).hasSize(4);
+        then(LS.page.get(0).coin).isEqualTo(STORJ.symbol);
+        then(LS.page.get(1).coin).isEqualTo(GLM.symbol);
+        then(LS.page.get(2).coin).isEqualTo("UNKNOWN");
+        then(LS.page.get(3).coin).isEqualTo("UNKNOWN");
+    }
+
+    @Test
+    public void refresh_ignores_not_incoming_coin_transactions() throws Exception {
+        final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
+        final LedgerSource LS = new LedgerSource(W1);
+
+        givenMixedTransactionsBlock();
 
         LM.refresh(); LS.fetch();
 
         then(LS.page).hasSize(2);
-        then(LS.page.get(0).coin).isEqualTo(STORJ.symbol);
-        then(LS.page.get(1).coin).isEqualTo(GLM.symbol);
     }
 
     @Test
@@ -130,8 +150,14 @@ public class LedgerManagerTest implements TestingUtils {
 
     // --------------------------------------------------------- private methods
 
-    private void givenABlock() {
-        server.addIncomingTransactionsRequest(TRANSACTIONS1, COINS);
+    private void givenIncomingCoinTransactionsBlock() {
+        server.addTransfersRequest(TRANSACTIONS1, COINS);
+    }
+
+    private void givenMixedTransactionsBlock() throws IOException {
+        server.addTransfersRequest(
+            FileUtils.readFileToString(new File("src/test/examples/transactions-body-1.json"), "UTF8")
+        );
     }
 
 
