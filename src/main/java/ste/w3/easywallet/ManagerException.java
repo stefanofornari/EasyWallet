@@ -25,6 +25,6 @@ package ste.w3.easywallet;
  */
 public class ManagerException extends EasyWalletException {
     public ManagerException(final String msg, final Throwable cause) {
-        super(cause, "%s%s", msg, (cause != null) ? ("; " + cause) : "");
+        super(cause, "%s%s", msg, (cause != null) ? ("; " + cause.getMessage()) : "");
     }
 }

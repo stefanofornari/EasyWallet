@@ -77,7 +77,7 @@ public class TransactionsManagerTest implements TestingUtils {
             fail("bad initialization not detected");
         } catch (ManagerException x) {
             then(x)
-                .hasMessage("error trying to access transactions data")
+                .hasMessageContaining("error trying to access transactions data")
                 .hasCauseInstanceOf(ConfigurationException.class);
         }
 

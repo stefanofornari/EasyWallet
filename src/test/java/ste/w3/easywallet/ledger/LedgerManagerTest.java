@@ -145,7 +145,6 @@ public class LedgerManagerTest implements TestingUtils {
         then(LS.page).hasSize(4);
     }
 
-
     @Test
     public void throw_an_application_exception_in_case_of_errors() {
         server.addFailure();
@@ -153,7 +152,7 @@ public class LedgerManagerTest implements TestingUtils {
             new LedgerManager(server.ethereum.url("fake")).refresh();
             fail("no application exception");
         } catch (ManagerException x) {
-            then(x).hasMessage("error retrieving transfers");
+            then(x).hasMessageContaining("error retrieving transfers");
         }
 
         server.addError(404, "not found");
@@ -161,7 +160,7 @@ public class LedgerManagerTest implements TestingUtils {
             new LedgerManager(server.ethereum.url("fake")).refresh();
             fail("no application exception");
         } catch (ManagerException x) {
-            then(x).hasMessage("error retrieving transfers");
+            then(x).hasMessageContaining("error retrieving transfers");
         }
     }
 
