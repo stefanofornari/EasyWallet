@@ -98,7 +98,7 @@ public class LedgerController extends EasyWalletDialogController implements Init
 
         table.onScrollProperty().set((event) -> {
             //
-            // do not fetch only when scrolling up (delta > 0)
+            // do not fetch when scrolling up (delta > 0)
             //
             if ((event.getDeltaY() < 0) && (table.getLastRowsRange().getMax().longValue() == table.getItems().size() - 1)) {
                 fetch();
