@@ -22,13 +22,13 @@ import ste.w3.easywallet.data.TableSourceSorting;
 /**
  *
  */
-public class TransactionLedgerTestAsync extends ApplicationTest implements TestingUtils {
+public class TransactionLedgerAsyncTest extends ApplicationTest implements TestingUtils {
 
     private static final int PAGE_SIZE = 10;
 
     private LedgerControllerEx controller;
 
-    public TransactionLedgerTestAsync() {
+    public TransactionLedgerAsyncTest() {
     }
 
     @Override
@@ -40,7 +40,7 @@ public class TransactionLedgerTestAsync extends ApplicationTest implements Testi
 
         Scene scene = new Scene(
             FXMLLoader.load(
-                this.getClass().getResource("/fxml/TransactionLedger.fxml"),
+                this.getClass().getResource("/fxml/LedgerDialog.fxml"),
                 null, null,
                 (clazz) -> controller
             ),
@@ -96,27 +96,31 @@ public class TransactionLedgerTestAsync extends ApplicationTest implements Testi
         }
 
         public void hold() {
+            System.out.println("ON HOLD...");
             latch = new CountDownLatch(1);
+
         }
 
         public void go() {
+            System.out.println("GO!");
             latch.countDown();
         }
 
         @Override
         public void fetch() {
+            System.out.println("latch: " + latch);
             if (latch != null) {
                 try {
-                    //System.out.println("on hold");
+                    System.out.println("on hold");
                     latch.await(2, TimeUnit.SECONDS);
-                    //System.out.println("let's go");
+                    System.out.println("let's go");
                 } catch (InterruptedException x) {
                     x.printStackTrace();
                 } finally {
                     latch = null;
                 }
             }
-            //System.out.println("fetching...");
+            System.out.println("fetching...");
             super.fetch();
         }
     }
