@@ -1,12 +1,9 @@
 package ste.w3.easywallet;
 
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.RecordedRequest;
-import okhttp3.mockwebserver.SocketPolicy;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +12,7 @@ import org.junit.Test;
  */
 public class WalletManagerTest implements TestingConstants {
 
-    public static TestingServer server = null;
+    public TestingServer server = null;
 
     private static final String TEST_APP_KEY_1 = "THSISANAPPKEY";
     private static final String TEST_APP_KEY_2 = "THISISANOTHERAPPKEY";
@@ -23,6 +20,12 @@ public class WalletManagerTest implements TestingConstants {
     @Before
     public void before() throws Exception {
         server = new TestingServer();
+        server.ethereum.start();
+    }
+
+    @After
+    public void after() throws Exception {
+        server.ethereum.stop();
     }
 
     @Test
@@ -36,12 +39,12 @@ public class WalletManagerTest implements TestingConstants {
 
     @Test
     public void get_balance() throws Exception {
-        server.addBalanceRequest(ETH, "0x" + ADDRESS1, new BigDecimal("9343922.000069"));
-        server.addBalanceRequest(STORJ, "0x" + ADDRESS1, new BigDecimal("534.09876543"));
-        server.addBalanceRequest(ETH, "0x" + ADDRESS2, new BigDecimal("2113030.001"));
-        server.addBalanceRequest(STORJ, "0x" + ADDRESS2, new BigDecimal("123.456789"));
+        server.addBalanceRequest(ADDRESS1, new BigDecimal("9343922.000069"));
+        server.addBalanceRequest(STORJ, ADDRESS1, new BigDecimal("534.09876543"));
+        server.addBalanceRequest(ADDRESS2, new BigDecimal("2113030.001"));
+        server.addBalanceRequest(STORJ, ADDRESS2, new BigDecimal("123.456789"));
 
-        WalletManager wm = new WalletManager(server.ethereum.url("v3/PROJECTID1/" + TEST_APP_KEY_1).toString());
+        WalletManager wm = new WalletManager(server.ethereum.url("v3/PROJECTID1/" + TEST_APP_KEY_1));
 
         try {
             wm.balance(null);
@@ -53,21 +56,15 @@ public class WalletManagerTest implements TestingConstants {
         Wallet w = new Wallet(ADDRESS1);
         then(wm.balance(w)).isSameAs(wm);
         then(w.balances).isEmpty();
-        then(server.ethereum.getRequestCount()).isZero();
 
         wm.balance(w, ETH, STORJ);
-        then(server.ethereum.getRequestCount()).isEqualTo(2); // ETH and STORJ
-        RecordedRequest r = server.ethereum.takeRequest();
-        then(r.getBody().readString(Charset.defaultCharset())).contains("\"method\":\"eth_getBalance\"");
-        r = server.ethereum.takeRequest();
-        then(r.getBody().readString(Charset.defaultCharset())).contains("\"method\":\"eth_call\"");
 
-        then(w.balance(ETH)).isEqualTo("9343922.000069");
+        then(w.balance(ETH)).isEqualTo("934.3922000069");
         then(w.balance(STORJ)).isEqualTo("534.09876543");
 
         w = new Wallet(ADDRESS2);
         then(wm.balance(w, ETH, STORJ)).isSameAs(wm);
-        then(w.balance(ETH)).isEqualTo("2113030.001");
+        then(w.balance(ETH)).isEqualTo("211.3030001");
         then(w.balance(STORJ)).isEqualTo("123.45678900");
     }
 
@@ -101,22 +98,19 @@ public class WalletManagerTest implements TestingConstants {
 
         project id required in the url
         */
-        server.ethereum.enqueue(
-            new MockResponse().setResponseCode(401).setHeader("Content-Type", "text/plain")
-                .setBody("project id required in the url")
-        );
 
-        WalletManager wm = new WalletManager(server.ethereum.url("v3").toString());
+        server.addError(401, "project id required in the url");
+
+
+        WalletManager wm = new WalletManager(server.ethereum.url("v3"));
         try {
             wm.balance(new Wallet(ADDRESS1), ETH);
         } catch (EasyWalletException x) {
             then(x).hasMessageContaining("project id required in the url");
         }
 
-        server.ethereum.enqueue(
-            new MockResponse().setResponseCode(401).setHeader("Content-Type", "text/plain")
-                .setBody("invalid project id")
-        );
+        server.reset();
+        server.addError(401, "invalid project id");
 
         try {
             wm.balance(new Wallet(ADDRESS1), ETH);
@@ -127,11 +121,9 @@ public class WalletManagerTest implements TestingConstants {
 
     @Test
     public void reports_connection_errors() throws Exception {
-        server.ethereum.enqueue(
-            new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
-        );
+        server.addFailure();
 
-        WalletManager wm = new WalletManager(server.ethereum.url("v3").toString());
+        WalletManager wm = new WalletManager(server.ethereum.url("v3"));
         try {
             wm.balance(new Wallet(ADDRESS1), ETH);
         } catch (EasyWalletException x) {

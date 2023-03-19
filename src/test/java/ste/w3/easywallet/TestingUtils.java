@@ -81,6 +81,7 @@ public interface TestingUtils {
         return (T) pane.getUserData();
     }
 
+    // TODO: rename to givenEmptyPreferences
     default Preferences bindPreferences() throws NamingException {
         Preferences preferences = new Preferences();
 
@@ -96,6 +97,10 @@ public interface TestingUtils {
     default public Dao<Transaction, String> transactionsDao(ConnectionSource source)
     throws SQLException {
         return DaoManager.createDao(source, Transaction.class);
+    }
+
+    default Preferences givenEmptyPreferences() throws NamingException {
+        return bindPreferences();
     }
 
     default void givenDatabase(final Wallet wallet, final int howMany) throws Exception {

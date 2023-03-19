@@ -23,8 +23,8 @@ package ste.w3.easywallet;
 /**
  *
  */
-public class ManagerException extends Exception {
+public class ManagerException extends EasyWalletException {
     public ManagerException(final String msg, final Throwable cause) {
-        super(msg, cause);
+        super(cause, "%s%s", msg, (cause != null) ? ("; " + cause.getMessage()) : "");
     }
 }

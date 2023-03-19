@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import ste.w3.easywallet.data.Order;
 
 /**
@@ -109,6 +109,13 @@ public class TransactionsManager {
         transactions.create(t);
     }
 
+    public Transaction mostRecentTransaction() throws ManagerException {
+        List<Transaction> ret =
+            get(new TableSourceSorting("when", Order.DESCENDING), 0, 1);
+
+        return (ret.isEmpty()) ? null : ret.get(0);
+    }
+
     // --------------------------------------------------------- private methods
 
     private JdbcConnectionSource db() throws ConfigurationException {
@@ -121,6 +128,7 @@ public class TransactionsManager {
             }
             db = new JdbcConnectionSource(preferences.db);
         } catch (Exception x) {
+            x.printStackTrace();
             throw new ConfigurationException("db connection string is missing");
         }
 

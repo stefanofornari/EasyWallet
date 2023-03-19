@@ -17,6 +17,8 @@ package ste.w3.easywallet.ui;
 
 import ste.w3.easywallet.TestingUtils;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Date;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -25,11 +27,13 @@ import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.service.query.NodeQuery;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Labels;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import static ste.w3.easywallet.Labels.LABEL_BUTTON_OK;
 import static ste.w3.easywallet.Labels.LABEL_DELETE_WALLET_CONFIRMATION;
 import ste.w3.easywallet.TestingConstants;
+import ste.w3.easywallet.Transaction;
 import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
 import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
 
@@ -37,7 +41,6 @@ import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
  *
  */
 public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingConstants, TestingUtils {
-
 
     @Test
     public void window_title_icon_and_size() throws Exception {
@@ -108,15 +111,28 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
     }
 
     @Test
-    public void pressing_refresh_udates_balances_in_ui_and_preferences() throws Exception {
-        server.addBalanceRequest(ETH, "0x" + preferences.wallets[0].address, new BigDecimal("47.34269121"));
-        server.addBalanceRequest(STORJ, "0x" + preferences.wallets[0].address, new BigDecimal("534.09876543"));
+    public void pressing_refresh_udates_ui_preferences_db() throws Exception {
+        final Instant NOW = Instant.now();
+        final Transaction[] TRANSACTIONS = new Transaction[] {
+            new Transaction(new Date(NOW.toEpochMilli()), STORJ, BigDecimal.ONE, STORJ.contract, preferences.wallets[0].address, "hash1"),
+            new Transaction(new Date(NOW.toEpochMilli()+3600*1000), GLM, BigDecimal.TWO, GLM.contract, WALLET1, "hash2"),
+            new Transaction(new Date(NOW.toEpochMilli()+2*3600*1000), GLM, BigDecimal.TEN, GLM.contract, preferences.wallets[0].address, "hash3")
+        };
 
-        clickOn('#' + KEY_REFRESH);
-        waitForFxEvents();
+        server.addBalanceRequest(preferences.wallets[0].address, new BigDecimal("47.34269121"));
+        server.addBalanceRequest(STORJ, preferences.wallets[0].address, new BigDecimal("534.09876543"));
+        server.addTransfersRequest(TRANSACTIONS, new Coin[] {STORJ});
 
-        Then.then(lookup("ETH 47.34269121 - STORJ 534.09876543")).hasWidgets();
-        then(main.getConfigFile()).content().contains("{\"ETH\":47.34269121,\"STORJ\":534.09876543}");
+        clickOn('#' + KEY_REFRESH); waitForFxEvents();
+
+        Then.then(lookup("ETH 0.004734269121 - STORJ 534.09876543")).hasWidgets();
+        then(main.getConfigFile()).content().contains("{\"ETH\":0.004734269121,\"STORJ\":534.09876543}");
+
+        //
+        // The ledger dialog shall have a transaction for STORJ tokens
+        //
+        clickOn("mfx-ledger"); waitForFxEvents();
+        Then.then(lookup("STORJ")).hasWidgets();
     }
 
     @Test
@@ -129,7 +145,7 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
         Then.then(lookup(".error")).hasOneWidget();
         then(controller.errorLabel.getText())
             .contains(ERR_NETWORK)
-            .contains("network not available");
+            .contains("Connection reset");
 
         clickOn('#' + Constants.KEY_CLOSE_ERROR);
         Then.then(lookup(".error")).hasNoWidgets();

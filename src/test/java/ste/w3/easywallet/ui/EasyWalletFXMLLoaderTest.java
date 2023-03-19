@@ -25,6 +25,7 @@ import javafx.scene.layout.Pane;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
+import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
 
@@ -40,7 +41,7 @@ public class EasyWalletFXMLLoaderTest extends ApplicationTest {
 
     @Test
     public void loaded_main_window_pane_has_controller() {
-        Pane pane = instance.loadMainWindow(new EasyWalletMain());
+        Pane pane = instance.loadMainWindow(new EasyWalletMainWithEmptyPreferences());
         then(pane.getUserData()).isNotNull().isInstanceOf(EasyWalletMainController.class);
     }
 
@@ -65,6 +66,17 @@ public class EasyWalletFXMLLoaderTest extends ApplicationTest {
         EditWalletController controller = (EditWalletController)pane.getUserData();
         then(controller).isNotNull().isInstanceOf(EditWalletController.class);
         then(controller.wallet()).isNull();
+    }
+
+    // -------------------------------------- EasyWalletMainWithEmptyPreferences
+
+    private class EasyWalletMainWithEmptyPreferences extends EasyWalletMain {
+        private final Preferences p = new Preferences();
+
+        @Override
+        public Preferences getPreferences() {
+            return p;
+        }
     }
 
 }

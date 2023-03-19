@@ -32,7 +32,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TitledPane;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import ste.w3.easywallet.BIP32Utils;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;

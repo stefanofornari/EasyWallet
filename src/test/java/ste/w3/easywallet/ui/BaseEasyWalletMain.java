@@ -25,15 +25,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.text.RandomStringGenerator;
-import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.testfx.assertions.api.Then;
 import org.testfx.framework.junit.ApplicationTest;
 import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.EasyWalletException;
-import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.TestingConstants;
@@ -63,7 +59,7 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
     public void start(Stage stage) throws Exception {
         this.stage = stage;
 
-        server = new TestingServer();
+        server = new TestingServer(); server.ethereum.start();
 
         try {
             preparePreferences();
@@ -75,6 +71,12 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
 
         controller = getController(lookup("#main").queryAs(Pane.class));
     }
+
+    @Override
+    public void stop() {
+        server.ethereum.stop();
+    }
+
 
     protected File getPreferencesFile() throws IOException {
         return new File(HOME.getRoot(), CONFIG_FILE);
@@ -97,6 +99,7 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
         preferences.appkey = randomStringGenerator.generate(12);
         preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
         preferences.coins = new Coin[] {ETH, STORJ};
+        preferences.db = JDBC_CONNECTION_STRING;
 
         PreferencesManager pm = new PreferencesManager();
 
@@ -104,13 +107,15 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
     }
 
     protected void withConnectionException() throws Exception {
+        server.addFailure();
+        /*
         PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com/key") {
             @Override
             public WalletManager balance(Wallet wallet, Coin... coins) throws EasyWalletException {
                 throw new EasyWalletException("network not available");
             }
-
         });
+        */
     }
 
 
@@ -129,14 +134,16 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
             return null;
         }
 
-        @Override
+        /*@Override
         //
         // With this we make sure multiple instances do not interefeer each
         // other. The root can then be retrieved with the following code:
         //
+
         protected Context getJNDIRoot() throws NamingException {
             return new InitialContext().createSubcontext(String.valueOf(this.hashCode()));
         }
+        */
     }
 
 }

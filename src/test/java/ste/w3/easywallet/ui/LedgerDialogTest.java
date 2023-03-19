@@ -6,8 +6,6 @@ import io.github.palexdev.materialfx.font.MFXFontIcon;
 import io.github.palexdev.mfxcore.controls.MFXIconWrapper;
 import io.github.palexdev.virtualizedfx.table.VirtualTable;
 import io.github.palexdev.virtualizedfx.table.defaults.DefaultTableColumn;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.geometry.VerticalDirection;

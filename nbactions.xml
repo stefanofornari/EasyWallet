@@ -8,7 +8,7 @@
         </goals>
         <properties>
                 <javafx.mainClass>${packageClassName}</javafx.mainClass>
-                
+
             </properties>
     </action>
     <action>
@@ -30,7 +30,6 @@
         <displayName>package</displayName>
         <goals>
             <goal>package</goal>
-            <goal>assembly:single</goal>
         </goals>
         <properties>
             <skipTests>true</skipTests>
@@ -43,16 +42,16 @@
             </packagings>
             <goals>
                 <goal>javafx:run</goal>
-                
+
             </goals>
             <properties>
                 <javafx.mainClass>${packageClassName}</javafx.mainClass>
-                
-                
-                
-                
-                
-                
+
+
+
+
+
+
             </properties>
         </action>
 </actions>

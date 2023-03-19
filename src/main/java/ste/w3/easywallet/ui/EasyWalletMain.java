@@ -26,6 +26,7 @@ import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
+import ste.w3.easywallet.ledger.LedgerManager;
 
 /**
  * Preferences are stored in a file under $(CONFIG_HOME)/ste.w3.easywallet/preferences.json
@@ -36,8 +37,9 @@ public class EasyWalletMain extends Application {
 
     public final File configFile = getConfigFile();
 
-    private Preferences preferences = new Preferences();
+    private Preferences preferences = null;
     private WalletManager walletManager = null;
+    private LedgerManager ledgerManager = null;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -47,6 +49,7 @@ public class EasyWalletMain extends Application {
         // ///
 
         walletManager = new WalletManager(preferences.url());
+        ledgerManager = new LedgerManager(preferences.url());
 
         stage.setTitle("EasyWallet v0.1");
         stage.setWidth(575);
@@ -92,12 +95,18 @@ public class EasyWalletMain extends Application {
         savePreferences();
     }
 
+    // TODO: rename to preferences()
     public Preferences getPreferences() {
         return preferences;
     }
 
+    // TODO: rename to walletManager()
     public WalletManager getWalletManager() {
         return walletManager;
+    }
+
+    public LedgerManager ledgerManager() {
+        return ledgerManager;
     }
 
     public void savePreferences() {
@@ -147,6 +156,7 @@ public class EasyWalletMain extends Application {
         Context ctx = getJNDIRoot();
 
         PreferencesManager pm = new PreferencesManager();
+        System.out.println(FileUtils.readFileToString(configFile, "UTF-8"));
         preferences = pm.fromJSON(FileUtils.readFileToString(configFile, "UTF-8"));
         ctx.rebind("preferences", preferences);
     }
