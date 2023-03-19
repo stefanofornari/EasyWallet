@@ -109,6 +109,13 @@ public class TransactionsManager {
         transactions.create(t);
     }
 
+    public Transaction mostRecentTransaction() throws ManagerException {
+        List<Transaction> ret =
+            get(new TableSourceSorting("when", Order.DESCENDING), 0, 1);
+
+        return (ret.isEmpty()) ? null : ret.get(0);
+    }
+
     // --------------------------------------------------------- private methods
 
     private JdbcConnectionSource db() throws ConfigurationException {

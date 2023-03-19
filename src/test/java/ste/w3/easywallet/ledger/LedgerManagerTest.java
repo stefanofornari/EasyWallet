@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ste.w3.easywallet.Coin;
+import ste.w3.easywallet.ManagerException;
 import ste.w3.easywallet.Preferences;
 import static ste.w3.easywallet.TestingConstants.COINS;
 import static ste.w3.easywallet.TestingConstants.GLM;
@@ -109,7 +110,7 @@ public class LedgerManagerTest implements TestingUtils {
         final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
         final LedgerSource LS = new LedgerSource(W1);
 
-        givenIncomingCoinTransactionsBlock();
+        givenTransfersBlock();
 
         LM.refresh(); LS.fetch();
 
@@ -121,7 +122,7 @@ public class LedgerManagerTest implements TestingUtils {
     }
 
     @Test
-    public void refresh_ignores_not_incoming_coin_transactions() throws Exception {
+    public void refresh_ignores_not_transfers() throws Exception {
         final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
         final LedgerSource LS = new LedgerSource(W1);
 
@@ -133,24 +134,40 @@ public class LedgerManagerTest implements TestingUtils {
     }
 
     @Test
-    public void refresh_does_not_load_the_block_twice () {
-        fail("tbd");
+    public void refresh_does_not_load_the_block_twice () throws Exception {
+        final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
+        final LedgerSource LS = new LedgerSource(W1);
+
+        givenTransfersBlock();
+
+        LM.refresh(); LM.refresh(); LS.fetch(); // error if trying to insert
+                                                // twice the same transaction
+        then(LS.page).hasSize(4);
     }
 
-
-    @Test
-    public void ignore_not_incoming_coins_transactions() {
-        fail("tbd");
-    }
 
     @Test
     public void throw_an_application_exception_in_case_of_errors() {
-        fail("tbd");
+        server.addFailure();
+        try {
+            new LedgerManager(server.ethereum.url("fake")).refresh();
+            fail("no application exception");
+        } catch (ManagerException x) {
+            then(x).hasMessage("error retrieving transfers");
+        }
+
+        server.addError(404, "not found");
+        try {
+            new LedgerManager(server.ethereum.url("fake")).refresh();
+            fail("no application exception");
+        } catch (ManagerException x) {
+            then(x).hasMessage("error retrieving transfers");
+        }
     }
 
     // --------------------------------------------------------- private methods
 
-    private void givenIncomingCoinTransactionsBlock() {
+    private void givenTransfersBlock() {
         server.addTransfersRequest(TRANSACTIONS1, COINS);
     }
 

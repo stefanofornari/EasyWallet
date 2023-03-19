@@ -36,6 +36,7 @@ import ste.w3.easywallet.ABIUtils;
 import ste.w3.easywallet.Coin;
 import static ste.w3.easywallet.Coin.COIN_UNKOWN;
 import ste.w3.easywallet.EasyWalletException;
+import ste.w3.easywallet.ManagerException;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.TransactionsManager;
@@ -63,10 +64,13 @@ public class LedgerManager {
         web3 = Web3j.build(new HttpService(endpoint));
     }
 
-    public void refresh() throws EasyWalletException {
+    public void refresh() throws ManagerException {
         final ABIUtils ABI = new ABIUtils();
 
         try {
+            final TransactionsManager TM = new TransactionsManager();
+            final Transaction mostRecentTransaction = TM.mostRecentTransaction();
+
             final Map<String, Coin> coinMap = new HashMap<>();
             if (coins() != null) {
                 for (Coin c: coins()) {
@@ -76,12 +80,14 @@ public class LedgerManager {
                 }
             }
 
-            final TransactionsManager TM = new TransactionsManager();
-
             Block block = web3.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, true).send().getBlock();
             List<EthBlock.TransactionResult> transactions = block.getTransactions();
 
             final Date when = new Date(block.getTimestamp().longValue());
+
+            if ((mostRecentTransaction != null) && (!when.after(mostRecentTransaction.when))) {
+                return;
+            }
 
             for(EthBlock.TransactionResult tr: transactions) {
                 EthBlock.TransactionObject t = (EthBlock.TransactionObject) tr.get();
@@ -105,7 +111,7 @@ public class LedgerManager {
                 }
             }
         } catch (Exception x) {
-            throw new EasyWalletException(x);
+            throw new ManagerException("error retrieving transfers", x);
         }
     }
 

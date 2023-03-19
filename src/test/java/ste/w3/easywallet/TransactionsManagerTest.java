@@ -25,8 +25,6 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +38,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static ste.w3.easywallet.TestingConstants.GLM;
 import static ste.w3.easywallet.TestingConstants.STORJ;
+import static ste.w3.easywallet.TestingConstants.WALLET1;
+import static ste.w3.easywallet.TestingConstants.WALLET2;
 import ste.w3.easywallet.data.TableSourceSorting;
 import ste.w3.easywallet.data.Order;
 
@@ -176,6 +176,21 @@ public class TransactionsManagerTest implements TestingUtils {
             .value().isEqualTo(new BigDecimal("789.012"))
             .value().isEqualTo(new Timestamp(d.getTime()))
             .value().isEqualTo("GLM");
+    }
+
+    @Test
+    public void most_recent_transaction() throws Exception {
+        final TransactionsManager tm = new TransactionsManager();
+
+        then(tm.mostRecentTransaction()).isNull();
+        givenDatabase();
+
+        then(tm.mostRecentTransaction().when).isEqualTo(
+            tm.get(new TableSourceSorting("when", Order.DESCENDING), 0, 1).get(0).when
+        );
+
+        tm.add(new Transaction(new Date(), null, BigDecimal.ZERO, WALLET1, WALLET2, "newtrhash"));
+        then(tm.mostRecentTransaction().hash).isEqualTo("newtrhash");
     }
 
 }
