@@ -19,7 +19,7 @@ import com.j256.ormlite.table.TableUtils;
 import javafx.scene.layout.Pane;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import org.scenicview.ScenicView;
+//import org.scenicview.ScenicView;
 import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Transaction;
@@ -66,7 +66,7 @@ public class TransactionLedgerDemo extends Application {
         controller.source().pageSize(20);
 
         controller.fetch();
-        ScenicView.show(scene);
+//        ScenicView.show(scene);  // to use it, enable the dependency in pom.xml
     }
 
     private static Parent loadFXML(String fxml) throws IOException {

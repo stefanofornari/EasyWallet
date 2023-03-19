@@ -194,12 +194,12 @@
             <scope>test</scope>
             <type>jar</type>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>net.raumzeitfalle.fx</groupId>
             <artifactId>scenic-view</artifactId>
             <version>11.0.2</version>
             <type>jar</type>
-        </dependency>
+        </dependency-->
     </dependencies>
 
     <build>
