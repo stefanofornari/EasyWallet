@@ -13,6 +13,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
+import ste.w3.easywallet.Preferences;
 import static ste.w3.easywallet.TestingConstants.WALLET1;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.ledger.LedgerSource;
@@ -27,13 +28,12 @@ public class TransactionLedgerAsyncTest extends ApplicationTest implements Testi
     private static final int PAGE_SIZE = 10;
 
     private LedgerControllerEx controller;
-
-    public TransactionLedgerAsyncTest() {
-    }
-
+    
     @Override
     public void start(Stage stage) throws Exception {
-        givenDatabase();
+        Preferences preferences = givenEmptyPreferences();
+        preferences.db = JDBC_CONNECTION_STRING;
+        givenDatabase(new Wallet(WALLET1), 50);
 
         controller = new LedgerControllerEx();
         controller.source.pageSize(PAGE_SIZE);
@@ -44,7 +44,7 @@ public class TransactionLedgerAsyncTest extends ApplicationTest implements Testi
                 null, null,
                 (clazz) -> controller
             ),
-            640, 480
+            640, 350
         );
         stage.setScene(scene);
         stage.show();
@@ -57,7 +57,7 @@ public class TransactionLedgerAsyncTest extends ApplicationTest implements Testi
         LatchedLedgerSource source = (LatchedLedgerSource)controller.source;
 
         source.hold();
-        controller.table.scrollToLastRow(); scroll(VerticalDirection.DOWN); waitForFxEvents();
+        controller.table.scrollToLastRow(); scroll(VerticalDirection.UP); waitForFxEvents();
         then(controller.ledgerDialogPane.getScene().getCursor()).isSameAs(Cursor.WAIT);
         source.go(); waitForFxEvents();
         then(controller.ledgerDialogPane.getScene().getCursor()).isSameAs(Cursor.DEFAULT);
@@ -96,31 +96,28 @@ public class TransactionLedgerAsyncTest extends ApplicationTest implements Testi
         }
 
         public void hold() {
-            System.out.println("ON HOLD...");
             latch = new CountDownLatch(1);
-
         }
 
         public void go() {
-            System.out.println("GO!");
             latch.countDown();
         }
 
         @Override
         public void fetch() {
-            System.out.println("latch: " + latch);
+//            System.out.println("latch: " + latch);
             if (latch != null) {
                 try {
-                    System.out.println("on hold");
+//                    System.out.println("on hold");
                     latch.await(2, TimeUnit.SECONDS);
-                    System.out.println("let's go");
+//                    System.out.println("let's go");
                 } catch (InterruptedException x) {
                     x.printStackTrace();
                 } finally {
                     latch = null;
                 }
             }
-            System.out.println("fetching...");
+//            System.out.println("fetching...");
             super.fetch();
         }
     }
