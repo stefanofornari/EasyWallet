@@ -43,7 +43,7 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
 
     @Override
     public void start(Stage stage) throws Exception {
-        Preferences preferences = bindPreferences();
+        Preferences preferences = givenEmptyPreferences();
         preferences.coins = new Coin[] { STORJ, GLM };
         preferences.db = JDBC_CONNECTION_STRING;
 

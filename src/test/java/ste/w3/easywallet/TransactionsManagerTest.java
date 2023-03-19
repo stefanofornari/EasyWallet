@@ -51,7 +51,7 @@ public class TransactionsManagerTest implements TestingUtils {
     private final Preferences preferences;
 
     public TransactionsManagerTest() throws Exception {
-        preferences = bindPreferences();
+        preferences = givenEmptyPreferences();
     }
 
     @Before
