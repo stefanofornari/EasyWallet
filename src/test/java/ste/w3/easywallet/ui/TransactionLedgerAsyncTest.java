@@ -28,7 +28,7 @@ public class TransactionLedgerAsyncTest extends ApplicationTest implements Testi
     private static final int PAGE_SIZE = 10;
 
     private LedgerControllerEx controller;
-    
+
     @Override
     public void start(Stage stage) throws Exception {
         Preferences preferences = givenEmptyPreferences();
@@ -86,7 +86,7 @@ public class TransactionLedgerAsyncTest extends ApplicationTest implements Testi
         }
     }
 
-    // ----------------------------------------------------- DelayedLedgerSource
+    // ----------------------------------------------------- LatchedLedgerSource
 
     private class LatchedLedgerSource extends LedgerSource {
         private CountDownLatch latch = null;
