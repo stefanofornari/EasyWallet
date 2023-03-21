@@ -48,9 +48,6 @@ public class EasyWalletMain extends Application {
         initialize();
         // ///
 
-        walletManager = new WalletManager(preferences.url());
-        ledgerManager = new LedgerManager(preferences.url());
-
         stage.setTitle("EasyWallet v0.1");
         stage.setWidth(575);
         stage.setHeight(800);
@@ -156,9 +153,11 @@ public class EasyWalletMain extends Application {
         Context ctx = getJNDIRoot();
 
         PreferencesManager pm = new PreferencesManager();
-        System.out.println(FileUtils.readFileToString(configFile, "UTF-8"));
         preferences = pm.fromJSON(FileUtils.readFileToString(configFile, "UTF-8"));
         ctx.rebind("preferences", preferences);
+
+        walletManager = new WalletManager(preferences.url());
+        ledgerManager = new LedgerManager(preferences.url());
     }
 
     // ------------------------------------------------------- protected methods
