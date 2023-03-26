@@ -20,11 +20,13 @@ import javax.naming.InitialContext;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
+import ste.xtest.concurrent.WaitFor;
 
 /**
  *
@@ -56,7 +58,7 @@ public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingCon
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(String.format(
             "{\"endpoint\":\"%s\",\"appkey\":\"%s\",\"wallets\":[{\"address\":\"%s\",\"privateKey\":\"\",\"mnemonicPhrase\":\"\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"%s\"}",
-            p.endpoint, p.appkey, p.wallets[0].address, JDBC_CONNECTION_STRING
+            p.endpoint, p.appkey, p.wallets[0].address, p.db
         ));
 
         //
@@ -68,7 +70,7 @@ public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingCon
 
         main.savePreferences();
         then(getPreferencesFile()).content().isEqualTo(
-            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"" + JDBC_CONNECTION_STRING + "\"}"
+            "{\"endpoint\":\"new endpoint\",\"appkey\":\"new key\",\"wallets\":[{\"address\":\"1234567890123456789012345678901234567890\",\"privateKey\":\"\",\"mnemonicPhrase\":\"mnemonic1\",\"balances\":{}},{\"address\":\"0123456789012345678901234567890123456789\",\"privateKey\":\"privatekey2\",\"mnemonicPhrase\":\"mnemonic2\",\"balances\":{}}],\"coins\":[{\"symbol\":\"ETH\",\"name\":\"Ether\",\"decimals\":18},{\"contract\":\"14F2c84A58e065C846c5fDDdadE0d3548F97A517\",\"symbol\":\"STORJ\",\"name\":\"StorjToken\",\"decimals\":8}],\"db\":\"" + p.db + "\"}"
         );
     }
 
@@ -106,12 +108,14 @@ public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingCon
         Then.then(lookup(".error")).hasNoWidgets();
         clickOn('#' + Constants.KEY_REFRESH);
 
+        new WaitFor(5000, () -> !lookup(".error").queryAll().isEmpty());
+
         Then.then(lookup(".error")).hasOneWidget();
         then(controller.errorLabel.getText())
             .contains(ERR_NETWORK)
-            .contains("Connection reset");
+            .contains("check your network");
 
-        clickOn('#' + Constants.KEY_CLOSE_ERROR);
+        clickOn('#' + Constants.KEY_CLOSE_ERROR); waitForFxEvents();
         Then.then(lookup(".error")).hasNoWidgets();
     }
 

@@ -18,34 +18,34 @@ package ste.w3.easywallet.ui;
 import ste.w3.easywallet.TestingUtils;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.testfx.framework.junit.ApplicationTest;
 import ste.w3.easywallet.Coin;
-import ste.w3.easywallet.EasyWalletException;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.TestingServer;
+import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.Wallet;
-import ste.w3.easywallet.WalletManager;
-import ste.xtest.reflect.PrivateAccess;
+import ste.xtest.concurrent.WaitFor;
 
 /**
  *
  */
 public class BaseEasyWalletMain extends ApplicationTest implements TestingConstants, TestingUtils {
 
-    public static TestingServer server = null;
+    public TestingServer server = null;
 
-    protected EasyWalletMain main;
+    protected EasyWalletMainWithPreferences main;
     protected Preferences preferences;
     protected Stage stage;
     protected EasyWalletMainController controller;
@@ -55,20 +55,22 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
     @Rule
     public TemporaryFolder HOME = new TemporaryFolder();
 
+    @Rule
+    public TestRule watcher = new TestWatcher() {
+        protected void starting(Description description) {
+            System.out.println("-----> " + description.getMethodName());
+        }
+    };
+
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
 
-        server = new TestingServer(); server.ethereum.start();
+        givenServer();
+        givenPreferences();
+        givenMainWindow();
 
-        try {
-            preparePreferences();
-        } catch (IOException x) {
-            x.printStackTrace();
-        }
-
-        main = new EasyWalletMainWithPreferences(); main.start(stage);
-
+        main.start(stage);
         controller = getController(lookup("#main").queryAs(Pane.class));
     }
 
@@ -77,12 +79,11 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
         server.ethereum.stop();
     }
 
-
     protected File getPreferencesFile() throws IOException {
         return new File(HOME.getRoot(), CONFIG_FILE);
     }
 
-    protected void preparePreferences() throws IOException {
+    protected Preferences givenPreferences() throws IOException {
         File preferencesFile = getPreferencesFile();
 
         preferencesFile.getParentFile().mkdirs();
@@ -90,37 +91,49 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
         //
         // Create some randomness to make sure the content is correctly read
         //
-        RandomStringGenerator randomStringGenerator =
-            new RandomStringGenerator.Builder()
-                    .selectFrom("0123456789abcdef".toCharArray())
-                    .build();
+        RandomStringGenerator randomStringGenerator
+                = new RandomStringGenerator.Builder()
+                        .selectFrom("0123456789abcdef".toCharArray())
+                        .build();
         preferences = new Preferences();
         preferences.endpoint = server.ethereum.url("v3/" + randomStringGenerator.generate(20)).toString();
         preferences.appkey = randomStringGenerator.generate(12);
-        preferences.wallets = new Wallet[] { new Wallet(randomStringGenerator.generate(40)) };
-        preferences.coins = new Coin[] {ETH, STORJ};
-        preferences.db = JDBC_CONNECTION_STRING;
+        preferences.wallets = new Wallet[]{new Wallet(randomStringGenerator.generate(40))};
+        preferences.coins = new Coin[]{ETH, STORJ};
+        preferences.db = getRandomConnectionString();
 
         PreferencesManager pm = new PreferencesManager();
 
         FileUtils.writeStringToFile(preferencesFile, pm.toJSON(preferences), "UTF-8");
+
+        return preferences;
+    }
+
+    protected EasyWalletMainWithPreferences givenMainWindow() {
+        return (main = new EasyWalletMainWithPreferences());
+    }
+
+    protected TestingServer givenServer() {
+        server = new TestingServer();
+        server.ethereum.start();
+        return server;
     }
 
     protected void withConnectionException() throws Exception {
         server.addFailure();
-        /*
-        PrivateAccess.setInstanceValue(main, "walletManager", new WalletManager("http://somewere.com/key") {
-            @Override
-            public WalletManager balance(Wallet wallet, Coin... coins) throws EasyWalletException {
-                throw new EasyWalletException("network not available");
-            }
-        });
-        */
     }
 
+    protected void givenRequests() {
+        server.addBalanceRequest(preferences.wallets[0].address, BigDecimal.ZERO);
+        server.addBalanceRequest(STORJ, preferences.wallets[0].address, BigDecimal.ZERO);
+        server.addTransfersRequest(new Transaction[0], new Coin[0]);
+    }
+
+    protected void waitForRefresh() {
+        new WaitFor(5000, () -> !controller.refreshButton.isDisabled());
+    }
 
     // ------------------------------------------- EasyWalletMainWithPreferences
-
     protected class EasyWalletMainWithPreferences extends EasyWalletMain {
 
         @Override
@@ -133,17 +146,6 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
 
             return null;
         }
-
-        /*@Override
-        //
-        // With this we make sure multiple instances do not interefeer each
-        // other. The root can then be retrieved with the following code:
-        //
-
-        protected Context getJNDIRoot() throws NamingException {
-            return new InitialContext().createSubcontext(String.valueOf(this.hashCode()));
-        }
-        */
     }
 
 }

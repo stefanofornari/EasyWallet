@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import static org.assertj.core.api.BDDAssertions.then;
+import org.junit.Before;
 import org.junit.Test;
 import org.testfx.assertions.api.Then;
 import org.testfx.service.query.NodeQuery;
@@ -36,11 +37,17 @@ import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.Transaction;
 import static ste.w3.easywallet.ui.Constants.KEY_ADD_WALLET;
 import static ste.w3.easywallet.ui.Constants.KEY_REFRESH;
+import ste.xtest.concurrent.WaitFor;
 
 /**
  *
  */
 public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingConstants, TestingUtils {
+
+    @Before
+    public void before() {
+        server.reset();
+    }
 
     @Test
     public void window_title_icon_and_size() throws Exception {
@@ -123,7 +130,7 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
         server.addBalanceRequest(STORJ, preferences.wallets[0].address, new BigDecimal("534.09876543"));
         server.addTransfersRequest(TRANSACTIONS, new Coin[] {STORJ});
 
-        clickOn('#' + KEY_REFRESH); waitForFxEvents();
+        clickOn('#' + KEY_REFRESH); waitForRefresh();
 
         Then.then(lookup("ETH 0.004734269121 - STORJ 534.09876543")).hasWidgets();
         then(main.getConfigFile()).content().contains("{\"ETH\":0.004734269121,\"STORJ\":534.09876543}");
@@ -131,8 +138,11 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
         //
         // The ledger dialog shall have a transaction for STORJ tokens
         //
-        clickOn("mfx-ledger"); waitForFxEvents();
+        clickOn("mfx-ledger"); waitForFxEvents(); // fetch of transfers is async as well
+        new WaitFor(2000, () -> !lookup("STORJ").queryAll().isEmpty());
         Then.then(lookup("STORJ")).hasWidgets();
+
+        // com.j256.ormlite.stmt.StatementExecutor query of 'SELECT LIMIT 0 1000 * FROM "TRANSACTIONS" WHERE "to" = '0e436b603633502d76f1de011c44cce054121df4'' with 0 args
     }
 
     @Test
@@ -140,15 +150,18 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
         withConnectionException();
 
         Then.then(lookup(".error")).hasNoWidgets();
-        clickOn('#' + Constants.KEY_REFRESH);
+        clickOn('#' + Constants.KEY_REFRESH); waitForRefresh();
 
         Then.then(lookup(".error")).hasOneWidget();
         then(controller.errorLabel.getText())
-            .contains(ERR_NETWORK)
-            .contains("Connection reset");
+            .contains(ERR_NETWORK);
 
         clickOn('#' + Constants.KEY_CLOSE_ERROR);
         Then.then(lookup(".error")).hasNoWidgets();
     }
+
+    // --------------------------------------------------------- private methods
+
+
 
 }

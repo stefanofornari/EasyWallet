@@ -45,9 +45,7 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
     public void start(Stage stage) throws Exception {
         Preferences preferences = givenEmptyPreferences();
         preferences.coins = new Coin[] { STORJ, GLM };
-        preferences.db = JDBC_CONNECTION_STRING;
-
-        givenDatabase(WALLET);
+        preferences.db = givenDatabase(WALLET);;
 
         Pane mainWindow = new BorderPane();
         showInStage(stage, mainWindow);

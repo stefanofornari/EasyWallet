@@ -72,10 +72,9 @@ public class LedgerManagerTest implements TestingUtils {
     @Before
     public void before() throws Exception {
         Preferences preferences = givenEmptyPreferences();
-        givenEmptyDatabase();
+        preferences.db = givenEmptyDatabase();
         server = new TestingServer();
         server.ethereum.start();
-        preferences.db = JDBC_CONNECTION_STRING;
         preferences.coins = COINS;
     }
 

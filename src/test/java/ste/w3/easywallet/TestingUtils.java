@@ -50,7 +50,6 @@ import static ste.w3.easywallet.TestingConstants.STORJ;
 public interface TestingUtils {
     final List<Transaction> transactions = new ArrayList<>();
 
-
     //public static final String JDBC_DRIVER_CLASS = "org.hsqldb.jdbc.JDBCDriver";
     public static final String JDBC_CONNECTION_STRING = "jdbc:hsqldb:mem:testdb";
 
@@ -98,9 +97,10 @@ public interface TestingUtils {
         return DaoManager.createDao(source, Transaction.class);
     }
 
-    default void givenDatabase(final Wallet wallet, final int howMany) throws Exception {
+    default String givenDatabase(final Wallet wallet, final int howMany) throws Exception {
+        final String connectionString = getRandomConnectionString();
         transactions.clear();
-        try (ConnectionSource db = new JdbcConnectionSource(JDBC_CONNECTION_STRING)) {
+        try (ConnectionSource db = new JdbcConnectionSource(connectionString)) {
             Dao<Transaction, String> transactionDao = DaoManager.createDao(db, Transaction.class);
 
             TableUtils.dropTable(transactionDao, true);
@@ -127,22 +127,27 @@ public interface TestingUtils {
                 transactionDao.create(t);
             }
         }
+        return connectionString;
     }
 
-    default void givenDatabase(final Wallet wallet) throws Exception {
-        givenDatabase(wallet, 63);  // just a odd number to test with 10-20 items
+    default String givenDatabase(final Wallet wallet) throws Exception {
+        return givenDatabase(wallet, 63);  // just a odd number to test with 10-20 items
     }
 
-    default void givenDatabase(final int howMany) throws Exception {
-        givenDatabase(null, howMany);
+    default String givenDatabase(final int howMany) throws Exception {
+        return givenDatabase(null, howMany);
     }
 
-    default void givenDatabase() throws Exception {
-        givenDatabase(37);  // just a odd number to test with 10-20 items
+    default String givenDatabase() throws Exception {
+        return givenDatabase(37);  // just a odd number to test with 10-20 items
     }
 
-    default void givenEmptyDatabase() throws Exception {
-        givenDatabase(0);  // table is dropped and recreated, no rows added
+    default String givenEmptyDatabase() throws Exception {
+        return givenDatabase(0);  // table is dropped and recreated, no rows added
+    }
+
+    default String getRandomConnectionString() {
+        return String.format("%s-%08X", JDBC_CONNECTION_STRING, System.currentTimeMillis());
     }
 
 }

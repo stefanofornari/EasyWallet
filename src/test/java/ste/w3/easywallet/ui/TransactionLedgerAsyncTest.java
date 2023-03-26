@@ -3,6 +3,7 @@ package ste.w3.easywallet.ui;
 import ste.w3.easywallet.TestingUtils;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.Date;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.VerticalDirection;
@@ -19,24 +20,28 @@ import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.ledger.LedgerSource;
 import ste.w3.easywallet.data.Order;
 import ste.w3.easywallet.data.TableSourceSorting;
+import ste.xtest.concurrent.PausableThreadPoolExecutor;
+import ste.xtest.reflect.PrivateAccess;
 
 /**
  *
  */
 public class TransactionLedgerAsyncTest extends ApplicationTest implements TestingUtils {
 
+    private final PausableThreadPoolExecutor EXECUTOR = new PausableThreadPoolExecutor();
+
     private static final int PAGE_SIZE = 10;
 
-    private LedgerControllerEx controller;
+    private LedgerController controller;
 
     @Override
     public void start(Stage stage) throws Exception {
         Preferences preferences = givenEmptyPreferences();
-        preferences.db = JDBC_CONNECTION_STRING;
-        givenDatabase(new Wallet(WALLET1), 50);
+        preferences.db = givenDatabase(new Wallet(WALLET1), 50);
 
-        controller = new LedgerControllerEx();
+        controller = new LedgerController(null, new LedgerSource(new Wallet(WALLET1)));
         controller.source.pageSize(PAGE_SIZE);
+        PrivateAccess.setInstanceValue(controller, "background", EXECUTOR);
 
         Scene scene = new Scene(
             FXMLLoader.load(
@@ -54,72 +59,21 @@ public class TransactionLedgerAsyncTest extends ApplicationTest implements Testi
 
     @Test
     public void async_and_wait_cursor_when_fetching() {
-        LatchedLedgerSource source = (LatchedLedgerSource)controller.source;
-
-        source.hold();
+        EXECUTOR.hold();
         controller.table.scrollToLastRow(); scroll(VerticalDirection.UP); waitForFxEvents();
         then(controller.ledgerDialogPane.getScene().getCursor()).isSameAs(Cursor.WAIT);
-        source.go(); waitForFxEvents();
+        EXECUTOR.go(); waitForFxEvents();
         then(controller.ledgerDialogPane.getScene().getCursor()).isSameAs(Cursor.DEFAULT);
     }
 
     @Test
     public void async_and_wait_cursor_when_changing_sorting() {
-        LatchedLedgerSource source = (LatchedLedgerSource)controller.source;
-
-        source.hold();
+        EXECUTOR.hold();
         controller.sortBy(new TableSourceSorting("when", Order.DESCENDING));
         waitForFxEvents();
         then(controller.ledgerDialogPane.getScene().getCursor()).isSameAs(Cursor.WAIT);
-        source.go(); waitForFxEvents();
+        EXECUTOR.go(); waitForFxEvents();
         then(controller.ledgerDialogPane.getScene().getCursor()).isSameAs(Cursor.DEFAULT);
-    }
-
-
-    // --------------------------------------------------------- private methods
-
-    // ------------------------------------------------------ LedgerControllerEx
-
-    private class LedgerControllerEx extends LedgerController implements Initializable {
-        public LedgerControllerEx() {
-            super(null, new LatchedLedgerSource());
-        }
-    }
-
-    // ----------------------------------------------------- LatchedLedgerSource
-
-    private class LatchedLedgerSource extends LedgerSource {
-        private CountDownLatch latch = null;
-
-        public LatchedLedgerSource() {
-            super(new Wallet(WALLET1));
-        }
-
-        public void hold() {
-            latch = new CountDownLatch(1);
-        }
-
-        public void go() {
-            latch.countDown();
-        }
-
-        @Override
-        public void fetch() {
-//            System.out.println("latch: " + latch);
-            if (latch != null) {
-                try {
-//                    System.out.println("on hold");
-                    latch.await(2, TimeUnit.SECONDS);
-//                    System.out.println("let's go");
-                } catch (InterruptedException x) {
-                    x.printStackTrace();
-                } finally {
-                    latch = null;
-                }
-            }
-//            System.out.println("fetching...");
-            super.fetch();
-        }
     }
 
 }

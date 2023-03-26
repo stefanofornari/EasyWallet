@@ -61,7 +61,7 @@ implements Labels, TestingConstants, TestingUtils {
 
         Preferences preferences = new Preferences();
         preferences.coins = new Coin[] {ETH, STORJ};
-        preferences.db = JDBC_CONNECTION_STRING;
+        preferences.db = givenDatabase(WALLET);
 
         ctx = ctx.createSubcontext("root");
         ctx.bind("preferences", preferences);
@@ -147,8 +147,6 @@ implements Labels, TestingConstants, TestingUtils {
 
     @Test
     public void show_ledger_dialog() throws Exception {
-        givenDatabase(WALLET);
-
         clickOn("#ledgerButton");
         Then.then(lookup(String.format(LABEL_LEDGER_DIALOG_TITLE, WALLET1))).hasWidgets();
         Then.then(lookup(".table-row")).hasNWidgets(16);

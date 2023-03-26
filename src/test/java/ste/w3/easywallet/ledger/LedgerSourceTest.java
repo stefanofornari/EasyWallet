@@ -20,10 +20,7 @@ public class LedgerSourceTest implements TestingUtils, TestingConstants {
 
     @Before
     public void before() throws Exception {
-        Preferences p = givenEmptyPreferences();
-        givenDatabase(WALLET, 100);
-
-        p.db = JDBC_CONNECTION_STRING;
+        givenEmptyPreferences().db = givenDatabase(WALLET, 100);
     }
 
     @Test

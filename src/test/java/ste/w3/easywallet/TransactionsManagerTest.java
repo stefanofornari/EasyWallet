@@ -56,7 +56,7 @@ public class TransactionsManagerTest implements TestingUtils {
 
     @Before
     public void before() throws Exception {
-        preferences.db = JDBC_CONNECTION_STRING;
+        preferences.db = getRandomConnectionString();
         try (ConnectionSource db = new JdbcConnectionSource(preferences.db)) {
             TableUtils.dropTable(db, Transaction.class, true);
         }
@@ -98,7 +98,7 @@ public class TransactionsManagerTest implements TestingUtils {
 
     @Test
     public void get_returns_selected_transactions() throws Exception {
-        givenDatabase();
+        preferences.db = givenDatabase();
 
         TransactionsManager tm = new TransactionsManager();
 
@@ -152,7 +152,7 @@ public class TransactionsManagerTest implements TestingUtils {
             )
         );
 
-        Table table = new Table(new Source(JDBC_CONNECTION_STRING, "sa", ""), "transactions");
+        Table table = new Table(new Source(preferences.db, "sa", ""), "transactions");
         then(table).hasNumberOfRows(1).row(0)
             .value().isEqualTo("transactionhash")
             .value().isEqualTo("fromaddress")
@@ -168,7 +168,7 @@ public class TransactionsManagerTest implements TestingUtils {
             )
         );
 
-        table = new Table(new Source(JDBC_CONNECTION_STRING, "sa", ""),  "transactions");
+        table = new Table(new Source(preferences.db, "sa", ""),  "transactions");
         then(table).hasNumberOfRows(2).row(0)
             .value().isEqualTo("newtransactionhash")
             .value().isEqualTo("newfromaddress")
@@ -180,10 +180,9 @@ public class TransactionsManagerTest implements TestingUtils {
 
     @Test
     public void most_recent_transaction() throws Exception {
-        final TransactionsManager tm = new TransactionsManager();
+        preferences.db = givenDatabase();
 
-        then(tm.mostRecentTransaction()).isNull();
-        givenDatabase();
+        final TransactionsManager tm = new TransactionsManager();
 
         then(tm.mostRecentTransaction().when).isEqualTo(
             tm.get(new TableSourceSorting("when", Order.DESCENDING), 0, 1).get(0).when

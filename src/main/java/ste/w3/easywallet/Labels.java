@@ -27,6 +27,7 @@ public interface Labels {
     public final String LABEL_BUTTON_OK = "OK";
     public final String LABEL_BUTTON_CANCEL = "CANCEL";
     public final String LABEL_BUTTON_SEARCH = "SEARCH";
+    public final String LABEL_BUTTON_REFRESH = "REFRESH";
     public final String LABEL_BUTTON_CLOSE = "CLOSE";
     public final String LABEL_BUTTON_APPLY = "APPLY";
     public final String LABEL_BUTTON_RESET = "RESET";
