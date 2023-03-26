@@ -126,7 +126,7 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
     protected void givenRequests() {
         server.addBalanceRequest(preferences.wallets[0].address, BigDecimal.ZERO);
         server.addBalanceRequest(STORJ, preferences.wallets[0].address, BigDecimal.ZERO);
-        server.addTransfersRequest(new Transaction[0], new Coin[0]);
+        server.addLatestTransfersRequest(new Transaction[0], new Coin[0]);
     }
 
     protected void waitForRefresh() {

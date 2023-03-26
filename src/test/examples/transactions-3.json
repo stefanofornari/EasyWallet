@@ -20,23 +20,7 @@
 "stateRoot": "0xc78b6a144993354f9e8eca88893da55bca829bde828dfbdcb2ba458614c9625f",
 "timestamp": "0x6420552E",
 "totalDifficulty": "0x20f4571e",
-"transactions": [{
-"blockHash": "0x941bdb675ea97b27414681303b158b7226d72ad8e6ea17d7345f03c5e2eb9842",
-"blockNumber": "0x21e62ab",
-"from": "0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3",
-"gas": "0x186a0",
-"gasPrice": "0x94133c250",
-"hash": "0xhash4",
-"input": "0xa9059cbb000000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000009dd466",
-"nonce": "0xe68a",
-"r": "0x6cd99eba87bb7104ede6e43238b390de6808a38af253b5aad5fc9424017549be",
-"s": "0x55486f168b2776478a8c3a63105b94e74f841f9ae567e501801d35aa13452c13",
-"to": "0x55110c24859411822932a5263c6e44318cc3e682",
-"transactionIndex": "0x38",
-"type": "0x0",
-"v": "0x135",
-"value": "0x0"
-}],
+"transactions": [],
 "transactionsRoot": "0xe252bc5c255ffc81992fbcbfc81fafc456a1bff80890ad2f7fcb8af2df8e9486",
 "uncles": []
 }

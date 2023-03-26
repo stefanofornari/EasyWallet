@@ -28,6 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import com.github.tomakehurst.wiremock.http.Fault;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,8 @@ import org.web3j.utils.Numeric;
  *
  */
 public class TestingServer implements TestingConstants {
+
+    public static final long A_TIMESTAMP = 1679840558000l;
 
     //
     // NOTE: placeholders in JSON are treated by WireMock accordingly to
@@ -54,6 +57,8 @@ public class TestingServer implements TestingConstants {
         "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0x%014x\"}";
     static public final String LATEST_TRANSACTIONS_REQUEST =
         "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\",true],\"id\":\"${json-unit.ignore}\"}";
+    static public final String TRANSACTIONS_REQUEST =
+        "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"0x%s\",true],\"id\":\"${json-unit.ignore}\"}";
     static public final String LATEST_TRANSACTION_RESPONSE_FORMAT = "{\n" +
         "\"jsonrpc\": \"2.0\",\n" +
         "\"id\": 0,\n" +
@@ -68,15 +73,15 @@ public class TestingServer implements TestingConstants {
             "\"miner\": \"0x0000000000000000000000000000000000000000\",\n" +
             "\"mixHash\": \"0x0000000000000000000000000000000000000000000000000000000000000000\",\n" +
             "\"nonce\": \"0x0000000000000000\",\n" +
-            "\"number\": \"0x21e62ab\",\n" +
+            "\"number\": \"0x%08X\",\n" +             // <--- number
             "\"parentHash\": \"0x82b4c8559714da01ead67df90db8b4e6d30ce6534531ff14597364fb3e251ecf\",\n" +
             "\"receiptsRoot\": \"0x52495649f13ac872f304d403f637e07b89e866c8aa1c17707ca7bd665c0cd780\",\n" +
             "\"sha3Uncles\": \"0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347\",\n" +
             "\"size\": \"0xa907\",\n" +
             "\"stateRoot\": \"0xc78b6a144993354f9e8eca88893da55bca829bde828dfbdcb2ba458614c9625f\",\n" +
-            "\"timestamp\": \"0x63709c13\",\n" +
+            "\"timestamp\": \"0x%08X\",\n" +          // <--- timestamp
             "\"totalDifficulty\": \"0x20f4571e\",\n" +
-            "\"transactions\": [%s],\n" +           // <--- TRANSACTIONS
+            "\"transactions\": [%s],\n" +             // <--- TRANSACTIONS
             "\"transactionsRoot\": \"0xe252bc5c255ffc81992fbcbfc81fafc456a1bff80890ad2f7fcb8af2df8e9486\",\n" +
             "\"uncles\": []\n" +
         "}\n" +
@@ -150,8 +155,8 @@ public class TestingServer implements TestingConstants {
                 );
     }
 
-    public void addTransfersRequest(Transaction[] transactions, Coin[] coins) {
-        String responseBody = buildTransactionsResponse(transactions, coins);
+    public void addLatestTransfersRequest(Transaction[] transactions, Coin[] coins) {
+        String responseBody = buildTransactionsResponse(35545771, transactions, coins); // <- hard-coded block number
         ethereum.stubFor(
                     any(anyUrl())
                     .withRequestBody(equalToJson(LATEST_TRANSACTIONS_REQUEST))
@@ -164,8 +169,22 @@ public class TestingServer implements TestingConstants {
                 );
     }
 
-    public void addTransfersRequest(String transactions) {
-        final String responseBody = String.format(LATEST_TRANSACTION_RESPONSE_FORMAT, transactions);
+    public void addTransfersRequest(long blockNumber, Transaction[] transactions, Coin[] coins) {
+        String responseBody = buildTransactionsResponse(blockNumber, transactions, coins);
+        ethereum.stubFor(
+                    any(anyUrl())
+                    .withRequestBody(equalToJson(String.format(TRANSACTIONS_REQUEST, BigInteger.valueOf(blockNumber).toString(16))))
+                    .willReturn(
+                        aResponse()
+                            .withHeader("content-type", "application/json")
+                            .withHeader("content-length", String.valueOf(responseBody.length()))
+                            .withBody(responseBody)
+                    )
+                );
+    }
+
+    public void addTransfersRequest(final String transactions) {
+        final String responseBody = String.format(LATEST_TRANSACTION_RESPONSE_FORMAT, 35545771, 1668324371, transactions); // hard-coded block # and timestamp
         ethereum.stubFor(
                     any(anyUrl())
                     .withRequestBody(equalToJson(LATEST_TRANSACTIONS_REQUEST))
@@ -233,8 +252,13 @@ public class TestingServer implements TestingConstants {
 
     }
 
-    private String buildTransactionsResponse(Transaction[] transactions, Coin[] coins) {
-        return String.format(LATEST_TRANSACTION_RESPONSE_FORMAT, buildTransactionsBody(transactions, coins));
+    private String buildTransactionsResponse(long blockNumber, Transaction[] transactions, Coin[] coins) {
+        return String.format(
+            LATEST_TRANSACTION_RESPONSE_FORMAT,
+            blockNumber,
+            ((transactions == null) || (transactions.length == 0))? A_TIMESTAMP/1000 : (long)(transactions[0].when.getTime()/1000),
+            buildTransactionsBody(transactions, coins)
+        );
     }
 
 }

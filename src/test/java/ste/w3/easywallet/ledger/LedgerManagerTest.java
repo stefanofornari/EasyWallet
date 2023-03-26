@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -60,11 +61,24 @@ public class LedgerManagerTest implements TestingUtils {
 
     private static final Instant NOW = Instant.now();
     private static final Transaction[] TRANSACTIONS1 = new Transaction[] {
-        new Transaction(new Date(NOW.toEpochMilli()), STORJ, BigDecimal.ONE, null, WALLET1, "hash1"),
-        new Transaction(new Date(NOW.toEpochMilli()+3600*1000), GLM, BigDecimal.TWO, null, WALLET1, "hash2"),
-        new Transaction(new Date(NOW.toEpochMilli()+2*3600*1000), GLM, BigDecimal.TEN, null, WALLET2, "hash3"),
-        new Transaction(new Date(NOW.toEpochMilli()+3*3600*1000), null, BigDecimal.TEN, null, WALLET1, "hash4"),
-        new Transaction(new Date(NOW.toEpochMilli()+4*3600*1000), new Coin("FAKE", "FAKE", "68c929e7b8fb06c58494a369f6f088fff28f7c77", 10), BigDecimal.TEN, null, WALLET1, "hash5")
+        //
+        // NOTE: these represents the transactions in a block; all shall have
+        //       the same timestamp
+        //
+        new Transaction(new Date(NOW.toEpochMilli()), STORJ, BigDecimal.ONE, null, WALLET1, "block1-hash1"),
+        new Transaction(new Date(NOW.toEpochMilli()), GLM, BigDecimal.TWO, null, WALLET1, "block1-hash2"),
+        new Transaction(new Date(NOW.toEpochMilli()), GLM, BigDecimal.TEN, null, WALLET2, "block1-hash3"),
+        new Transaction(new Date(NOW.toEpochMilli()), null, BigDecimal.TEN, null, WALLET1, "block1-hash4"),
+        new Transaction(new Date(NOW.toEpochMilli()), new Coin("FAKE", "FAKE", "68c929e7b8fb06c58494a369f6f088fff28f7c77", 10), BigDecimal.TEN, null, WALLET1, "block1-hash5")
+    };
+    private static final Transaction[] TRANSACTIONS2 = new Transaction[] {
+        new Transaction(new Date(NOW.minus(24, ChronoUnit.HOURS).toEpochMilli()), STORJ, BigDecimal.ONE, null, WALLET1, "block2-hash1")
+    };
+    private static final Transaction[] TRANSACTIONS3 = new Transaction[] {
+        new Transaction(new Date(NOW.minus(100, ChronoUnit.HOURS).toEpochMilli()), GLM, BigDecimal.TEN, null, WALLET1, "block3-hash1")
+    };
+    private static final Transaction[] TRANSACTIONS4 = new Transaction[] {
+        new Transaction(new Date(NOW.minus(300, ChronoUnit.DAYS).toEpochMilli()), GLM, BigDecimal.TEN, null, WALLET1, "block4-hash1")
     };
 
     private static final Wallet W1 = new Wallet(WALLET1);
@@ -105,19 +119,27 @@ public class LedgerManagerTest implements TestingUtils {
     }
 
     @Test
-    public void refresh_updates_the_database_with_latest_block() throws Exception {
+    public void refresh_updates_the_db_with_latest_blocks_up_to_6_months_old() throws Exception {
         final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
         final LedgerSource LS = new LedgerSource(W1);
 
-        givenTransfersBlock();
+        givenTransfersBlocks();
 
         LM.refresh(); LS.fetch();
 
-        then(LS.page).hasSize(4);
+        then(LS.page).hasSize(6);
+        then(LS.page.get(0).hash).isEqualTo("block1-hash1");
         then(LS.page.get(0).coin).isEqualTo(STORJ.symbol);
+        then(LS.page.get(1).hash).isEqualTo("block1-hash2");
         then(LS.page.get(1).coin).isEqualTo(GLM.symbol);
+        then(LS.page.get(2).hash).isEqualTo("block1-hash4");
         then(LS.page.get(2).coin).isEqualTo("UNKNOWN");
+        then(LS.page.get(3).hash).isEqualTo("block1-hash5");
         then(LS.page.get(3).coin).isEqualTo("UNKNOWN");
+        then(LS.page.get(4).hash).isEqualTo("block2-hash1");
+        then(LS.page.get(4).coin).isEqualTo(STORJ.symbol);
+        then(LS.page.get(5).hash).isEqualTo("block3-hash1");
+        then(LS.page.get(5).coin).isEqualTo(GLM.symbol);
     }
 
     @Test
@@ -127,7 +149,15 @@ public class LedgerManagerTest implements TestingUtils {
 
         givenMixedTransactionsBlock();
 
-        LM.refresh(); LS.fetch();
+        try {
+            LM.refresh();
+        } catch (ManagerException x) {
+            //
+            // we are supposed to get an execption because we made available one
+            // block only
+            //
+        }
+        LS.fetch();
 
         then(LS.page).hasSize(2);
         //
@@ -157,8 +187,15 @@ public class LedgerManagerTest implements TestingUtils {
 
         givenTransfersBlock();
 
-        LM.refresh(); LM.refresh(); LS.fetch(); // error if trying to insert
-                                                // twice the same transaction
+        try {
+            LM.refresh(); // error if trying to insert twice the same transaction
+        } catch (ManagerException x) {
+            //
+            // we are supposed to get an execption because we made available one
+            // block only
+            //
+        }
+        LS.fetch();
         then(LS.page).hasSize(4);
     }
 
@@ -184,7 +221,14 @@ public class LedgerManagerTest implements TestingUtils {
     // --------------------------------------------------------- private methods
 
     private void givenTransfersBlock() {
-        server.addTransfersRequest(TRANSACTIONS1, COINS);
+        server.addLatestTransfersRequest(TRANSACTIONS1, COINS);
+    }
+
+    private void givenTransfersBlocks() {
+        server.addLatestTransfersRequest(TRANSACTIONS1, COINS); // block # 35545770
+        server.addTransfersRequest(35545770, TRANSACTIONS2, COINS);
+        server.addTransfersRequest(35545769,TRANSACTIONS3, COINS);
+        server.addTransfersRequest(35545768, TRANSACTIONS4, COINS);
     }
 
     private void givenMixedTransactionsBlock() throws IOException {

@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.SocketException;
-import java.time.Instant;
 import java.util.Date;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -38,6 +37,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static ste.w3.easywallet.TestingConstants.ADDRESS1;
+import static ste.w3.easywallet.TestingServer.A_TIMESTAMP;
 import static ste.w3.easywallet.TestingServer.BALANCE_REQUEST_FORMAT;
 import static ste.w3.easywallet.TestingServer.LATEST_TRANSACTIONS_REQUEST;
 import static ste.w3.easywallet.TestingServer.LATEST_TRANSACTION_RESPONSE_FORMAT;
@@ -124,18 +124,20 @@ public class TestingServerTest implements TestingConstants {
 
     @Test
     public void add_transfers_request_mocks_a_request() throws Exception {
-        final Instant NOW = Instant.now();
         final Transaction[] TRANSACTIONS1 = new Transaction[] {
-            new Transaction(new Date(NOW.toEpochMilli()), STORJ, BigDecimal.ONE, null, WALLET1, "hash1"),
-            new Transaction(new Date(NOW.toEpochMilli()+3600*1000), GLM, BigDecimal.TWO, null, WALLET1, "hash2"),
-            new Transaction(new Date(NOW.toEpochMilli()+2*3600*1000), GLM, BigDecimal.TEN, null, WALLET2, "hash3"),
-            new Transaction(new Date(NOW.toEpochMilli()+3*3600*1000), null, BigDecimal.TEN, null, WALLET1, "hash4"),
+            //
+            // NOTE: all transaction in a block have the same timestamp
+            //
+            new Transaction(new Date(A_TIMESTAMP), STORJ, BigDecimal.ONE, null, WALLET1, "hash1"),
+            new Transaction(new Date(A_TIMESTAMP), GLM, BigDecimal.TWO, null, WALLET1, "hash2"),
+            new Transaction(new Date(A_TIMESTAMP), GLM, BigDecimal.TEN, null, WALLET2, "hash3"),
+            new Transaction(new Date(A_TIMESTAMP), null, BigDecimal.TEN, null, WALLET1, "hash4"),
         };
         final Transaction[] TRANSACTIONS2 = new Transaction[] {
-            new Transaction(new Date(NOW.toEpochMilli()), GLM, BigDecimal.valueOf(10343526), null, WALLET2, "hash4"),
+            new Transaction(new Date(A_TIMESTAMP), GLM, BigDecimal.valueOf(10343526), null, WALLET2, "hash4"),
         };
 
-        server.addTransfersRequest(TRANSACTIONS1, COINS);
+        server.addLatestTransfersRequest(TRANSACTIONS1, COINS);
 
         final Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
             RequestBody.create(
@@ -149,11 +151,17 @@ public class TestingServerTest implements TestingConstants {
             givenTransactionsBody("transactions-1.json")
         );
 
-        server.addTransfersRequest(TRANSACTIONS2, COINS);
+        server.addLatestTransfersRequest(TRANSACTIONS2, COINS);
 
         response = http.newCall(request).execute();
         then(response.body().string()).isEqualTo(
             givenTransactionsBody("transactions-2.json")
+        );
+
+        server.addLatestTransfersRequest(new Transaction[0], COINS);
+        response = http.newCall(request).execute();
+        then(response.body().string()).isEqualTo(
+            givenTransactionsBody("transactions-3.json")
         );
     }
 
@@ -171,7 +179,7 @@ public class TestingServerTest implements TestingConstants {
 
         Response response = http.newCall(request).execute();
         then(response.body().string()).isEqualTo(
-            String.format(LATEST_TRANSACTION_RESPONSE_FORMAT, TRANSACTIONS)
+            String.format(LATEST_TRANSACTION_RESPONSE_FORMAT, 35545771, 1668324371, TRANSACTIONS)
         );
     }
 

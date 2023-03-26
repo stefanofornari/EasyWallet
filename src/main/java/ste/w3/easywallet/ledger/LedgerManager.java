@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ledger;
 
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.Map;
 import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.EthBlock.Block;
@@ -64,8 +66,12 @@ public class LedgerManager {
     }
 
     public void refresh() throws ManagerException {
+        final Date SIX_MONTHS_AGO = new Date(System.currentTimeMillis()-6*30*24*60*60*1000l);
         final ABIUtils ABI = new ABIUtils();
 
+        //
+        // TODO: break if block number not found
+        //
         try {
             final TransactionsManager TM = new TransactionsManager();
             final Transaction mostRecentTransaction = TM.mostRecentTransaction();
@@ -79,35 +85,46 @@ public class LedgerManager {
                 }
             }
 
-            Block block = web3.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, true).send().getBlock();
-            List<EthBlock.TransactionResult> transactions = block.getTransactions();
+            BigInteger nextBlockNumber = null;
+            for (long i=0; i<500000; ++i) {  // just to make sure we do not loop forever
+                DefaultBlockParameter blockNumberParameter = (nextBlockNumber == null)
+                                                           ? DefaultBlockParameterName.LATEST
+                                                           : DefaultBlockParameter.valueOf(nextBlockNumber);
 
-            final Date when = new Date(block.getTimestamp().longValue()*1000);
+                Block block = web3.ethGetBlockByNumber(blockNumberParameter, true).send().getBlock();
+                List<EthBlock.TransactionResult> transactions = block.getTransactions();
 
-            if ((mostRecentTransaction != null) && (!when.after(mostRecentTransaction.when))) {
-                return;
-            }
-
-            for(EthBlock.TransactionResult tr: transactions) {
-                EthBlock.TransactionObject t = (EthBlock.TransactionObject) tr.get();
-
-                Transaction transaction = new Transaction(
-                    when,
-                    (t.getTo() != null) ? coinMap.getOrDefault(unex(t.getTo().toLowerCase()), COIN_UNKOWN) : COIN_UNKOWN,
-                    null,
-                    unex(t.getFrom()),
-                    null,
-                    unex(t.getHash())
-                );
-
-                try {
-                    ABI.tranferInputDecode(t.getInput(), transaction);
-                    TM.add(transaction);
-                } catch (IllegalArgumentException x) {
-                    //
-                    // Ignoring for now; this happens when the transaction is of
-                    // different type than incoming token
+                          final Date when = new Date(block.getTimestamp().longValue()*1000);
+                if (when.before(SIX_MONTHS_AGO)) {
+                    break;
                 }
+
+                if ((mostRecentTransaction != null) && (!when.after(mostRecentTransaction.when))) {
+                    return;
+                }
+
+                for(EthBlock.TransactionResult tr: transactions) {
+                    EthBlock.TransactionObject t = (EthBlock.TransactionObject) tr.get();
+
+                    Transaction transaction = new Transaction(
+                        when,
+                        (t.getTo() != null) ? coinMap.getOrDefault(unex(t.getTo().toLowerCase()), COIN_UNKOWN) : COIN_UNKOWN,
+                        null,
+                        unex(t.getFrom()),
+                        null,
+                        unex(t.getHash())
+                    );
+
+                    try {
+                        ABI.tranferInputDecode(t.getInput(), transaction);
+                        TM.add(transaction);
+                    } catch (IllegalArgumentException x) {
+                        //
+                        // Ignoring for now; this happens when the transaction is of
+                        // different type than incoming token
+                    }
+                }
+                nextBlockNumber = block.getNumber().subtract(BigInteger.ONE);
             }
         } catch (Exception x) {
             throw new ManagerException("error retrieving transfers", x);
