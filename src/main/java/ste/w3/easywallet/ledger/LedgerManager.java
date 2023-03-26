@@ -35,7 +35,6 @@ import org.web3j.protocol.http.HttpService;
 import ste.w3.easywallet.ABIUtils;
 import ste.w3.easywallet.Coin;
 import static ste.w3.easywallet.Coin.COIN_UNKOWN;
-import ste.w3.easywallet.EasyWalletException;
 import ste.w3.easywallet.ManagerException;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Transaction;
@@ -83,7 +82,7 @@ public class LedgerManager {
             Block block = web3.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, true).send().getBlock();
             List<EthBlock.TransactionResult> transactions = block.getTransactions();
 
-            final Date when = new Date(block.getTimestamp().longValue());
+            final Date when = new Date(block.getTimestamp().longValue()*1000);
 
             if ((mostRecentTransaction != null) && (!when.after(mostRecentTransaction.when))) {
                 return;

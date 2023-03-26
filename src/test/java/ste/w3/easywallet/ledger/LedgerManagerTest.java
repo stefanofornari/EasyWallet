@@ -130,6 +130,24 @@ public class LedgerManagerTest implements TestingUtils {
         LM.refresh(); LS.fetch();
 
         then(LS.page).hasSize(2);
+        //
+        // Let's check we loaded the correct transactions
+        //
+        Transaction t = LS.page.get(0);
+        then(t.hash).isEqualTo("hash1");
+        then(t.when).isEqualTo(new Date(1668324371000l));
+        then(t.from).isEqualTo("f6a01c044dedc636f5f93f14bde8a53b4212d0b3");
+        then(t.to).isEqualTo("1234567890123456789012345678901234567890");
+        then(String.valueOf(t.amount)).isEqualTo("1E-18");
+        then(t.coin).isEqualTo("UNKNOWN");
+
+        t = LS.page.get(1);
+        then(t.hash).isEqualTo("hash2");
+        then(t.when).isEqualTo(new Date(1668324371000l));
+        then(t.from).isEqualTo("bba01c044dedc6f6f5f93f14bde8a53b4212d032");
+        then(t.to).isEqualTo("1234567890123456789012345678901234567890");
+        then(String.valueOf(t.amount)).isEqualTo("2E-18");
+        then(t.coin).isEqualTo("UNKNOWN");
     }
 
     @Test
