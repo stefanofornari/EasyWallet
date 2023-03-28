@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet;
 
+import java.util.Date;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
@@ -53,6 +54,34 @@ public class UtilsTest {
         then(Utils.unex("123abc")).isEqualTo("123abc");
         then(Utils.unex("0x123abc")).isEqualTo("123abc");
         then(Utils.unex("0X123abc")).isEqualTo("0X123abc");
+    }
+
+    @Test
+    public void timestmp_formatting_with_seconds() {
+        for (int n: new int[] {-1, -100} ) {
+            try {
+                Utils.ts(n);
+                fail("missing sanity check");
+            } catch (IllegalArgumentException x) {
+                then(x).hasMessage("seconds can not be negative");
+            }
+        }
+
+        then(Utils.ts(1679991690)).isEqualTo("20230328082130UTC");
+        then(Utils.ts(1641032490)).isEqualTo("20220101102130UTC");
+    }
+
+    @Test
+    public void timestmp_formatting_with_Date() {
+        try {
+            Utils.ts(null);
+            fail("missing sanity check");
+        } catch (IllegalArgumentException x) {
+            then(x).hasMessage("date can not be null");
+        }
+
+        then(Utils.ts(new Date(1679991690000l))).isEqualTo("20230328082130UTC");
+        then(Utils.ts(new Date(1641032490000l))).isEqualTo("20220101102130UTC");
     }
 
 }

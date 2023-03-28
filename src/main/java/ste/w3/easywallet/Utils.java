@@ -21,7 +21,11 @@
 package ste.w3.easywallet;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang3.StringUtils;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
+import static ste.w3.easywallet.Constants.UTC_TIMESTAMP_FORMAT;
 
 /**
  * TODO: rename to Utils (or delete it)
@@ -49,4 +53,33 @@ public class Utils {
         return (s.startsWith("0x")) ? s.substring(2) : s;
     }
 
+    /**
+     * Format the given epoch timestamp as YYYYMMDDhhmmss'UTC'
+     *
+     * @param seconds the epoch timestamp in UNIX epoch seconds
+     *
+     * @return timestamp formatted
+     */
+    public static String ts(long seconds) {
+        if (seconds < 0) {
+            throw new IllegalArgumentException("seconds can not be negative");
+        }
+
+        return String.format(UTC_TIMESTAMP_FORMAT, Instant.ofEpochSecond(seconds).atZone(ZoneId.of("UTC")));
+    }
+
+    /**
+     * Format the given date as YYYYMMDDhhmmss'UTC'
+     *
+     * @param date the date
+     *
+     * @return the date formatted
+     */
+    public static String ts(final Date date) {
+        if (date == null) {
+            throw new IllegalArgumentException("date can not be null");
+        }
+
+        return ts(date.getTime()/1000);
+    }
 }

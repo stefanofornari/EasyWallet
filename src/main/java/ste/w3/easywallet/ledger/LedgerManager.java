@@ -22,10 +22,13 @@ package ste.w3.easywallet.ledger;
 
 import java.math.BigInteger;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
 import org.web3j.protocol.Web3j;
@@ -37,10 +40,16 @@ import org.web3j.protocol.http.HttpService;
 import ste.w3.easywallet.ABIUtils;
 import ste.w3.easywallet.Coin;
 import static ste.w3.easywallet.Coin.COIN_UNKOWN;
+import static ste.w3.easywallet.Constants.EASYWALLET_LOG_NAME;
+import static ste.w3.easywallet.Constants.LOG_BLOCK_FORMAT_KO;
+import static ste.w3.easywallet.Constants.LOG_BLOCK_FORMAT_OK;
+import static ste.w3.easywallet.Constants.LOG_TRANSACTION_FORMAT_KO;
+import static ste.w3.easywallet.Constants.LOG_TRANSACTION_FORMAT_OK;
 import ste.w3.easywallet.ManagerException;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.TransactionsManager;
+import static ste.w3.easywallet.Utils.ts;
 import static ste.w3.easywallet.Utils.unex;
 
 /**
@@ -48,6 +57,8 @@ import static ste.w3.easywallet.Utils.unex;
  * WalletManager
  */
 public class LedgerManager {
+
+    protected final Logger LOG = Logger.getLogger(EASYWALLET_LOG_NAME);
 
     private final Web3j web3;
 
@@ -68,10 +79,14 @@ public class LedgerManager {
     public void refresh() throws ManagerException {
         final Date SIX_MONTHS_AGO = new Date(System.currentTimeMillis()-6*30*24*60*60*1000l);
         final ABIUtils ABI = new ABIUtils();
-
         //
         // TODO: break if block number not found
         //
+
+        if (LOG.isLoggable(Level.INFO)) {
+            LOG.info("refresh start");
+        }
+
         try {
             final TransactionsManager TM = new TransactionsManager();
             final Transaction mostRecentTransaction = TM.mostRecentTransaction();
@@ -92,15 +107,36 @@ public class LedgerManager {
                                                            : DefaultBlockParameter.valueOf(nextBlockNumber);
 
                 Block block = web3.ethGetBlockByNumber(blockNumberParameter, true).send().getBlock();
+
                 List<EthBlock.TransactionResult> transactions = block.getTransactions();
 
-                          final Date when = new Date(block.getTimestamp().longValue()*1000);
+                final Date when = new Date(block.getTimestamp().longValue()*1000);
                 if (when.before(SIX_MONTHS_AGO)) {
+                    LOG.info(
+                        String.format(
+                            LOG_BLOCK_FORMAT_KO,
+                            block.getHash(),
+                            String.valueOf(block.getNumber()),
+                            ts(block.getTimestamp().longValue()),
+                            ts(SIX_MONTHS_AGO)
+                        )
+                    );
                     break;
                 }
 
+                if (LOG.isLoggable(Level.INFO)) {
+                    LOG.info(
+                        String.format(
+                            LOG_BLOCK_FORMAT_OK,
+                            block.getHash(),
+                            String.valueOf(block.getNumber()),
+                            ts(block.getTimestamp().longValue())
+                        )
+                    );
+                }
+
                 if ((mostRecentTransaction != null) && (!when.after(mostRecentTransaction.when))) {
-                    return;
+                    break;
                 }
 
                 for(EthBlock.TransactionResult tr: transactions) {
@@ -119,15 +155,51 @@ public class LedgerManager {
                         ABI.tranferInputDecode(t.getInput(), transaction);
                         TM.add(transaction);
                     } catch (IllegalArgumentException x) {
-                        //
-                        // Ignoring for now; this happens when the transaction is of
-                        // different type than incoming token
+                        if (LOG.isLoggable(Level.INFO)) {
+                            LOG.info(
+                                String.format(
+                                    LOG_TRANSACTION_FORMAT_KO,
+                                    transaction.hash,
+                                    "not an incoming transfer"
+                                )
+                            );
+                        }
+                    } catch (SQLException x) {
+                        if (LOG.isLoggable(Level.INFO)) {
+                            LOG.info(
+                                String.format(
+                                    LOG_TRANSACTION_FORMAT_KO,
+                                    transaction.hash,
+                                    x.getMessage()
+                                )
+                            );
+                        }
+                    }
+
+                    if (LOG.isLoggable(Level.INFO)) {
+                        LOG.info(
+                            String.format(
+                                LOG_TRANSACTION_FORMAT_OK,
+                                transaction.hash,
+                                transaction.from,
+                                transaction.to,
+                                transaction.coin,
+                                String.valueOf(transaction.amount)
+                            )
+                        );
                     }
                 }
                 nextBlockNumber = block.getNumber().subtract(BigInteger.ONE);
             }
         } catch (Exception x) {
+            if (LOG.isLoggable(Level.INFO)) {
+                LOG.info("refresh interrupted");
+            }
+            // TODO: log the exception (maybe in the caller?)
             throw new ManagerException("error retrieving transfers", x);
+        }
+        if (LOG.isLoggable(Level.INFO)) {
+            LOG.info("refresh done");
         }
     }
 
