@@ -22,8 +22,8 @@
 
     <fileSets>
         <fileSet>
-            <outputDirectory>bin</outputDirectory>
-            <directory>src/main/bin</directory>
+            <outputDirectory></outputDirectory>
+            <directory>src/main/dist</directory>
             <lineEnding>unix</lineEnding>
             <fileMode>0750</fileMode>
             <directoryMode>0750</directoryMode>
