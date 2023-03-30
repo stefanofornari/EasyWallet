@@ -20,18 +20,14 @@
  */
 package ste.w3.easywallet.ledger;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.io.FileUtils;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import ste.w3.easywallet.ManagerException;
-import static ste.w3.easywallet.TestingConstants.COINS;
 import static ste.w3.easywallet.TestingConstants.GLM;
 import static ste.w3.easywallet.TestingConstants.STORJ;
 import ste.w3.easywallet.Transaction;
@@ -40,7 +36,7 @@ import static ste.xtest.Constants.BLANKS;
 /**
  *
  */
-public class LedgerManagerTest extends BaseLedgerManager {
+public class LedgerManagerTest extends BaseLedgerManagerTest {
 
     @Test
     public void construct_ledger_manager() {
