@@ -32,7 +32,7 @@ import ste.xtest.logging.ListLogHandler;
 /**
  *
  */
-public class LedgerManager_loggingTest extends BaseLedgerManager {
+public class LedgerManager_loggingTest extends BaseLedgerManagerTest {
 
     private final Logger LOG = Logger.getLogger(EASYWALLET_LOG_NAME);
     private final ListLogHandler HANDLER = new ListLogHandler();
