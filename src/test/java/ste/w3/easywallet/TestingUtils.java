@@ -25,6 +25,8 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -39,6 +41,8 @@ import javafx.stage.Stage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 import static ste.w3.easywallet.TestingConstants.ETH;
 import static ste.w3.easywallet.TestingConstants.GLM;
@@ -148,6 +152,42 @@ public interface TestingUtils {
 
     default String getRandomConnectionString() {
         return String.format("%s-%08X", JDBC_CONNECTION_STRING, System.currentTimeMillis());
+    }
+
+    default Preferences givenPreferences(final File preferencesFile, final String endpoint) throws IOException {
+        preferencesFile.getParentFile().mkdirs();
+
+        //
+        // Create some randomness to make sure the content is correctly read
+        //
+        RandomStringGenerator randomStringGenerator
+                = new RandomStringGenerator.Builder()
+                        .selectFrom("0123456789abcdef".toCharArray())
+                        .build();
+        Preferences preferences = new Preferences();
+        preferences.endpoint = endpoint;
+        preferences.appkey = randomStringGenerator.generate(12);
+        preferences.wallets = new Wallet[]{new Wallet(randomStringGenerator.generate(40))};
+        preferences.coins = new Coin[]{ETH, STORJ};
+        preferences.db = getRandomConnectionString();
+
+        PreferencesManager pm = new PreferencesManager();
+
+        FileUtils.writeStringToFile(preferencesFile, pm.toJSON(preferences), "UTF-8");
+
+        return preferences;
+    }
+
+    default TestingServer givenServer() {
+        TestingServer server = new TestingServer();
+        server.ethereum.start();
+        return server;
+    }
+
+    default void givenRequests(final TestingServer server, final Preferences preferences) {
+        server.addBalanceRequest(preferences.wallets[0].address, BigDecimal.ZERO);
+        server.addBalanceRequest(STORJ, preferences.wallets[0].address, BigDecimal.ZERO);
+        server.addLatestTransfersRequest(111111, new Transaction[0], new Coin[0]);
     }
 
 }

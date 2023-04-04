@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.text.RandomStringGenerator;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
@@ -31,11 +29,9 @@ import org.junit.runner.Description;
 import org.testfx.framework.junit.ApplicationTest;
 import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Preferences;
-import ste.w3.easywallet.PreferencesManager;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.TestingServer;
 import ste.w3.easywallet.Transaction;
-import ste.w3.easywallet.Wallet;
 import ste.xtest.concurrent.WaitFor;
 
 /**
@@ -79,44 +75,21 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
         server.ethereum.stop();
     }
 
-    protected File getPreferencesFile() throws IOException {
-        return new File(HOME.getRoot(), CONFIG_FILE);
+    protected Preferences givenPreferences() throws IOException {
+        return preferences = givenPreferences(getPreferencesFile(), server.ethereum.url("v3/apikey-" + System.currentTimeMillis()));
     }
 
-    protected Preferences givenPreferences() throws IOException {
-        File preferencesFile = getPreferencesFile();
-
-        preferencesFile.getParentFile().mkdirs();
-
-        //
-        // Create some randomness to make sure the content is correctly read
-        //
-        RandomStringGenerator randomStringGenerator
-                = new RandomStringGenerator.Builder()
-                        .selectFrom("0123456789abcdef".toCharArray())
-                        .build();
-        preferences = new Preferences();
-        preferences.endpoint = server.ethereum.url("v3/" + randomStringGenerator.generate(20)).toString();
-        preferences.appkey = randomStringGenerator.generate(12);
-        preferences.wallets = new Wallet[]{new Wallet(randomStringGenerator.generate(40))};
-        preferences.coins = new Coin[]{ETH, STORJ};
-        preferences.db = getRandomConnectionString();
-
-        PreferencesManager pm = new PreferencesManager();
-
-        FileUtils.writeStringToFile(preferencesFile, pm.toJSON(preferences), "UTF-8");
-
-        return preferences;
+    protected File getPreferencesFile() throws IOException {
+        return new File(HOME.getRoot(), CONFIG_FILE);
     }
 
     protected EasyWalletMainWithPreferences givenMainWindow() {
         return (main = new EasyWalletMainWithPreferences());
     }
 
-    protected TestingServer givenServer() {
-        server = new TestingServer();
-        server.ethereum.start();
-        return server;
+    @Override
+    public TestingServer givenServer() {
+        return server = TestingUtils.super.givenServer();
     }
 
     protected void withConnectionException() throws Exception {
@@ -124,9 +97,7 @@ public class BaseEasyWalletMain extends ApplicationTest implements TestingConsta
     }
 
     protected void givenRequests() {
-        server.addBalanceRequest(preferences.wallets[0].address, BigDecimal.ZERO);
-        server.addBalanceRequest(STORJ, preferences.wallets[0].address, BigDecimal.ZERO);
-        server.addLatestTransfersRequest(111111, new Transaction[0], new Coin[0]);
+        givenRequests(server, preferences);
     }
 
     protected void waitForRefresh() {

@@ -55,7 +55,7 @@ public class BaseLedgerManagerTest implements TestingUtils {
     protected static final String TEST_APP_KEY_2 = "THISISANOTHERAPPKEY";
 
     protected static final Date TS = new Date(1648887012000l);
-    protected static final Transaction[] TRANSACTIONS1 = new Transaction[] {
+    public static final Transaction[] TRANSACTIONS1 = new Transaction[] {
         //
         // NOTE: these represents the transactions in a block; all shall have
         //       the same timestamp
@@ -66,15 +66,15 @@ public class BaseLedgerManagerTest implements TestingUtils {
         new Transaction(TS, null, BigDecimal.TEN, null, WALLET1, "block1-hash4"),
         new Transaction(TS, new Coin("FAKE", "FAKE", "68c929e7b8fb06c58494a369f6f088fff28f7c77", 10), BigDecimal.TEN, null, WALLET1, "block1-hash5")
     };
-    protected static final Transaction[] TRANSACTIONS2 = new Transaction[] {
+    public static final Transaction[] TRANSACTIONS2 = new Transaction[] {
         new Transaction(DateUtils.addDays(TS, 1), STORJ, BigDecimal.ONE, null, WALLET1, "block2-hash1"),
         new Transaction(DateUtils.addDays(TS, -1), STORJ, BigDecimal.ONE, null, WALLET1, "block2-hash1"), // duplicated
         new Transaction(DateUtils.addDays(TS, -1), STORJ, BigDecimal.valueOf(1, 50), null, WALLET1, "block2-hash1") // amount too big
     };
-    protected static final Transaction[] TRANSACTIONS3 = new Transaction[] {
+    public static final Transaction[] TRANSACTIONS3 = new Transaction[] {
         new Transaction(DateUtils.addHours(TS, -100), GLM, BigDecimal.TEN, null, WALLET1, "block3-hash1")
     };
-    protected static final Transaction[] TRANSACTIONS4 = new Transaction[] {
+    public static final Transaction[] TRANSACTIONS4 = new Transaction[] {
         new Transaction(new Date(1641032490000l /*  Saturday 1 January 2022 10:21:30 GMT */), GLM, BigDecimal.TEN, null, WALLET1, "block4-hash1")
     };
 

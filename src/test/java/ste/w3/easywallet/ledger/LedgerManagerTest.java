@@ -20,7 +20,6 @@
  */
 package ste.w3.easywallet.ledger;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,7 +34,6 @@ import static ste.w3.easywallet.TestingConstants.STORJ;
 import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.data.BlocksManager;
 import static ste.xtest.Constants.BLANKS;
-import wiremock.org.apache.commons.lang3.time.DateUtils;
 
 /**
  *

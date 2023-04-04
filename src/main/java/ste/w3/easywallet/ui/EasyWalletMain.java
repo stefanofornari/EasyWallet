@@ -37,9 +37,9 @@ public class EasyWalletMain extends Application {
 
     public final File configFile = getConfigFile();
 
-    private Preferences preferences = null;
-    private WalletManager walletManager = null;
-    private LedgerManager ledgerManager = null;
+    protected Preferences preferences = null;
+    protected WalletManager walletManager = null;
+    protected LedgerManager ledgerManager = null;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -147,7 +147,7 @@ public class EasyWalletMain extends Application {
         launch(args);
     }
 
-    protected void initialize() throws Exception {
+    protected void initialize() throws IOException, NamingException {
         Context ctx = getJNDIRoot();
 
         PreferencesManager pm = new PreferencesManager();
