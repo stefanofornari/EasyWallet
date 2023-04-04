@@ -50,6 +50,9 @@ public class TransactionsManager {
         }
     }
 
+    //
+    // TODO: rename in all()
+    //
     public List<Transaction> getAll() throws ManagerException {
         try {
             return transactions.queryBuilder().query();

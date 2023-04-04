@@ -26,7 +26,6 @@ import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import static ste.w3.easywallet.Constants.EASYWALLET_LOG_NAME;
 import ste.w3.easywallet.ManagerException;
-import static ste.w3.easywallet.Utils.ts;
 import ste.xtest.logging.ListLogHandler;
 
 /**
@@ -46,24 +45,27 @@ public class LedgerManager_loggingTest extends BaseLedgerManagerTest {
     public void log_block_and_transaction_loading() throws Exception {
         final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
 
-        givenTransfersBlocks(); LM.refresh();
+        givenTransfersBlocks(); givenDBWithBlocks(111109);
+
+        LM.refresh();
 
         final List<String> MESSAGES = HANDLER.getMessages();
         then(MESSAGES)
             .contains("refresh start")
-            .contains("block 0x941bdb675ea97b27414681303b158b7226d72ad8e6ea17d7345f03c5e2eb9842 35545771 " + ts(TRANSACTIONS1[0].when) + " ok")
-            .contains("block 0x941bdb675ea97b27414681303b158b7226d72ad8e6ea17d7345f03c5e2eb9842 35545770 " + ts(TRANSACTIONS2[0].when) + " ok")
-            .contains("block 0x941bdb675ea97b27414681303b158b7226d72ad8e6ea17d7345f03c5e2eb9842 35545769 " + ts(TRANSACTIONS3[0].when) + " ok")
+            .contains("block 0xhash00000000000000000000000000000000000000000000000000000001B206 111110 20220403081012UTC ok")
+            .contains("block 0xhash00000000000000000000000000000000000000000000000000000001B207 111111 20220402081012UTC ok")
             .contains("refresh done");
-        then(MESSAGES.get(15)).contains("35545768").contains("ko block older than ");
 
         then(MESSAGES)
             .contains("transaction 0xblock1-hash1 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x1234567890123456789012345678901234567890 STORJ 1E-18")
             .contains("transaction 0xblock2-hash1 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x1234567890123456789012345678901234567890 STORJ 1E-18")
-            .contains("transaction 0xblock2-hash1 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x1234567890123456789012345678901234567890 STORJ 1E-18")
-            .contains("transaction 0xblock3-hash1 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x1234567890123456789012345678901234567890 GLM 1E-17");
-        then(MESSAGES.get(9)).contains("transaction 0xblock2-hash1 ko Unable to run insert stmt");
-        then(MESSAGES.get(11)).contains("transaction 0xblock2-hash1 ko Unable to run insert stmt");
+            .contains("transaction 0xblock1-hash1 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x1234567890123456789012345678901234567890 STORJ 1E-18")
+            .contains("transaction 0xblock1-hash2 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x1234567890123456789012345678901234567890 GLM 2E-18")
+            .contains("transaction 0xblock1-hash3 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x0123456789012345678901234567890123456789 GLM 1E-17")
+            .contains("transaction 0xblock1-hash4 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x1234567890123456789012345678901234567890 UNKNOWN 1E-17")
+            .contains("transaction 0xblock1-hash5 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0x1234567890123456789012345678901234567890 UNKNOWN 1E-17")
+        ;
+        then(MESSAGES.get(3)).contains("transaction 0xblock2-hash1 ko Unable to run insert stmt");
     }
 
     @Test
@@ -88,7 +90,7 @@ public class LedgerManager_loggingTest extends BaseLedgerManagerTest {
     public void log_not_refresh_error() throws Exception {
         final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
 
-        givenMixedTransactionsBlock();
+        givenMixedTransactionsBlock(); givenDBWithBlocks(111100);
         try {
             LM.refresh();
         } catch (ManagerException x) {

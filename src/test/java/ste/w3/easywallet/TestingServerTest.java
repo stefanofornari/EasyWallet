@@ -137,7 +137,7 @@ public class TestingServerTest implements TestingConstants {
             new Transaction(new Date(A_TIMESTAMP), GLM, BigDecimal.valueOf(10343526), null, WALLET2, "hash4"),
         };
 
-        server.addLatestTransfersRequest(TRANSACTIONS1, COINS);
+        server.addLatestTransfersRequest(111111, TRANSACTIONS1, COINS);
 
         final Request request = new Request.Builder().url(server.ethereum.url("fake")).post(
             RequestBody.create(
@@ -151,14 +151,14 @@ public class TestingServerTest implements TestingConstants {
             givenTransactionsBody("transactions-1.json")
         );
 
-        server.addLatestTransfersRequest(TRANSACTIONS2, COINS);
+        server.addLatestTransfersRequest(111111, TRANSACTIONS2, COINS);
 
         response = http.newCall(request).execute();
         then(response.body().string()).isEqualTo(
             givenTransactionsBody("transactions-2.json")
         );
 
-        server.addLatestTransfersRequest(new Transaction[0], COINS);
+        server.addLatestTransfersRequest(111111, new Transaction[0], COINS);
         response = http.newCall(request).execute();
         then(response.body().string()).isEqualTo(
             givenTransactionsBody("transactions-3.json")

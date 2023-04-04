@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet.ledger;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,11 +28,14 @@ import java.util.List;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
+import ste.w3.easywallet.Block;
 import ste.w3.easywallet.ManagerException;
 import static ste.w3.easywallet.TestingConstants.GLM;
 import static ste.w3.easywallet.TestingConstants.STORJ;
 import ste.w3.easywallet.Transaction;
+import ste.w3.easywallet.data.BlocksManager;
 import static ste.xtest.Constants.BLANKS;
+import wiremock.org.apache.commons.lang3.time.DateUtils;
 
 /**
  *
@@ -60,27 +64,62 @@ public class LedgerManagerTest extends BaseLedgerManagerTest {
     }
 
     @Test
-    public void refresh_updates_the_db_with_latest_blocks_up_to_6_months_old() throws Exception {
+    public void refresh_with_empty_blocks_db_loads_the_latest_block() throws Exception {
+        givenLatestTransfersBlock();
+
         final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
-        final LedgerSource LS = new LedgerSource(W1);
+        LM.refresh();
 
-        givenTransfersBlocks();
+        LedgerSource ls = new LedgerSource(W1); ls.fetch();
+        then(ls.page).hasSize(4);
+        then(ls.page.get(0).hash).isEqualTo("block1-hash1");
+        then(ls.page.get(0).coin).isEqualTo(STORJ.symbol);
+        then(ls.page.get(1).hash).isEqualTo("block1-hash2");
+        then(ls.page.get(1).coin).isEqualTo(GLM.symbol);
+        then(ls.page.get(2).hash).isEqualTo("block1-hash4");
+        then(ls.page.get(2).coin).isEqualTo("UNKNOWN");
+        then(ls.page.get(3).hash).isEqualTo("block1-hash5");
+        then(ls.page.get(3).coin).isEqualTo("UNKNOWN");
 
-        LM.refresh(); LS.fetch();
+        final BlocksManager BM = new BlocksManager();
+        then(BM.mostRecent().number.longValue()).isEqualTo(111111);
+    }
 
-        then(LS.page).hasSize(6);
-        then(LS.page.get(0).hash).isEqualTo("block1-hash1");
-        then(LS.page.get(0).coin).isEqualTo(STORJ.symbol);
-        then(LS.page.get(1).hash).isEqualTo("block1-hash2");
-        then(LS.page.get(1).coin).isEqualTo(GLM.symbol);
-        then(LS.page.get(2).hash).isEqualTo("block1-hash4");
-        then(LS.page.get(2).coin).isEqualTo("UNKNOWN");
-        then(LS.page.get(3).hash).isEqualTo("block1-hash5");
-        then(LS.page.get(3).coin).isEqualTo("UNKNOWN");
-        then(LS.page.get(4).hash).isEqualTo("block2-hash1");
-        then(LS.page.get(4).coin).isEqualTo(STORJ.symbol);
-        then(LS.page.get(5).hash).isEqualTo("block3-hash1");
-        then(LS.page.get(5).coin).isEqualTo(GLM.symbol);
+    @Test
+    public void refresh_imports_blocks_since_latest_impoorted() throws Exception {
+        final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
+
+        LedgerSource ls = new LedgerSource(W1);
+
+        givenTransfersBlocks(); givenDBWithBlocks(111109);
+
+        LM.refresh(); ls.fetch();
+
+        then(ls.page).hasSize(5);
+        then(ls.page.get(0).hash).isEqualTo("block1-hash1");
+        then(ls.page.get(0).coin).isEqualTo(STORJ.symbol);
+        then(ls.page.get(1).hash).isEqualTo("block1-hash2");
+        then(ls.page.get(1).coin).isEqualTo(GLM.symbol);
+        then(ls.page.get(2).hash).isEqualTo("block1-hash4");
+        then(ls.page.get(2).coin).isEqualTo("UNKNOWN");
+        then(ls.page.get(3).hash).isEqualTo("block1-hash5");
+        then(ls.page.get(4).hash).isEqualTo("block2-hash1");
+        then(ls.page.get(4).coin).isEqualTo(STORJ.symbol);
+
+        ls = new LedgerSource(W2); ls.fetch();
+        then(ls.page).hasSize(1);
+        then(ls.page.get(0).hash).isEqualTo("block1-hash3");
+        then(ls.page.get(0).coin).isEqualTo(GLM.symbol);
+
+        final BlocksManager BM = new BlocksManager();
+
+        List<Block> all = BM.all();
+        then(all).hasSize(3);
+        then(all).element(0).hasFieldOrPropertyWithValue("hash", "hash-111109");
+        then(all).element(1).hasFieldOrPropertyWithValue("hash", "hash00000000000000000000000000000000000000000000000000000001B206");
+        then(all).element(2).hasFieldOrPropertyWithValue("hash", "hash00000000000000000000000000000000000000000000000000000001B207");
+
+        then(BM.mostRecent().number.longValue()).isEqualTo(111111);
     }
 
     @Test
@@ -126,10 +165,10 @@ public class LedgerManagerTest extends BaseLedgerManagerTest {
         final LedgerManager LM = new LedgerManager(server.ethereum.url("fake"));
         final LedgerSource LS = new LedgerSource(W1);
 
-        givenTransfersBlock();
+        givenLatestTransfersBlock();
 
         try {
-            LM.refresh(); // error if trying to insert twice the same transaction
+            LM.refresh(); LM.refresh(); // error if trying to insert twice the same transaction
         } catch (ManagerException x) {
             //
             // we are supposed to get an execption because we made available one
@@ -158,5 +197,7 @@ public class LedgerManagerTest extends BaseLedgerManagerTest {
             then(x).hasMessageContaining("error retrieving transfers");
         }
     }
+
+    // --------------------------------------------------------- private methods
 
 }

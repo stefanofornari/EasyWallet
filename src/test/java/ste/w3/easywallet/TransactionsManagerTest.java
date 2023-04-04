@@ -157,7 +157,7 @@ public class TransactionsManagerTest implements TestingUtils {
             .value().isEqualTo("transactionhash")
             .value().isEqualTo("fromaddress")
             .value().isEqualTo("toaddress")
-            .value().isEqualTo(new BigDecimal("123.456")) // turn into BigDecimal
+            .value().isEqualTo(new BigDecimal("123.456"))
             .value().isEqualTo(new Timestamp(d.getTime()))
             .value().isEqualTo("STORJ");
 

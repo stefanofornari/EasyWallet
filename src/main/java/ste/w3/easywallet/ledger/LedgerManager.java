@@ -21,6 +21,7 @@
 package ste.w3.easywallet.ledger;
 
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
@@ -35,13 +36,12 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthBlock;
-import org.web3j.protocol.core.methods.response.EthBlock.Block;
 import org.web3j.protocol.http.HttpService;
 import ste.w3.easywallet.ABIUtils;
+import ste.w3.easywallet.Block;
 import ste.w3.easywallet.Coin;
 import static ste.w3.easywallet.Coin.COIN_UNKOWN;
 import static ste.w3.easywallet.Constants.EASYWALLET_LOG_NAME;
-import static ste.w3.easywallet.Constants.LOG_BLOCK_FORMAT_KO;
 import static ste.w3.easywallet.Constants.LOG_BLOCK_FORMAT_OK;
 import static ste.w3.easywallet.Constants.LOG_TRANSACTION_FORMAT_KO;
 import static ste.w3.easywallet.Constants.LOG_TRANSACTION_FORMAT_OK;
@@ -51,6 +51,7 @@ import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.TransactionsManager;
 import static ste.w3.easywallet.Utils.ts;
 import static ste.w3.easywallet.Utils.unex;
+import ste.w3.easywallet.data.BlocksManager;
 
 /**
  * TOTO: refactor to move commodity code in a base class for LedgerManager and
@@ -63,143 +64,88 @@ public class LedgerManager {
     private final Web3j web3;
 
     public final String endpoint;
+    public final Map<String, Coin> coinMap = new HashMap<>();
 
     public LedgerManager(final String endpoint) {
         try {
             new URL(endpoint);
-        } catch (Exception x) {
+        } catch (MalformedURLException x) {
             throw new IllegalArgumentException(
-                String.format("endpoint is not a valid url (%s)", endpoint)
+                    String.format("endpoint is not a valid url (%s)", endpoint)
             );
         }
         this.endpoint = endpoint;
         web3 = Web3j.build(new HttpService(endpoint));
+
+        try {
+            if (coins() != null) {
+                for (Coin c : coins()) {
+                    if (c.contract != null) {
+                        coinMap.put(c.contract.toLowerCase(), c);
+                    }
+                }
+            }
+        } catch (ConfigurationException x) {
+            //
+            // todo: log the error
+            //
+        }
     }
 
     public void refresh() throws ManagerException {
-        final Date SIX_MONTHS_AGO = new Date(System.currentTimeMillis()-6*30*24*60*60*1000l);
-        final ABIUtils ABI = new ABIUtils();
+        boolean ok = true;
         //
-        // TODO: break if block number not found
+        // TODO: break if block number not found?
         //
-
         if (LOG.isLoggable(Level.INFO)) {
             LOG.info("refresh start");
         }
 
         try {
             final TransactionsManager TM = new TransactionsManager();
-            final Transaction mostRecentTransaction = TM.mostRecentTransaction();
+            final BlocksManager BM = new BlocksManager();
 
-            final Map<String, Coin> coinMap = new HashMap<>();
-            if (coins() != null) {
-                for (Coin c: coins()) {
-                    if (c.contract != null) {
-                        coinMap.put(c.contract.toLowerCase(), c);
-                    }
-                }
+            Block mostRecentBlock = BM.mostRecent(); // null if db is empty
+
+            //
+            // Retrieve the latest block and if the db is empty save it and take
+            // it as the most recent
+            //
+            EthBlock.Block latestEthBlock = web3.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, true).send().getBlock();
+            if (mostRecentBlock == null) {
+                mostRecentBlock = getBlock(latestEthBlock);
+                saveEthBlock(BM, TM, latestEthBlock);
+                return;
+            } else if (mostRecentBlock.number.equals(latestEthBlock.getNumber())) {
+                return;
             }
 
-            BigInteger nextBlockNumber = null;
-            for (long i=0; i<500000; ++i) {  // just to make sure we do not loop forever
-                DefaultBlockParameter blockNumberParameter = (nextBlockNumber == null)
-                                                           ? DefaultBlockParameterName.LATEST
-                                                           : DefaultBlockParameter.valueOf(nextBlockNumber);
-
-                Block block = web3.ethGetBlockByNumber(blockNumberParameter, true).send().getBlock();
-
-                List<EthBlock.TransactionResult> transactions = block.getTransactions();
-
-                final Date when = new Date(block.getTimestamp().longValue()*1000);
-                if (when.before(SIX_MONTHS_AGO)) {
-                    LOG.info(
-                        String.format(
-                            LOG_BLOCK_FORMAT_KO,
-                            block.getHash(),
-                            String.valueOf(block.getNumber()),
-                            ts(block.getTimestamp().longValue()),
-                            ts(SIX_MONTHS_AGO)
-                        )
-                    );
-                    break;
-                }
-
-                if (LOG.isLoggable(Level.INFO)) {
-                    LOG.info(
-                        String.format(
-                            LOG_BLOCK_FORMAT_OK,
-                            block.getHash(),
-                            String.valueOf(block.getNumber()),
-                            ts(block.getTimestamp().longValue())
-                        )
-                    );
-                }
-
-                if ((mostRecentTransaction != null) && (!when.after(mostRecentTransaction.when))) {
-                    break;
-                }
-
-                for(EthBlock.TransactionResult tr: transactions) {
-                    EthBlock.TransactionObject t = (EthBlock.TransactionObject) tr.get();
-
-                    Transaction transaction = new Transaction(
-                        when,
-                        (t.getTo() != null) ? coinMap.getOrDefault(unex(t.getTo().toLowerCase()), COIN_UNKOWN) : COIN_UNKOWN,
-                        null,
-                        unex(t.getFrom()),
-                        null,
-                        unex(t.getHash())
-                    );
-
-                    try {
-                        ABI.tranferInputDecode(t.getInput(), transaction);
-                        TM.add(transaction);
-                    } catch (IllegalArgumentException x) {
-                        if (LOG.isLoggable(Level.INFO)) {
-                            LOG.info(
-                                String.format(
-                                    LOG_TRANSACTION_FORMAT_KO,
-                                    transaction.hash,
-                                    "not an incoming transfer"
-                                )
-                            );
-                        }
-                    } catch (SQLException x) {
-                        if (LOG.isLoggable(Level.INFO)) {
-                            LOG.info(
-                                String.format(
-                                    LOG_TRANSACTION_FORMAT_KO,
-                                    transaction.hash,
-                                    x.getMessage()
-                                )
-                            );
-                        }
-                    }
-
-                    if (LOG.isLoggable(Level.INFO)) {
-                        LOG.info(
-                            String.format(
-                                LOG_TRANSACTION_FORMAT_OK,
-                                transaction.hash,
-                                transaction.from,
-                                transaction.to,
-                                transaction.coin,
-                                String.valueOf(transaction.amount)
-                            )
-                        );
-                    }
-                }
-                nextBlockNumber = block.getNumber().subtract(BigInteger.ONE);
+            for (
+                BigInteger blockNumber = mostRecentBlock.number.add(BigInteger.ONE);
+                latestEthBlock.getNumber().compareTo(blockNumber) > 0;
+                blockNumber = blockNumber.add(BigInteger.ONE)
+            ) {
+                saveEthBlock(
+                    BM, TM,
+                    web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(blockNumber), true).send().getBlock()
+                );
             }
+
+            //
+            // we still need to save the latest block gathered at the beginning
+            //
+            saveEthBlock(BM, TM, latestEthBlock);
         } catch (Exception x) {
             if (LOG.isLoggable(Level.INFO)) {
                 LOG.info("refresh interrupted");
             }
+            ok = false;
             // TODO: log the exception (maybe in the caller?)
             throw new ManagerException("error retrieving transfers", x);
-        }
-        if (LOG.isLoggable(Level.INFO)) {
-            LOG.info("refresh done");
+        } finally {
+            if (ok && LOG.isLoggable (Level.INFO)) {
+                LOG.info("refresh done");
+            }
         }
     }
 
@@ -212,6 +158,86 @@ public class LedgerManager {
         } catch (Exception x) {
             throw new ConfigurationException(x.getMessage());
         }
+    }
 
+    private void saveEthBlock(BlocksManager bm, TransactionsManager tm, EthBlock.Block ethBlock)
+    throws ConfigurationException, ManagerException {
+        final ABIUtils ABI = new ABIUtils();
+        final List<EthBlock.TransactionResult> transactions = ethBlock.getTransactions();
+
+        final Date when = new Date(ethBlock.getTimestamp().longValue() * 1000);
+
+        if (LOG.isLoggable(Level.INFO)) {
+            LOG.info(
+                String.format(
+                    LOG_BLOCK_FORMAT_OK,
+                    ethBlock.getHash(),
+                    String.valueOf(ethBlock.getNumber()),
+                    ts(ethBlock.getTimestamp().longValue())
+                )
+            );
+        }
+
+        for (EthBlock.TransactionResult tr : transactions) {
+            EthBlock.TransactionObject t = (EthBlock.TransactionObject) tr.get();
+
+            Transaction transaction = new Transaction(
+                when,
+                (t.getTo() != null) ? coinMap.getOrDefault(unex(t.getTo().toLowerCase()), COIN_UNKOWN) : COIN_UNKOWN,
+                null,
+                unex(t.getFrom()),
+                null,
+                unex(t.getHash())
+            );
+
+            try {
+                ABI.tranferInputDecode(t.getInput(), transaction);
+                tm.add(transaction);
+            } catch (IllegalArgumentException x) {
+                if (LOG.isLoggable(Level.INFO)) {
+                    LOG.info(
+                        String.format(
+                                LOG_TRANSACTION_FORMAT_KO,
+                                transaction.hash,
+                                "not an incoming transfer"
+                        )
+                    );
+                }
+            } catch (SQLException x) {
+                if (LOG.isLoggable(Level.INFO)) {
+                    LOG.info(
+                            String.format(
+                                    LOG_TRANSACTION_FORMAT_KO,
+                                    transaction.hash,
+                                    x.getMessage()
+                            )
+                    );
+                }
+            }
+
+            if (LOG.isLoggable(Level.INFO)) {
+                LOG.info(
+                        String.format(
+                                LOG_TRANSACTION_FORMAT_OK,
+                                transaction.hash,
+                                transaction.from,
+                                transaction.to,
+                                transaction.coin,
+                                String.valueOf(transaction.amount)
+                        )
+                );
+            }
+        } // for
+
+        bm.add(getBlock(ethBlock));
+    }
+
+    private Block getBlock(final EthBlock.Block ethBlock)
+    throws ManagerException {
+        return new Block(
+            new Date(ethBlock.getTimestamp().longValue() * 1000),
+            ethBlock.getNumber(),
+            unex(ethBlock.getHash())
+        );
     }
 }

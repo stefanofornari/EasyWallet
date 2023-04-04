@@ -71,8 +71,8 @@ public class ERC20Test {
     }
 
     /*
-    token.symbol().send()
-    =====================
+    token.symbol
+    ============
 
     --> POST https://polygon-mainnet.infura.io/v3/$APPKEY
     Content-Type: application/json; charset=utf-8
@@ -90,8 +90,8 @@ public class ERC20Test {
     {"jsonrpc":"2.0","id":0,"result":"0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000553544f524a000000000000000000000000000000000000000000000000000000"}
     <-- END HTTP (230-byte body)
 
-    token.name().send()
-    ===================
+    token.name
+    ==========
 
     --> POST https://polygon-mainnet.infura.io/v3/$APPKEY
     Content-Type: application/json; charset=utf-8
@@ -109,8 +109,8 @@ public class ERC20Test {
     {"jsonrpc":"2.0","id":1,"result":"0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001053746f726a546f6b656e2028506f532900000000000000000000000000000000"}
     <-- END HTTP (230-byte body)
 
-    token.decimals().send()
-    =======================
+    token.decimals
+    ==============
 
     --> POST https://polygon-mainnet.infura.io/v3/$APPKEY
     Content-Type: application/json; charset=utf-8
@@ -187,8 +187,8 @@ public class ERC20Test {
 
     /*
 
-    ethGetBalance().send
-    ====================
+    getBalance
+    ==========
 
     --> POST https://polygon-mainnet.infura.io/v3/$APPKEY
     Content-Type: application/json; charset=utf-8
@@ -230,8 +230,8 @@ public class ERC20Test {
     }
 
     /*
-    ethBlockNumber()
-    ===================
+    getBlockByNumber
+    ================
     --> POST https://polygon-mainnet.infura.io/v3/$APPKEY
     Content-Type: application/json; charset=utf-8
     Content-Length: 84
@@ -246,8 +246,8 @@ public class ERC20Test {
 
     {"jsonrpc":"2.0","id":0,"result":"0x264c70f"}
 
-    ethGetBlockByNumber (latest)
-    ============================
+    getBlockByNumber (latest)
+    =========================
     --> POST https://polygon-mainnet.infura.io/v3/$APPKEY
     Content-Type: application/json; charset=utf-8
     Content-Length: 82
