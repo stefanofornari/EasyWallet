@@ -142,8 +142,6 @@ public class EasyWalletMain extends Application {
                         )
                 );
             }
-
-            //ctx.bind("root/db", db);
         }
 
         launch(args);
