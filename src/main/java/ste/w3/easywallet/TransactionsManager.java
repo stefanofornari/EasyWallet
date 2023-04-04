@@ -50,10 +50,7 @@ public class TransactionsManager {
         }
     }
 
-    //
-    // TODO: rename in all()
-    //
-    public List<Transaction> getAll() throws ManagerException {
+    public List<Transaction> all() throws ManagerException {
         try {
             return transactions.queryBuilder().query();
         } catch (SQLException x) {

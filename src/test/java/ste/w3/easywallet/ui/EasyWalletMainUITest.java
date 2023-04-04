@@ -141,8 +141,6 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
         clickOn("mfx-ledger"); waitForFxEvents(); // fetch of transfers is async as well
         new WaitFor(2000, () -> !lookup("STORJ").queryAll().isEmpty());
         Then.then(lookup("STORJ")).hasWidgets();
-
-        // com.j256.ormlite.stmt.StatementExecutor query of 'SELECT LIMIT 0 1000 * FROM "TRANSACTIONS" WHERE "to" = '0e436b603633502d76f1de011c44cce054121df4'' with 0 args
     }
 
     @Test

@@ -87,13 +87,13 @@ public class TransactionsManagerTest implements TestingUtils {
     public void getAll_returns_all_transactions() throws Exception {
         TransactionsManager tm = new TransactionsManager();
 
-        then(tm.getAll()).isEmpty();
+        then(tm.all()).isEmpty();
         tm.add(
             new Transaction(
                 new Date(), STORJ, new BigDecimal("123.456"), "fromaddress", "toaddress", "newtransactionhash"
             )
         );
-        then(tm.getAll()).hasSize(1).element(0).hasFieldOrPropertyWithValue("hash", "newtransactionhash");
+        then(tm.all()).hasSize(1).element(0).hasFieldOrPropertyWithValue("hash", "newtransactionhash");
     }
 
     @Test
@@ -119,7 +119,7 @@ public class TransactionsManagerTest implements TestingUtils {
         for(TableSourceSorting s: new TableSourceSorting[] { new TableSourceSorting("hash", Order.NONE), null}) {
             rows = tm.get(s, 0, Integer.MAX_VALUE);
             int i = 0;
-            for (Transaction t: tm.getAll()) {
+            for (Transaction t: tm.all()) {
                 then(t.hash).isEqualTo(rows.get(i++).hash);
             }
         }
