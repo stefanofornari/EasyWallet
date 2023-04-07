@@ -83,7 +83,9 @@ public class LedgerManagerLoggingTest extends BaseLedgerManagerTest {
         }
 
         final List<String> MESSAGES = HANDLER.getMessages();
-        then(MESSAGES).contains("transaction 0xhash3 ko not an incoming transfer");
+        then(MESSAGES)
+            .contains("transaction 0xhash3 ko not an incoming transfer")
+            .doesNotContain("transaction 0xhash3 ok 0xf6a01c044dedc636f5f93f14bde8a53b4212d0b3 0xnull UNKNOWN null");
     }
 
     @Test

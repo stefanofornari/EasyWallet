@@ -193,6 +193,18 @@ public class LedgerManager {
             try {
                 ABI.tranferInputDecode(t.getInput(), transaction);
                 tm.add(transaction);
+                if (LOG.isLoggable(Level.INFO)) {
+                    LOG.info(
+                        String.format(
+                            LOG_TRANSACTION_FORMAT_OK,
+                            transaction.hash,
+                            transaction.from,
+                            transaction.to,
+                            transaction.coin,
+                            String.valueOf(transaction.amount)
+                        )
+                    );
+                }
             } catch (IllegalArgumentException x) {
                 if (LOG.isLoggable(Level.INFO)) {
                     LOG.info(
@@ -215,18 +227,6 @@ public class LedgerManager {
                 }
             }
 
-            if (LOG.isLoggable(Level.INFO)) {
-                LOG.info(
-                        String.format(
-                                LOG_TRANSACTION_FORMAT_OK,
-                                transaction.hash,
-                                transaction.from,
-                                transaction.to,
-                                transaction.coin,
-                                String.valueOf(transaction.amount)
-                        )
-                );
-            }
         } // for
 
         bm.add(getBlock(ethBlock));
