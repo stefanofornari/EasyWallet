@@ -31,13 +31,13 @@ import ste.xtest.logging.ListLogHandler;
 /**
  *
  */
-public class LedgerManager_loggingTest extends BaseLedgerManagerTest {
+public class LedgerManagerLoggingTest extends BaseLedgerManagerTest {
 
     private final Logger LOG = Logger.getLogger(EASYWALLET_LOG_NAME);
     private final ListLogHandler HANDLER = new ListLogHandler();
 
 
-    public LedgerManager_loggingTest() {
+    public LedgerManagerLoggingTest() {
         LOG.addHandler(HANDLER);
     }
 
