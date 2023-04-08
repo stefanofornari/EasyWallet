@@ -25,7 +25,6 @@ import io.github.palexdev.materialfx.effects.ripple.RippleClipType;
 import io.github.palexdev.materialfx.factories.RippleClipTypeFactory;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -43,6 +42,7 @@ import ste.w3.easywallet.EasyWalletException;
 import static ste.w3.easywallet.Labels.ERR_NETWORK;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
+import ste.w3.easywallet.util.Utils;
 
 /**
  *
@@ -51,7 +51,7 @@ public class EasyWalletMainController {
 
     private final EasyWalletMain main;
 
-    protected ExecutorService background = Executors.newSingleThreadExecutor();  // do not set final for testing purposes
+    protected ExecutorService background = Utils.newSingleDaemonThreadExecutor(); // do not set final for testing purposes
 
     @FXML
     protected BorderPane easyWalletMain;

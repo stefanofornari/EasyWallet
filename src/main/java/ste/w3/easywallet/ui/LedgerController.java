@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -40,6 +39,7 @@ import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.ledger.LedgerSource;
 import ste.w3.easywallet.data.Order;
 import ste.w3.easywallet.data.TableSourceSorting;
+import ste.w3.easywallet.util.Utils;
 
 @SuppressWarnings("unchecked")
 public class LedgerController extends EasyWalletDialogController implements Initializable {
@@ -51,7 +51,7 @@ public class LedgerController extends EasyWalletDialogController implements Init
     protected StackPane ledgerPane;
 
     protected VirtualTable table;
-    protected final ExecutorService background = Executors.newSingleThreadExecutor();
+    protected final ExecutorService background = Utils.newSingleDaemonThreadExecutor(); // do not set final for testing purposes
 
     protected LedgerSource source = null;
 

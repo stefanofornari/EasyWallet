@@ -49,8 +49,8 @@ import ste.w3.easywallet.ManagerException;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.TransactionsManager;
-import static ste.w3.easywallet.Utils.ts;
-import static ste.w3.easywallet.Utils.unex;
+import static ste.w3.easywallet.util.Utils.ts;
+import static ste.w3.easywallet.util.Utils.unex;
 import ste.w3.easywallet.data.BlocksManager;
 
 /**

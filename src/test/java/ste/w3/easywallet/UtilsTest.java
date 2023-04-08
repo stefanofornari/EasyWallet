@@ -20,6 +20,7 @@
  */
 package ste.w3.easywallet;
 
+import ste.w3.easywallet.util.Utils;
 import java.util.Date;
 import static org.assertj.core.api.BDDAssertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;

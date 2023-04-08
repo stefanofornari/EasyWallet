@@ -18,14 +18,17 @@
  * DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
  * THIS SOFTWARE OR ITS DERIVATIVES.
  */
-package ste.w3.easywallet;
+package ste.w3.easywallet.util;
 
 import com.google.gson.Gson;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import ste.w3.easywallet.Wallet;
 import static ste.w3.easywallet.Constants.UTC_TIMESTAMP_FORMAT;
+import static ste.w3.easywallet.util.DaemonThreadFactory.FACTORY;
 
 /**
  * TODO: rename to Utils (or delete it)
@@ -81,5 +84,12 @@ public class Utils {
         }
 
         return ts(date.getTime()/1000);
+    }
+
+    public static ExecutorService newSingleDaemonThreadExecutor() {
+        //
+        // I do not know how to bugfree code this...
+        //
+        return Executors.newSingleThreadExecutor(FACTORY);
     }
 }
