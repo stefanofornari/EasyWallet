@@ -3,7 +3,7 @@ EasyWallet
 
 A simple Crypto wallets app to easily manage and create personal wallets.
 
-See src/docs/readme.txt for more information.
+See [src/docs/readme.txt](https://github.com/stefanofornari/EasyWallet/blob/main/src/main/docs/readme.txt) for more information.
 
 ----
 
