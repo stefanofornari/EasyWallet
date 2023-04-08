@@ -1,35 +1,22 @@
-# EasyWallet
+EasyWallet
+==========
 
 A simple Crypto wallets app to easily manage and create personal wallets.
+See src/docs/readme.txt for more information.
 
-EasyWallet reads and updates the configuration file $(HOME)/.config/ste.w3.easywallet/preferences.json
+    Copyright (C) 2022 Stefano Fornari. Licensed under the
+    EUPL-1.2 or later (see LICENSE).
 
-The content looks like the following:
+    All Rights Reserved.  No use, copying or distribution of this
+    work may be made except in accordance with a valid license
+    agreement from Stefano Fornari.  This notice must be
+    included on all copies, modifications and derivatives of this
+    work.
 
->{
-  "endpoint":"https://the.network.endpoint",
-  "appkey":"the endpoint app key",
-  "wallets":[
-  {
-    "address":"the wallet address",
-    "privateKey":"the private key if any",
-    "mnemonicPhrase":"the mnemonic phrase to generate the keys if any",
-    "balances":
-    {
-      "ETH":big decimal amount,
-      "STORJ":big decimal amount
-      ...
-    }
-  },
-  ...
-  ],
-  "coins":[
-  {
-    "contract":"the coin contract, null if main for the network",
-   "symbol":"the coin symbol, e.g. STORJ",
-   "name":"the coin name, e.g. StorjToken",
-   "decimals":number of decimals, e.g. 8
-  },
-  ...
-  ]
-}
+    STEFANO FORNARI MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY
+    OF THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+    PURPOSE, OR NON-INFRINGEMENT. STEFANO FORNARI SHALL NOT BE LIABLE FOR ANY
+    DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
+    THIS SOFTWARE OR ITS DERIVATIVES.
+
