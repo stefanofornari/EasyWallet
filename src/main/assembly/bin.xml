@@ -35,5 +35,16 @@
                 <exclude>*.formatted</exclude>
             </excludes>
         </fileSet>
+        <fileSet>
+            <outputDirectory>docs</outputDirectory>
+            <directory>src/main/docs</directory>
+            <filtered>true</filtered>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <excludes>
+                <exclude>*.formatted</exclude>
+            </excludes>
+        </fileSet>
     </fileSets>
 </assembly>
