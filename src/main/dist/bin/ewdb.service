@@ -1,0 +1,9 @@
+[Unit]
+Description=EasyWallet HyperSQL DB
+
+[Service]
+ExecStart=/opt/EasyWallet/bin/ewdb
+User=easywallet
+
+[Install]
+WantedBy=multi-user.target

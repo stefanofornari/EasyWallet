@@ -1,0 +1,11 @@
+[Unit]
+Description=EasyWallet Loader
+
+[Service]
+ExecStart=/opt/EasyWallet/bin/ewloader
+Restart=always
+RestartSec=15m
+User=easywallet
+
+[Install]
+WantedBy=multi-user.target
