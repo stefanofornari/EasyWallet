@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Properties;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -62,6 +63,8 @@ public class EasyWalletMain extends Application {
     protected WalletManager walletManager = null;
     protected LedgerManager ledgerManager = null;
 
+    private String version = null;
+
     @Override
     public void start(Stage stage) throws Exception {
         //
@@ -69,7 +72,7 @@ public class EasyWalletMain extends Application {
         initialize();
         // ///
 
-        stage.setTitle("EasyWallet v0.1");
+        stage.setTitle("EasyWallet v" + version);
         stage.setWidth(575);
         stage.setHeight(800);
         stage.getIcons().add(new Image(EasyWalletMain.class.getResourceAsStream("/images/easy-wallet-icon-64x64.png")));
@@ -177,6 +180,14 @@ public class EasyWalletMain extends Application {
 
         walletManager = new WalletManager(preferences.url());
         ledgerManager = new LedgerManager(preferences.url());
+
+        //
+        // get the version number from maven meta data
+        //
+        Properties p = new Properties();
+        p.load(EasyWalletMain.class.getResourceAsStream("/easywallet.properties"));
+
+        version = (String)p.get("version");
     }
 
     // ------------------------------------------------------- protected methods

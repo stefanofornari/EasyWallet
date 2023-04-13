@@ -15,6 +15,7 @@
  */
 package ste.w3.easywallet.ui;
 
+import javafx.stage.Stage;
 import ste.w3.easywallet.TestingUtils;
 import javax.naming.InitialContext;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -125,6 +126,11 @@ public class EasyWalletMainTest extends BaseEasyWalletMain implements TestingCon
 
         Preferences p = (Preferences)ctx.lookup("root/preferences");
         then(p).isNotNull().isSameAs(main.getPreferences());
+    }
+
+    @Test
+    public void title_contains_the_version_number() {
+        then(stage.getTitle()).isEqualTo("EasyWallet v" + System.getProperty("artifactVersion"));
     }
 
 }
