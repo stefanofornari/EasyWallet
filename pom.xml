@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.stefanofornari</groupId>
     <artifactId>EasyWallet</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -297,7 +297,7 @@
     <scm>
         <connection>scm:git:git@github.com:stefanofornari/EasyWallet.git</connection>
         <url>https://github.com/stefanofornari/EasyWallet</url>
-        <tag>EasyWallet-1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
 
