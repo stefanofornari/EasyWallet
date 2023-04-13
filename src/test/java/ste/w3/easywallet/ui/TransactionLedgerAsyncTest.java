@@ -1,11 +1,7 @@
 package ste.w3.easywallet.ui;
 
 import ste.w3.easywallet.TestingUtils;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.Date;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.VerticalDirection;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;

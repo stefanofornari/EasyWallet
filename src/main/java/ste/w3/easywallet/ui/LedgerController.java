@@ -1,7 +1,6 @@
 package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.font.MFXFontIcon;
 import io.github.palexdev.mfxcore.controls.MFXIconWrapper;
 import io.github.palexdev.mfxcore.observables.When;
 import io.github.palexdev.mfxcore.utils.fx.RegionUtils;
@@ -34,6 +33,7 @@ import javafx.beans.Observable;
 import javafx.concurrent.Task;
 import javafx.geometry.HPos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Label;
 import ste.w3.easywallet.Transaction;
 
 import ste.w3.easywallet.ledger.LedgerSource;
@@ -124,14 +124,14 @@ public class LedgerController extends EasyWalletDialogController implements Init
         sortIcon.getStyleClass().add("rounded");
         sortIcon.getStyleClass().add("column-sort-icon");
         sortIcon.onMouseClickedProperty().set((event) -> {
-            String symbol = ((MFXFontIcon) sortIcon.getIcon()).getDescription();
+            String symbol = ((Label) sortIcon.getIcon()).getText();
 
             resetSortingOrder();
 
-            if (symbol == SortingIcons.NONE.symbol) {
+            if (Constants.ICON_HYPHEN.equals(symbol)) {
                 sortIcon.setIcon(SortingIcons.DESCENDING.newIcon());
                 sortBy(new TableSourceSorting(name, Order.DESCENDING));
-            } else if (symbol == SortingIcons.DESCENDING.symbol) {
+            } else if (Constants.ICON_CARET_DOWN.equals(symbol)) {
                 sortIcon.setIcon(SortingIcons.ASCENDING.newIcon());
                 sortBy(new TableSourceSorting(name, Order.ASCENDING));
             } else {

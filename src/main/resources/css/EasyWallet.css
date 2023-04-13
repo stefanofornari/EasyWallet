@@ -35,6 +35,10 @@
     -fx-background-color: -ew-neutral-gray-light;
 }
 
+.label .icon-button { /* typically a svg icon button */
+    -fx-background-color: -ew-neutral-gray-dark;
+}
+
 .primary-color {
     -fx-background-color: -ew-primary-color;
 }

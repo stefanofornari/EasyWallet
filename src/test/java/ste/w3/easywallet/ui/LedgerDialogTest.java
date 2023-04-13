@@ -2,13 +2,13 @@ package ste.w3.easywallet.ui;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import ste.w3.easywallet.TestingUtils;
-import io.github.palexdev.materialfx.font.MFXFontIcon;
 import io.github.palexdev.mfxcore.controls.MFXIconWrapper;
 import io.github.palexdev.virtualizedfx.table.VirtualTable;
 import io.github.palexdev.virtualizedfx.table.defaults.DefaultTableColumn;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.geometry.VerticalDirection;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -127,11 +127,11 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
         then(lookup(".table-column").lookup(".column-sort-icon").queryAllAs(MFXIconWrapper.class))
             .allMatch(
                 (wrapper) -> {
-                    MFXFontIcon icon = (MFXFontIcon)wrapper.getIcon();
+                    Label icon = (Label)wrapper.getIcon();
                     //
                     // == used on purpose to make sure SortingIcons is used
                     //
-                    return SortingIcons.NONE.symbol == icon.getDescription();
+                    return SortingIcons.NONE.key == icon.getText();
                 }
             );
     }
@@ -159,11 +159,11 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
 
         for (MFXIconWrapper wrapper: columns) {
             clickOn(wrapper); waitForFxEvents();
-            then(wrapper.getIcon()).extracting("description").isSameAs(SortingIcons.DESCENDING.symbol);
+            then(wrapper.getIcon()).extracting("text").isSameAs(SortingIcons.DESCENDING.key);
             clickOn(wrapper); waitForFxEvents();
-            then(wrapper.getIcon()).extracting("description").isSameAs(SortingIcons.ASCENDING.symbol);
+            then(wrapper.getIcon()).extracting("text").isSameAs(SortingIcons.ASCENDING.key);
             clickOn(wrapper); waitForFxEvents();
-            then(wrapper.getIcon()).extracting("description").isSameAs(SortingIcons.NONE.symbol);
+            then(wrapper.getIcon()).extracting("text").isSameAs(SortingIcons.NONE.key);
         }
 
         //
@@ -171,11 +171,11 @@ public class LedgerDialogTest extends ApplicationTest implements Labels, Testing
         //
         clickOn(columns[0]); waitForFxEvents();
         for (int i=1; i<columns.length; ++i) {
-            then(columns[i].getIcon()).extracting("description").isSameAs(SortingIcons.NONE.symbol);
+            then(columns[i].getIcon()).extracting("text").isSameAs(SortingIcons.NONE.key);
         }
         clickOn(columns[columns.length-1]); waitForFxEvents();
         for (int i=0; i<columns.length-1; ++i) {
-            then(columns[i].getIcon()).extracting("description").isSameAs(SortingIcons.NONE.symbol);
+            then(columns[i].getIcon()).extracting("text").isSameAs(SortingIcons.NONE.key);
         }
     }
 

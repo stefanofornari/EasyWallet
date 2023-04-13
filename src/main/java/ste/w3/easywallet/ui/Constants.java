@@ -25,4 +25,8 @@ public class Constants {
 
     public static final String CONFIG_FILE = ".config/ste.w3.easywallet/preferences.json";
 
+    public static final String ICON_CARET_UP = "ew-icon-caret-up";
+    public static final String ICON_CARET_DOWN = "ew-icon-caret-down";
+    public static final String ICON_HYPHEN = "ew-icon-hyphen";
+
 }

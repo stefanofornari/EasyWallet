@@ -60,42 +60,12 @@
         <dependency>
             <groupId>io.github.palexdev</groupId>
             <artifactId>virtualizedfx</artifactId>
-            <version>11.8.3-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-base</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-controls</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-swing</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-fxml</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-media</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-web</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-graphics</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>11.8.5</version>
         </dependency>
         <dependency>
             <groupId>io.github.palexdev</groupId>
             <artifactId>materialfx</artifactId>
-            <version>11.13.9</version>
+            <version>11.13.10</version>
         </dependency>
         <dependency>
             <groupId>io.github.palexdev</groupId>
@@ -323,6 +293,12 @@
             <url>https://nexus.gluonhq.com/nexus/content/repositories/releases</url>
         </repository>
     </repositories>
+
+    <scm>
+        <connection>scm:git:git@github.com:stefanofornari/EasyWallet.git</connection>
+        <url>https://github.com/stefanofornari/EasyWallet</url>
+        <tag>HEAD</tag>
+    </scm>
 
 
     <properties>

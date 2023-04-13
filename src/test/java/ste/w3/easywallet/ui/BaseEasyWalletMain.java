@@ -18,7 +18,6 @@ package ste.w3.easywallet.ui;
 import ste.w3.easywallet.TestingUtils;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.junit.Rule;
@@ -27,11 +26,9 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.testfx.framework.junit.ApplicationTest;
-import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.TestingConstants;
 import ste.w3.easywallet.TestingServer;
-import ste.w3.easywallet.Transaction;
 import ste.xtest.concurrent.WaitFor;
 
 /**
