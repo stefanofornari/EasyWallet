@@ -24,3 +24,6 @@ hs_err_pid*
 
 # db
 data/
+
+# maven target
+target/
