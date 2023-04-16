@@ -15,8 +15,27 @@
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <excludes>
-                <exclude>com.github.jnr:jffi</exclude>
+                <!--exclude>com.github.jnr:jffi</exclude-->
+                <exclude>org.openjfx</exclude>
             </excludes>
+        </dependencySet>
+        <dependencySet>
+            <!--
+            I need to put openjfx modules in a different directory because of
+            strange error trigger by adding the mysql driver. As long as we do
+            not add mysql jdbc driver jar in the classpath, everything works.
+            Adding that jar, causes a JVM boot error:
+
+            Error occurred during initialization of boot layer
+            java.lang.module.ResolutionException: Modules utils and core export package org.web3j.crypto to module contracts
+
+            It turned out that moving javafx into a separate directory and then
+            setting -module-lib accordingly fixed the problem.
+            -->
+            <outputDirectory>lib/modules</outputDirectory>
+            <includes>
+                <include>org.openjfx</include>
+            </includes>
         </dependencySet>
     </dependencySets>
 
