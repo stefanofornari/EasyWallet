@@ -139,35 +139,7 @@ public class EasyWalletMain extends Application {
         }
     }
 
-    //
-    // TODO: cleanup database code
-    //
     public static void main(String[] args) throws Exception {
-        try (ConnectionSource db = new JdbcConnectionSource("jdbc:hsqldb:mem:testdb")) {
-            Dao<Transaction, String> transactionDao = DaoManager.createDao(db, Transaction.class);
-
-            TableUtils.createTable(db, Transaction.class);
-
-            Coin[] coins = new Coin[] {
-                new Coin("ETH", "Ethereum", 18),
-                new Coin("STORJ", "STORJ", 12),
-                new Coin("GLM", "GLM", 18)
-            };
-
-            for (int i=1; i<=25; ++i) {
-                transactionDao.create(
-                        new Transaction(
-                                new Date(Instant.parse(String.format("2022-11-10T10:%02d:00.00Z", i)).getEpochSecond()*1000),
-                                coins[i%3],
-                                new BigDecimal(String.format("%1$02d.%1$02d", i)),
-                                String.format("12345678901234567890123456789012345678%02d",i),
-                                String.format("%02d12345678901234567890123456789012345678",i),
-                                String.format("hahs%02d",i)
-                        )
-                );
-            }
-        }
-
         launch(args);
     }
 
