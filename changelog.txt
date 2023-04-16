@@ -1,5 +1,5 @@
 20230416
-- released v1.0.1
+- released v1.0.2
 - support for mysql
 
 20230414
