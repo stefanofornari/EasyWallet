@@ -29,7 +29,7 @@ import java.util.Date;
 /**
  * TODO: remove coin
  */
-@DatabaseTable(tableName = "transactions")
+@DatabaseTable(tableName = "TRANSACTIONS")
 public class Transaction {
     @DatabaseField(id = true, width = 64)
     public String hash;

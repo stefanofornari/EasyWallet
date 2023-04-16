@@ -23,17 +23,13 @@ package ste.w3.easywallet;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import static java.lang.ProcessBuilder.Redirect.to;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import static java.util.Date.from;
-import static javafx.beans.binding.Bindings.when;
 
 /**
  * TODO: remove coin
  */
-@DatabaseTable(tableName = "blocks")
+@DatabaseTable(tableName = "BLOCKS")
 public class Block {
     @DatabaseField(id = true, width = 64)
     public String hash;
