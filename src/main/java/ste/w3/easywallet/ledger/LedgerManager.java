@@ -125,6 +125,9 @@ public class LedgerManager {
                 latestEthBlock.getNumber().compareTo(blockNumber) > 0;
                 blockNumber = blockNumber.add(BigInteger.ONE)
             ) {
+                //
+                // TODO: getBlock() cer return null
+                //
                 saveEthBlock(
                     BM, TM,
                     web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(blockNumber), true).send().getBlock()
