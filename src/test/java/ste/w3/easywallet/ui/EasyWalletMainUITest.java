@@ -52,7 +52,7 @@ public class EasyWalletMainUITest extends BaseEasyWalletMain implements TestingC
     @Test
     public void window_title_icon_and_size() throws Exception {
         Pane root = lookup(".root").queryAs(Pane.class);
-        then(stage.getTitle()).isEqualTo("EasyWallet v0.1");
+        then(stage.getTitle()).isEqualTo("EasyWallet v" + System.getProperty("artifactVersion"));
         then(root.getScene().getWidth()).isGreaterThanOrEqualTo(400);
         then(root.getScene().getHeight()).isGreaterThanOrEqualTo(600);
         then(stage.getIcons()).isNotEmpty();
