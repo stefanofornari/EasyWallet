@@ -98,7 +98,7 @@ public class LedgerManager {
         // TODO: break if block number not found?
         //
         if (LOG.isLoggable(Level.INFO)) {
-            LOG.info("refresh start");
+            LOG.info("refresh start");  
         }
 
         try {

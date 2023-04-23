@@ -21,16 +21,8 @@
 
 package ste.w3.easywallet.ui;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Date;
 import java.util.Properties;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -42,10 +34,8 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import org.apache.commons.io.FileUtils;
-import ste.w3.easywallet.Coin;
 import ste.w3.easywallet.Preferences;
 import ste.w3.easywallet.PreferencesManager;
-import ste.w3.easywallet.Transaction;
 import ste.w3.easywallet.Wallet;
 import ste.w3.easywallet.WalletManager;
 import ste.w3.easywallet.ledger.LedgerManager;
